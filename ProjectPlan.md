@@ -48,7 +48,7 @@ The language distinguishes itself from existing scripting languages through thre
 |------|-------------|
 | Learn | Deeply understand how interpreters work — lexing, parsing, evaluation, environments, closures |
 | Build | Produce a real, runnable programming language with a complete feature set |
-| Portfolio | Ship a live web playground at `yourname.github.io/axonblade` as a flagship portfolio piece |
+| Portfolio | Ship a full website at `AI-Alon.github.io/axonblade` with docs, interactive playground, and examples — a flagship portfolio piece |
 
 ### Non-goals (v1)
 
@@ -1283,7 +1283,7 @@ axonblade/
 
 ---
 
-### Phase 5 — Web Playground (Weeks 9–10)
+### Phase 5 — Website: Docs + Playground (Weeks 9–10)
 
 #### Week 9 — Pyodide Bridge + Canvas Renderer
 
@@ -1301,22 +1301,40 @@ axonblade/
 
 ---
 
-#### Week 10 — Playground UI + Deploy
+#### Week 10 — Website: Docs + Playground + Deploy
 
-**Goal:** Ship a polished, shareable web playground.
+**Goal:** Ship a complete AxonBlade website with documentation, an interactive playground, and example showcase — all statically hosted on GitHub Pages.
 
 **Tasks:**
-- Integrate CodeMirror 6 with custom AxonBlade language definition
-- Syntax highlighting rules: `bladeFN`, `ECB`, `+/`, `>>`, `-**-` color literals, string interpolation `&{}`
-- Build split-pane layout — editor (left 55%), output + canvas (right 45%)
-- Add example program dropdown — Hello World, Fibonacci, Closures demo, Snake, Life
-- Add Run button + `Ctrl+Enter` shortcut
-- Show runtime errors inline in editor with red underline on the error line
-- Show stdout output in output panel (preserve ANSI-to-HTML color conversion)
-- Add "Share" button that encodes source in URL hash
-- Deploy to GitHub Pages — zero backend, fully static
 
-**Deliverable:** Live playground at `yourname.github.io/axonblade`
+*Site structure:*
+- Multi-page static site: Home, Docs, Playground, Examples
+- Shared navbar, dark AxonBlade-themed design (dark bg, cyan/green accents)
+- Responsive layout, footer with version + GitHub link
+
+*Home page:*
+- Hero section with tagline and animated color demo
+- Feature highlights, install snippet, language at a glance
+
+*Documentation:*
+- Getting Started — install, first program, REPL, CLI
+- Syntax Reference — variables, strings, functions, control flow, classes, imports
+- Operators — full table including `-n`/`-a`/`-o`, `>>`, `+/`, `|>`, `**`
+- Type System, Color Literals, Grid System, Standard Library, Error Handling, Module System
+- Syntax-highlighted code blocks on every page
+
+*Playground:*
+- CodeMirror 6 with full AxonBlade syntax highlighting
+- Split-pane layout — editor (55%) / output + canvas (45%)
+- Example dropdown, Run button, `Ctrl+Enter` shortcut
+- ANSI-to-HTML color output, inline error display, canvas grid renderer
+- "Share" button encodes source in URL hash
+
+*Deploy:*
+- Zero build step — plain HTML/CSS/JS
+- Deploy to GitHub Pages at `AI-Alon.github.io/axonblade`
+
+**Deliverable:** Live website at `AI-Alon.github.io/axonblade`
 
 ---
 
@@ -1351,46 +1369,79 @@ python -m pytest tests/ -v
 
 ---
 
-## 16. Web Playground
+## 16. Website
 
-### 16.1 Tech Stack
+### 16.1 Pages
+
+| Page | Path | Description |
+|------|------|-------------|
+| Home | `/` | Hero, features, install snippet, language preview |
+| Docs | `/docs/` | Full language documentation |
+| Playground | `/playground/` | Interactive browser-based editor |
+| Examples | `/examples/` | Annotated example programs |
+
+### 16.2 Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
+| Site | Plain HTML/CSS/JS — zero build step |
 | Code editor | CodeMirror 6 |
 | Python runtime | Pyodide (Python 3.11 WASM) |
 | Grid renderer | HTML Canvas API |
 | Hosting | GitHub Pages |
-| Build | Zero build step — plain HTML/CSS/JS |
 
-### 16.2 UI Layout
+### 16.3 Site Layout
+
+```
+┌─────────────────────────────────────────────────────┐
+│  AxonBlade    Home  Docs  Playground  Examples  GitHub│
+├─────────────────────────────────────────────────────┤
+│                                                      │
+│   [page content]                                     │
+│                                                      │
+├─────────────────────────────────────────────────────┤
+│  AxonBlade v1.0  ·  MIT License  ·  GitHub          │
+└─────────────────────────────────────────────────────┘
+```
+
+### 16.4 Playground Layout
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│  AxonBlade Playground          [Examples ▾]  [Run ▶]    │
+│  AxonBlade Playground     [Examples ▾]  [Share]  [Run ▶]│
 ├──────────────────────────┬──────────────────────────────┤
 │                          │  Output                       │
 │   CodeMirror editor      │  ─────────────────────────── │
 │                          │  > Hello, AxonBlade!          │
-│   bladeFN main() +/      │                               │
-│     >> g = grid(10,10)   │  Grid                         │
-│     g.fill(-*blue*-)     │  ─────────────────────────── │
-│     g.render()           │  [canvas renders here]        │
-│   ECB                    │                               │
+│   bladeFN greet() +/     │                               │
+│     write(-*cyan*- +     │  Grid                         │
+│       "Hello!")          │  ─────────────────────────── │
+│   ECB                    │  [canvas renders here]        │
 │                          │                               │
 └──────────────────────────┴──────────────────────────────┘
 ```
 
-### 16.3 CodeMirror Syntax Rules
+### 16.5 Documentation Sections
 
-Highlight the following:
+1. Getting Started
+2. Syntax Reference
+3. Operators
+4. Type System
+5. Color Literals
+6. Grid System
+7. Standard Library
+8. Error Handling
+9. Module System
 
-- Keywords: `bladeFN`, `bladeGRP`, `if`, `elif`, `else`, `while`, `for`, `in`, `return`, `try`, `catch`, `raise`, `uselib`, `ECB`
-- Operators: `>>`, `+/`, `|>`
+### 16.6 CodeMirror Syntax Rules
+
+- Keywords: `bladeFN`, `bladeGRP`, `if`, `elif`, `else`, `while`, `for`, `in`, `return`, `try`, `catch`, `raise`, `uselib`, `ECB`, `blade`
+- Logical operators: `-n`, `-a`, `-o`
+- Structural operators: `>>`, `+/`, `|>`
 - Color literals: `-*...*-` highlighted distinctly
 - String interpolation: `&{...}` highlighted inside strings
-- Type annotations: `#type` highlighted after parameter names
-- Comments: `# ...` grayed out
+- Type annotations: `#type` after parameter names
+- Comments: `# ...` and `#/ ... /#` grayed out
 - Numbers, strings, booleans highlighted as standard
 
 ---

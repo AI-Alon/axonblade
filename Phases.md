@@ -295,34 +295,51 @@
 
 ---
 
-## Week 10 — Playground UI + Deploy @waiting
+## Week 10 — Website: Docs + Playground + Deploy @waiting
 
-### Phase 10.1: CodeMirror 6 Integration
-- Integrate CodeMirror 6 editor
-- Create custom AxonBlade language definition
-- Implement syntax highlighting for: `bladeFN`, `ECB`, `+/`, `>>`, color literals, string interpolation
+### Phase 10.1: Site Structure & Navigation
+- Design multi-page static site: Home, Docs, Playground, Examples
+- Build shared navbar with links to all sections and GitHub repo
+- Dark AxonBlade-themed design (dark background, cyan/green accents)
+- Responsive layout for desktop and mobile
+- Footer with version, license, GitHub link
 
-### Phase 10.2: Editor Layout & Styling
-- Build split-pane layout — editor (left 55%), output + canvas (right 45%)
-- Implement responsive design
-- Style editor with AxonBlade colors and theme
-- Create output and canvas display panels
+### Phase 10.2: Home Page
+- Hero section — language name, tagline, animated color demo
+- Feature highlights: unique syntax, color literals, grid primitive
+- "Try it" button linking to playground
+- Install snippet: `pip install axonblade` + `ablade run hello.axb`
+- Language at a glance: short syntax showcase
 
-### Phase 10.3: Example Programs & Interactivity
-- Add example program dropdown — Hello World, Fibonacci, Closures, Snake, Life
-- Implement Run button + `Ctrl+Enter` keyboard shortcut
-- Load examples into editor on selection
-- Handle run button click and execution
+### Phase 10.3: Documentation Pages
+- **Getting Started** — install, first program, running files, REPL
+- **Syntax Reference** — variables, strings, functions, control flow, classes, imports
+- **Operators** — all operators including `-n`/`-a`/`-o`, `>>`, `+/`, `|>`, `**`
+- **Type System** — annotations, supported types, enforcement rules
+- **Color Literals** — all 9 colors, ANSI output, usage with `write()` and `grid`
+- **Grid System** — `grid()`, all methods, game loop, `on_key`, examples
+- **Standard Library** — math.axb and string.axb function reference
+- **Error Handling** — try/catch, raise, error types
+- **Module System** — uselib, writing modules
+- Syntax-highlighted code blocks on every page using CodeMirror or highlight.js
 
-### Phase 10.4: Error Display & Output
-- Show runtime errors inline in editor with red underline
-- Display errors in output panel with line/column info
-- Show stdout output preserving ANSI-to-HTML color conversion
-- Real-time error reporting as user types
+### Phase 10.4: Playground Page
+- CodeMirror 6 editor with full AxonBlade syntax highlighting
+  - Keywords: `bladeFN`, `bladeGRP`, `ECB`, `+/`, `>>`, `|>`, `-n`, `-a`, `-o`
+  - Color literals `-*red*-` highlighted distinctly
+  - String interpolation `&{}` highlighted inside strings
+  - Type annotations `#type` after parameter names
+  - Comments `# ...` and `#/ ... /#` grayed out
+- Split-pane layout — editor (left 55%) / output + canvas (right 45%)
+- Example dropdown — Hello World, Fibonacci, Closures, Classes, Snake, Life
+- Run button + `Ctrl+Enter` shortcut
+- ANSI-to-HTML color conversion in output panel
+- Inline error display with red underline on error line
+- Canvas grid renderer for grid programs
+- "Share" button encodes source in URL hash
 
-### Phase 10.5: Sharing & Deployment
-- Implement "Share" button that encodes source in URL hash
-- Add URL hash decoding on page load to restore shared code
-- Deploy to GitHub Pages (zero backend, fully static)
-- Test across browsers and devices
-- **Deliverable:** Live playground at `AI-Alon.github.io/axonblade`
+### Phase 10.5: Deploy
+- All pages as plain HTML/CSS/JS — zero build step
+- Deploy to GitHub Pages at `AI-Alon.github.io/axonblade`
+- Test across browsers (Chrome, Firefox, Safari)
+- **Deliverable:** Live website at `AI-Alon.github.io/axonblade` with docs, playground, and examples
