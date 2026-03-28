@@ -1,0 +1,59 @@
+# fibonacci.axb — Fibonacci sequence
+# Demonstrates: recursion, closures, first-class functions, pipeline
+
+# Recursive Fibonacci
+bladeFN fib(n#int) +/
+    if n <= 1 +/
+        return n
+    ECB
+    return fib(n - 1) + fib(n - 2)
+ECB
+
+write(-*cyan*- + "Recursive Fibonacci:" + -*reset*-)
+>> i = 0
+while i < 10 +/
+    write("  fib(&{i}) = &{fib(i)}")
+    i = i + 1
+ECB
+
+write("")
+
+# Fibonacci using a closure-based memoizing generator
+bladeFN make_fib_gen() +/
+    >> a = 0
+    >> b = 1
+    bladeFN next() +/
+        >> val = a
+        >> tmp = b
+        b = a + b
+        a = tmp
+        return val
+    ECB
+    return next
+ECB
+
+write(-*cyan*- + "Generator Fibonacci:" + -*reset*-)
+>> gen = make_fib_gen()
+>> j = 0
+while j < 10 +/
+    write("  &{gen()}")
+    j = j + 1
+ECB
+
+write("")
+
+# First-class functions: apply a transform to each fib number
+bladeFN apply(fn#fn, n#int) +/
+    return fn(n)
+ECB
+
+bladeFN square(x#int) +/
+    return x * x
+ECB
+
+write(-*cyan*- + "Squared Fibonacci:" + -*reset*-)
+>> k = 0
+while k < 8 +/
+    write("  fib(&{k})^2 = &{apply(square, fib(k))}")
+    k = k + 1
+ECB

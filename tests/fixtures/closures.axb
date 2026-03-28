@@ -1,0 +1,13 @@
+bladeFN make_counter() +/
+    >> count = 0
+    bladeFN increment() +/
+        count = count + 1
+        return count
+    ECB
+    return increment
+ECB
+
+>> counter = make_counter()
+write(counter())
+write(counter())
+write(counter())

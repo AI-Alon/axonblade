@@ -1,0 +1,172 @@
+# life.axb — Conway's Game of Life
+# EDIT MODE: w/a/s/d move cursor, space toggles cell, enter starts simulation
+# RUN MODE:  q quits, p pauses/resumes
+
+>> W = 30
+>> H = 20
+>> g = grid(W, H)
+
+# Board state
+bladeFN make_board() +/
+    >> board = []
+    >> y = 0
+    while y < H +/
+        >> row = []
+        >> x = 0
+        while x < W +/
+            row.append(0)
+            x = x + 1
+        ECB
+        board.append(row)
+        y = y + 1
+    ECB
+    return board
+ECB
+
+>> board = make_board()
+
+# Editor state
+>> paused = true
+>> cx = 15
+>> cy = 10
+
+bladeFN count_neighbors(brd, px, py) +/
+    >> total = 0
+    >> dy = -1
+    while dy <= 1 +/
+        >> dx = -1
+        while dx <= 1 +/
+            if -n (dx == 0 -a dy == 0) +/
+                >> nx = px + dx
+                >> ny = py + dy
+                if nx >= 0 -a nx < W -a ny >= 0 -a ny < H +/
+                    total = total + brd~ny~~nx~
+                ECB
+            ECB
+            dx = dx + 1
+        ECB
+        dy = dy + 1
+    ECB
+    return total
+ECB
+
+bladeFN step() +/
+    >> next = make_board()
+    >> y = 0
+    while y < H +/
+        >> x = 0
+        while x < W +/
+            >> alive = board~y~~x~
+            >> n = count_neighbors(board, x, y)
+            if alive == 1 -a (n == 2 -o n == 3) +/
+                next~y~~x~ = 1
+            ECB
+            elif alive == 0 -a n == 3 +/
+                next~y~~x~ = 1
+            ECB
+            x = x + 1
+        ECB
+        y = y + 1
+    ECB
+    board = next
+ECB
+
+bladeFN draw() +/
+    >> y = 0
+    while y < H +/
+        >> x = 0
+        while x < W +/
+            if board~y~~x~ == 1 +/
+                if paused -a x == cx -a y == cy +/
+                    g.set(x, y, -*yellow*-)
+                ECB
+                else +/
+                    g.set(x, y, -*green*-)
+                ECB
+            ECB
+            else +/
+                if paused -a x == cx -a y == cy +/
+                    g.set(x, y, -*cyan*-)
+                ECB
+                else +/
+                    g.set(x, y, -*black*-)
+                ECB
+            ECB
+            x = x + 1
+        ECB
+        y = y + 1
+    ECB
+ECB
+
+bladeFN update() +/
+    if -n paused +/
+        step()
+    ECB
+    draw()
+ECB
+
+# Editor controls
+g.on_key("w", bladeFN() +/
+    if cy > 0 +/
+        cy = cy - 1
+    ECB
+ECB)
+g.on_key("s", bladeFN() +/
+    if cy < H - 1 +/
+        cy = cy + 1
+    ECB
+ECB)
+g.on_key("a", bladeFN() +/
+    if cx > 0 +/
+        cx = cx - 1
+    ECB
+ECB)
+g.on_key("d", bladeFN() +/
+    if cx < W - 1 +/
+        cx = cx + 1
+    ECB
+ECB)
+
+# Space: toggle cell under cursor
+g.on_key(" ", bladeFN() +/
+    if paused +/
+        if board~cy~~cx~ == 1 +/
+            board~cy~~cx~ = 0
+        ECB
+        else +/
+            board~cy~~cx~ = 1
+        ECB
+    ECB
+ECB)
+
+# Enter: start / p: pause-resume / q: quit
+g.on_key("\r", bladeFN() +/ paused = false ECB)
+g.on_key("p", bladeFN() +/
+    if paused +/
+        paused = false
+    ECB
+    else +/
+        paused = true
+    ECB
+ECB)
+g.on_key("q", bladeFN() +/ g.stop() ECB)
+
+write(-*green*- + "  ╔══════════════════════════════╗" + -*reset*-)
+write(-*green*- + "  ║  CONWAY'S GAME OF LIFE       ║" + -*reset*-)
+write(-*green*- + "  ╠══════════════════════════════╣" + -*reset*-)
+write(-*green*- + "  ║  EDIT MODE (start here)      ║" + -*reset*-)
+write(-*green*- + "  ║  w/a/s/d — move cursor       ║" + -*reset*-)
+write(-*green*- + "  ║  space   — toggle cell       ║" + -*reset*-)
+write(-*green*- + "  ║  enter   — start simulation  ║" + -*reset*-)
+write(-*green*- + "  ╠══════════════════════════════╣" + -*reset*-)
+write(-*green*- + "  ║  RUN MODE                    ║" + -*reset*-)
+write(-*green*- + "  ║  p       — pause / resume    ║" + -*reset*-)
+write(-*green*- + "  ║  q       — quit              ║" + -*reset*-)
+write(-*green*- + "  ╚══════════════════════════════╝" + -*reset*-)
+write("")
+write("  Cursor shown in cyan. Move it and press space to draw cells.")
+write("  Press any key to begin...")
+wait_key()
+
+draw()
+g.loop(update, 10)

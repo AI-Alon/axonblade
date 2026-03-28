@@ -1,0 +1,168 @@
+# snake.axb — Playable Snake
+# Controls: w/a/s/d to move, q to quit
+# Eat the * to grow. Hit the wall or yourself = game over.
+
+>> W = 24
+>> H = 16
+>> g = grid(W, H)
+
+>> snake = [{x: 12, y: 8}, {x: 11, y: 8}, {x: 10, y: 8}]
+>> dir_x = 1
+>> dir_y = 0
+>> next_dx = 1
+>> next_dy = 0
+>> food_x = 5
+>> food_y = 4
+>> score = 0
+>> alive = true
+>> tick = 0
+
+# Pseudo-random food placement using tick as seed
+bladeFN new_food() +/
+    food_x = (food_x * 7 + tick * 3 + 1) % (W - 2) + 1
+    food_y = (food_y * 5 + tick * 2 + 1) % (H - 2) + 1
+ECB
+
+bladeFN is_on_snake(px, py) +/
+    >> i = 0
+    while i < len(snake) +/
+        >> seg = snake~i~
+        if seg~"x"~ == px -a seg~"y"~ == py +/
+            return true
+        ECB
+        i = i + 1
+    ECB
+    return false
+ECB
+
+bladeFN draw() +/
+    g.fill(-*black*-)
+
+    # Border
+    >> bx = 0
+    while bx < W +/
+        g.set(bx, 0, -*white*-)
+        g.set(bx, H - 1, -*white*-)
+        bx = bx + 1
+    ECB
+    >> by = 0
+    while by < H +/
+        g.set(0, by, -*white*-)
+        g.set(W - 1, by, -*white*-)
+        by = by + 1
+    ECB
+
+    # Food
+    g.set(food_x, food_y, -*red*-)
+    g.set_char(food_x, food_y, "*")
+
+    # Snake body
+    >> i = 1
+    while i < len(snake) +/
+        >> seg = snake~i~
+        g.set(seg~"x"~, seg~"y"~, -*green*-)
+        g.set_char(seg~"x"~, seg~"y"~, "o")
+        i = i + 1
+    ECB
+
+    # Snake head
+    >> head = snake~0~
+    g.set(head~"x"~, head~"y"~, -*cyan*-)
+    g.set_char(head~"x"~, head~"y"~, "@")
+ECB
+
+bladeFN game_over() +/
+    alive = false
+    g.stop()
+ECB
+
+bladeFN update() +/
+    if -n alive +/
+        return null
+    ECB
+
+    tick = tick + 1
+
+    # Commit buffered direction
+    dir_x = next_dx
+    dir_y = next_dy
+
+    >> head = snake~0~
+    >> nx = head~"x"~ + dir_x
+    >> ny = head~"y"~ + dir_y
+
+    # Wall collision = death
+    if nx <= 0 -o nx >= W - 1 -o ny <= 0 -o ny >= H - 1 +/
+        game_over()
+        return null
+    ECB
+
+    # Self collision = death
+    if is_on_snake(nx, ny) +/
+        game_over()
+        return null
+    ECB
+
+    >> new_head = {x: nx, y: ny}
+    snake.insert(0, new_head)
+
+    # Ate food?
+    if nx == food_x -a ny == food_y +/
+        score = score + 1
+        new_food()
+        # Keep tail (snake grows) — don't pop
+    ECB
+    else +/
+        snake.pop()
+    ECB
+
+    draw()
+ECB
+
+# w/a/s/d — buffer next direction, prevent 180-degree reversal
+g.on_key("w", bladeFN() +/
+    if dir_y == 0 +/
+        next_dx = 0
+        next_dy = -1
+    ECB
+ECB)
+g.on_key("s", bladeFN() +/
+    if dir_y == 0 +/
+        next_dx = 0
+        next_dy = 1
+    ECB
+ECB)
+g.on_key("a", bladeFN() +/
+    if dir_x == 0 +/
+        next_dx = -1
+        next_dy = 0
+    ECB
+ECB)
+g.on_key("d", bladeFN() +/
+    if dir_x == 0 +/
+        next_dx = 1
+        next_dy = 0
+    ECB
+ECB)
+g.on_key("q", bladeFN() +/ g.stop() ECB)
+
+write(-*cyan*- + "  ╔══════════════════════╗" + -*reset*-)
+write(-*cyan*- + "  ║   S N A K E          ║" + -*reset*-)
+write(-*cyan*- + "  ╠══════════════════════╣" + -*reset*-)
+write(-*cyan*- + "  ║  w/a/s/d  — move     ║" + -*reset*-)
+write(-*cyan*- + "  ║  eat  *   — grow      ║" + -*reset*-)
+write(-*cyan*- + "  ║  hit wall — game over ║" + -*reset*-)
+write(-*cyan*- + "  ║  q        — quit      ║" + -*reset*-)
+write(-*cyan*- + "  ╚══════════════════════╝" + -*reset*-)
+write("")
+write("  Press any key to begin...")
+write("")
+wait_key()
+
+draw()
+g.loop(update, 8)
+
+if -n alive +/
+    write("")
+    write(-*red*- + "  You lost!  Score: &{score}" + -*reset*-)
+ECB

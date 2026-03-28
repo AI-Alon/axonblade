@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "axonblade"
+version = "1.0.0"
+description = "AxonBlade — a custom interpreted scripting language with a native grid primitive"
+requires-python = ">=3.11"
+readme = "README.md"
+
+[project.scripts]
+ablade = "axonblade.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["core*", "grid*", "stdlib*", "playground*", "axonblade*"]
+
+[tool.setuptools.package-data]
+"stdlib" = ["*.axb"]

@@ -1,0 +1,103 @@
+# classes.axb — bladeGRP (classes) and instances
+# Demonstrates: bladeGRP definition, init, methods, fields, try/catch, error handling
+
+bladeGRP Animal +/
+    bladeFN init(blade, name#str, sound#str, hp#int) +/
+        blade.name = name
+        blade.sound = sound
+        blade.hp = hp
+        blade.alive = true
+    ECB
+
+    bladeFN speak(blade) +/
+        if blade.alive +/
+            write("&{blade.name} says: &{blade.sound}!")
+        ECB
+        else +/
+            write("&{blade.name} is silent.")
+        ECB
+    ECB
+
+    bladeFN take_damage(blade, amount#int) +/
+        blade.hp = blade.hp - amount
+        if blade.hp <= 0 +/
+            blade.hp = 0
+            blade.alive = false
+            write(-*red*- + "&{blade.name} has been defeated!" + -*reset*-)
+        ECB
+        else +/
+            write("&{blade.name} takes &{amount} damage. HP: &{blade.hp}")
+        ECB
+    ECB
+
+    bladeFN describe(blade) +/
+        >> status = "alive"
+        if -n blade.alive +/
+            status = "defeated"
+        ECB
+        return "&{blade.name} [HP: &{blade.hp}] (&{status})"
+    ECB
+ECB
+
+bladeGRP Point +/
+    bladeFN init(blade, x#int, y#int) +/
+        blade.x = x
+        blade.y = y
+    ECB
+
+    bladeFN distance(blade, other) +/
+        >> dx = blade.x - other.x
+        >> dy = blade.y - other.y
+        return dx * dx + dy * dy
+    ECB
+
+    bladeFN to_str(blade) +/
+        return "(&{blade.x}, &{blade.y})"
+    ECB
+ECB
+
+# -- Animals --
+write(-*cyan*- + "=== Animals ===" + -*reset*-)
+>> dog = Animal("Rex", "woof", 30)
+>> cat = Animal("Luna", "meow", 20)
+
+dog.speak()
+cat.speak()
+write(dog.describe())
+write(cat.describe())
+
+write("")
+dog.take_damage(10)
+dog.take_damage(15)
+dog.take_damage(10)
+dog.speak()
+write(dog.describe())
+
+write("")
+
+# -- Points --
+write(-*cyan*- + "=== Points ===" + -*reset*-)
+>> p1 = Point(0, 0)
+>> p2 = Point(3, 4)
+write("p1 = &{p1.to_str()}")
+write("p2 = &{p2.to_str()}")
+write("squared distance = &{p1.distance(p2)}")
+
+write("")
+
+# -- Error handling --
+write(-*cyan*- + "=== Error Handling ===" + -*reset*-)
+bladeFN safe_divide(a#int, b#int) +/
+    if b == 0 +/
+        raise "Division by zero"
+    ECB
+    return a / b
+ECB
+
+try +/
+    write("10 / 2 = &{safe_divide(10, 2)}")
+    write("5 / 0 = &{safe_divide(5, 0)}")
+ECB
+catch e +/
+    write(-*red*- + "Caught: &{e}" + -*reset*-)
+ECB

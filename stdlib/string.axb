@@ -1,0 +1,27 @@
+bladeFN upper(s#str) +/
+    return __builtin_upper(s)
+ECB
+
+bladeFN lower(s#str) +/
+    return __builtin_lower(s)
+ECB
+
+bladeFN split(s#str, delim#str) +/
+    return __builtin_split(s, delim)
+ECB
+
+bladeFN join(parts#list, delim#str) +/
+    return __builtin_join(parts, delim)
+ECB
+
+bladeFN strip(s#str) +/
+    return __builtin_strip(s)
+ECB
+
+bladeFN contains(s#str, sub#str) +/
+    return __builtin_contains(s, sub)
+ECB
+
+bladeFN replace(s#str, old#str, new#str) +/
+    return __builtin_replace(s, old, new)
+ECB

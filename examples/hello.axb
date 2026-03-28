@@ -1,0 +1,33 @@
+# hello.axb — Welcome to AxonBlade
+# Demonstrates: variables, string interpolation, colors, loops, functions
+
+>> name = "AxonBlade"
+>> version = 1
+
+write(-*cyan*- + "Welcome to &{name} v&{version}" + -*reset*-)
+write("")
+
+# Colors as first-class values
+>> colors = [-*red*-, -*yellow*-, -*green*-, -*cyan*-, -*blue*-, -*magenta*-]
+>> labels = ["red", "yellow", "green", "cyan", "blue", "magenta"]
+
+>> i = 0
+while i < len(colors) +/
+    write(colors~i~ + "  " + labels~i~ + "  " + -*reset*-)
+    i = i + 1
+ECB
+
+write("")
+
+# String interpolation with expressions
+>> a = 6
+>> b = 7
+write("&{a} * &{b} = &{a * b}")
+
+# Function definition
+bladeFN greet(who#str) +/
+    return -*green*- + "Hello, &{who}!" + -*reset*-
+ECB
+
+write(greet("world"))
+write(greet(name))

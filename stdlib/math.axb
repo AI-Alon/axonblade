@@ -1,0 +1,36 @@
+bladeFN sqrt(n#float) +/
+    return __builtin_sqrt(n)
+ECB
+
+bladeFN abs(n) +/
+    if n < 0 +/
+        return n * -1
+    ECB
+    return n
+ECB
+
+bladeFN floor(n#float) +/
+    return __builtin_floor(n)
+ECB
+
+bladeFN ceil(n#float) +/
+    return __builtin_ceil(n)
+ECB
+
+bladeFN pow(base, exp) +/
+    return base ** exp
+ECB
+
+bladeFN max(a, b) +/
+    if a > b +/
+        return a
+    ECB
+    return b
+ECB
+
+bladeFN min(a, b) +/
+    if a < b +/
+        return a
+    ECB
+    return b
+ECB
