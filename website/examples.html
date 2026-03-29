@@ -37,7 +37,7 @@
     .page-header p { color: var(--muted); font-size: 1.05rem; }
 
     .examples-layout { max-width: 1100px; margin: 0 auto; padding: 2rem; display: grid; grid-template-columns: 220px 1fr; gap: 2rem; }
-    @media(max-width:700px){ .examples-layout { grid-template-columns: 1fr; } .ex-sidebar { display: none; } }
+    @media(max-width:768px){ .examples-layout { grid-template-columns: 1fr; } .ex-sidebar { display: none; } }
 
     .ex-sidebar { display: flex; flex-direction: column; gap: .3rem; }
     .ex-nav-btn {
@@ -79,7 +79,16 @@
       background: var(--code-bg); font-family: 'Cascadia Code','Fira Code','Consolas',monospace;
       font-size: .87rem; line-height: 1.75; padding: 1.5rem;
       overflow-x: auto; white-space: pre; color: var(--text);
+      position: relative;
     }
+    .copy-btn {
+      position: absolute; top: .6rem; right: .6rem;
+      background: var(--bg3); border: 1px solid var(--border); color: var(--muted);
+      font-size: .75rem; padding: .2rem .55rem; border-radius: 5px; cursor: pointer;
+      font-family: inherit; transition: color .2s, border-color .2s;
+    }
+    .copy-btn:hover { color: var(--cyan); border-color: var(--cyan); }
+    .copy-btn.copied { color: var(--green); border-color: var(--green); }
     .kw  { color: #c792ea; } .fn  { color: #82aaff; } .str { color: #c3e88d; }
     .num { color: #f78c6c; } .col { color: #ffcb6b; } .cmt { color: #546e7a; font-style: italic; }
     .op  { color: #89ddff; } .var { color: #eeffff; }
@@ -407,7 +416,6 @@
     <div class="footer-links">
       <a href="index.html">Home</a>
       <a href="docs/index.html">Docs</a>
-      <a href="examples.html">Examples</a>
       <a href="https://github.com/AI-Alon/axonblade" target="_blank">GitHub</a>
     </div>
   </div>
@@ -420,6 +428,20 @@
     document.getElementById('ex-' + name).classList.add('active');
     event.currentTarget.classList.add('active');
   }
+
+  document.querySelectorAll('.code-block').forEach(block => {
+    const btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.textContent = 'Copy';
+    btn.addEventListener('click', () => {
+      navigator.clipboard.writeText(block.innerText.replace('Copy', '').trim()).then(() => {
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+      });
+    });
+    block.appendChild(btn);
+  });
 </script>
 </body>
 </html>

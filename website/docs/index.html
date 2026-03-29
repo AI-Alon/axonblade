@@ -102,6 +102,7 @@
       font-family: inherit; transition: color .2s, border-color .2s;
     }
     .copy-btn:hover { color: var(--cyan); border-color: var(--cyan); }
+    .copy-btn.copied { color: var(--green); border-color: var(--green); }
 
     /* back to top */
     .back-to-top {
@@ -110,7 +111,7 @@
     }
     .back-to-top:hover { color: var(--cyan); text-decoration: none; }
 
-    @media(max-width:800px) { .docs-layout { grid-template-columns: 1fr; } .docs-sidebar { display: none; } .docs-content { padding: 2rem 1.5rem; } }
+    @media(max-width:768px) { .docs-layout { grid-template-columns: 1fr; } .docs-sidebar { display: none; } .docs-content { padding: 2rem 1.5rem; } }
   </style>
 </head>
 <body>
@@ -336,7 +337,7 @@ axb&gt; EXIT</code></pre>
 
     <!-- ── Dicts ── -->
     <h2 id="dicts">Dictionaries</h2>
-    <p>Dictionaries store key-value pairs. Create them with <code>{key: value}</code> syntax.</p>
+    <p>Dictionaries store key-value pairs. Keys are unquoted identifiers at creation, but quoted strings when accessing with <code>~</code>:</p>
     <pre><code><span class="kw">&gt;&gt;</span> <span class="var">person</span> <span class="op">=</span> {<span class="str">name</span>: <span class="str">"Alon"</span>, <span class="str">age</span>: <span class="num">17</span>}
 <span class="fn">write</span>(<span class="var">person</span><span class="op">~</span><span class="str">"name"</span><span class="op">~</span>)   <span class="cmt"># Alon</span>
 <span class="fn">write</span>(<span class="var">person</span><span class="op">~</span><span class="str">"age"</span><span class="op">~</span>)    <span class="cmt"># 17</span></code></pre>
@@ -424,11 +425,13 @@ axb&gt; EXIT</code></pre>
 
     <!-- ── Errors ── -->
     <h2 id="errors">Error Handling</h2>
-    <p>Use <code>try / catch</code> to handle runtime errors. The caught value is the error message string:</p>
+    <p>Use <code>try / catch</code> to handle runtime errors. The caught value is a dict with <code>type</code>, <code>message</code>, and <code>line</code>:</p>
     <pre><code><span class="kw">try</span> <span class="op">+/</span>
     <span class="kw">&gt;&gt;</span> <span class="var">x</span> <span class="op">=</span> <span class="num">10</span> <span class="op">/</span> <span class="num">0</span>
-<span class="kw">ECB</span> <span class="kw">catch</span> <span class="var">err</span> <span class="op">+/</span>
-    <span class="fn">write</span>(<span class="str">"Caught: &amp;{err}"</span>)   <span class="cmt"># Caught: division by zero</span>
+<span class="kw">ECB</span> <span class="kw">catch</span> <span class="var">e</span> <span class="op">+/</span>
+    <span class="fn">write</span>(<span class="var">e</span><span class="op">~</span><span class="str">"type"</span><span class="op">~</span>)      <span class="cmt"># AxonDivisionError</span>
+    <span class="fn">write</span>(<span class="var">e</span><span class="op">~</span><span class="str">"message"</span><span class="op">~</span>)   <span class="cmt"># division by zero</span>
+    <span class="fn">write</span>(<span class="var">e</span><span class="op">~</span><span class="str">"line"</span><span class="op">~</span>)      <span class="cmt"># 2</span>
 <span class="kw">ECB</span></code></pre>
     <p>Raise your own errors with <code>raise</code>:</p>
     <pre><code><span class="kw">bladeFN</span> <span class="fn">divide</span>(<span class="var">a</span><span class="op">#</span><span class="kw">int</span>, <span class="var">b</span><span class="op">#</span><span class="kw">int</span>) <span class="op">+/</span>
@@ -464,6 +467,7 @@ axb&gt; EXIT</code></pre>
       <tr><td><code>write(val)</code></td><td>Print a value to stdout</td></tr>
       <tr><td><code>len(x)</code></td><td>Length of a list or string</td></tr>
       <tr><td><code>range(n)</code></td><td>List <code>[0, 1, ..., n-1]</code></td></tr>
+      <tr><td><code>range(start, end)</code></td><td>List <code>[start, ..., end-1]</code></td></tr>
       <tr><td><code>type(x)</code></td><td>Type name as string</td></tr>
       <tr><td><code>str(x)</code></td><td>Convert to string</td></tr>
       <tr><td><code>int(x)</code></td><td>Convert to integer</td></tr>
@@ -547,7 +551,6 @@ axb&gt; EXIT</code></pre>
     </div>
     <div class="footer-links">
       <a href="../index.html">Home</a>
-      <a href="index.html">Docs</a>
       <a href="../examples.html">Examples</a>
       <a href="https://github.com/AI-Alon/axonblade" target="_blank">GitHub</a>
     </div>
@@ -560,7 +563,7 @@ axb&gt; EXIT</code></pre>
   function setActive() {
     let current = headings[0];
     for (const h of headings) {
-      if (h && h.getBoundingClientRect().top <= 80) current = h;
+      if (h && h.getBoundingClientRect().top <= 64) current = h;
     }
     sidebarLinks.forEach(a => {
       a.classList.toggle("active", a.getAttribute("href") === "#" + current.id);
@@ -579,7 +582,8 @@ axb&gt; EXIT</code></pre>
     btn.addEventListener("click", () => {
       navigator.clipboard.writeText(pre.querySelector("code")?.innerText ?? pre.innerText).then(() => {
         btn.textContent = "Copied!";
-        setTimeout(() => btn.textContent = "Copy", 1500);
+        btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "Copy"; btn.classList.remove("copied"); }, 1500);
       });
     });
     pre.appendChild(btn);
