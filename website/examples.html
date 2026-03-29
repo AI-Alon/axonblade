@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Examples — AxonBlade</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:#0d0d1a; --bg2:#12122a; --bg3:#1a1a3a; --border:#2a2a4a;
+      --cyan:#00d4ff; --green:#39ff14; --purple:#a855f7;
+      --text:#e2e8f0; --muted:#94a3b8; --code-bg:#0a0a1a; --radius:8px;
+    }
+    html { scroll-behavior: smooth; overflow-y: scroll; scrollbar-gutter: stable; }
+    body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; line-height: 1.6; }
+    a { color: var(--cyan); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(13,13,26,.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border); padding: 0 2rem;
+      height: 58px;
+      display: flex; align-items: center; gap: 2rem;
+    }
+    .nav-inner { display: contents; }
+    .nav-logo { font-size: 1.25rem; font-weight: 700; color: var(--cyan); text-decoration: none; letter-spacing: -0.5px; white-space: nowrap; }
+    .nav-logo span { color: var(--green); }
+    .nav-links { display: flex; align-items: center; gap: 1.5rem; list-style: none; margin-left: auto; }
+    .nav-links a { color: var(--muted); font-size: .9rem; font-weight: 500; transition: color .2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--cyan); text-decoration: none; }
+    .nav-cta { margin-left: 1rem; background: var(--cyan); color: #000; padding: .35rem .9rem; border-radius: var(--radius); font-size: .85rem; font-weight: 700; }
+    .nav-cta:hover { opacity: .85; text-decoration: none; }
+
+    .page-header { padding: 4rem 2rem 2rem; max-width: 1100px; margin: 0 auto; }
+    .page-header h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: .5rem; }
+    .page-header p { color: var(--muted); font-size: 1.05rem; }
+
+    .examples-layout { max-width: 1100px; margin: 0 auto; padding: 2rem; display: grid; grid-template-columns: 220px 1fr; gap: 2rem; }
+    @media(max-width:700px){ .examples-layout { grid-template-columns: 1fr; } .ex-sidebar { display: none; } }
+
+    .ex-sidebar { display: flex; flex-direction: column; gap: .3rem; }
+    .ex-nav-btn {
+      background: none; border: 1px solid transparent; color: var(--muted);
+      padding: .5rem .9rem; border-radius: var(--radius); text-align: left;
+      font-size: .88rem; cursor: pointer; transition: all .2s; width: 100%;
+    }
+    .ex-nav-btn:hover, .ex-nav-btn.active {
+      border-color: var(--cyan); color: var(--cyan); background: rgba(0,212,255,.08);
+    }
+    .ex-nav-btn .badge {
+      font-size: .72rem; padding: .1rem .45rem; border-radius: 4px; margin-left: .4rem;
+      background: rgba(168,85,247,.2); color: var(--purple);
+    }
+    .ex-nav-btn .badge.game { background: rgba(57,255,20,.15); color: var(--green); }
+
+    .ex-pane { display: none; }
+    .ex-pane.active { display: block; }
+
+    .ex-card {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 12px;
+      overflow: hidden;
+    }
+    .ex-card-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border);
+    }
+    .ex-card-header h2 { font-size: 1.3rem; margin: 0; }
+    .ex-card-header p { color: var(--muted); font-size: .9rem; margin: .25rem 0 0; }
+    .run-btn {
+      background: var(--cyan); color: #000; border: none; cursor: pointer;
+      padding: .55rem 1.3rem; border-radius: var(--radius); font-weight: 700;
+      font-size: .9rem; white-space: nowrap; transition: opacity .2s;
+      text-decoration: none; display: inline-flex; align-items: center; gap: .4rem;
+    }
+    .run-btn:hover { opacity: .85; text-decoration: none; }
+
+    .code-block {
+      background: var(--code-bg); font-family: 'Cascadia Code','Fira Code','Consolas',monospace;
+      font-size: .87rem; line-height: 1.75; padding: 1.5rem;
+      overflow-x: auto; white-space: pre; color: var(--text);
+    }
+    .kw  { color: #c792ea; } .fn  { color: #82aaff; } .str { color: #c3e88d; }
+    .num { color: #f78c6c; } .col { color: #ffcb6b; } .cmt { color: #546e7a; font-style: italic; }
+    .op  { color: #89ddff; } .var { color: #eeffff; }
+
+    .ex-meta {
+      padding: 1rem 1.5rem; border-top: 1px solid var(--border);
+      display: flex; gap: 1.5rem; flex-wrap: wrap;
+    }
+    .ex-meta-item { font-size: .82rem; color: var(--muted); }
+    .ex-meta-item strong { color: var(--text); }
+
+    footer { border-top: 1px solid var(--border); padding: 2rem; color: var(--muted); font-size: .85rem; text-align: center; margin-top: 3rem; }
+  </style>
+</head>
+<body>
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">Axon<span>Blade</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="docs/index.html">Docs</a></li>
+      <li><a href="examples.html" class="active">Examples</a></li>
+      <li><a href="https://github.com/AI-Alon/axonblade" target="_blank">GitHub</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="page-header">
+  <h1>Examples</h1>
+  <p>Working programs covering every core feature of AxonBlade — from hello world to terminal games.</p>
+</div>
+
+<div class="examples-layout">
+  <!-- Sidebar nav -->
+  <aside class="ex-sidebar">
+    <button class="ex-nav-btn active" onclick="showEx('hello')">Hello World</button>
+    <button class="ex-nav-btn" onclick="showEx('fibonacci')">Fibonacci <span class="badge">math</span></button>
+    <button class="ex-nav-btn" onclick="showEx('closures')">Closures <span class="badge">advanced</span></button>
+    <button class="ex-nav-btn" onclick="showEx('classes')">Classes <span class="badge">OOP</span></button>
+    <button class="ex-nav-btn" onclick="showEx('snake')">Snake <span class="badge game">game</span></button>
+    <button class="ex-nav-btn" onclick="showEx('life')">Game of Life <span class="badge game">game</span></button>
+  </aside>
+
+  <!-- Example panes -->
+  <main>
+    <!-- Hello World -->
+    <div id="ex-hello" class="ex-pane active">
+      <div class="ex-card">
+        <div class="ex-card-header">
+          <div>
+            <h2>Hello World</h2>
+            <p>Colors, string interpolation, and a simple typed function.</p>
+          </div>
+        </div>
+        <div class="code-block"><span class="cmt"># AxonBlade — Hello World</span>
+
+<span class="kw">&gt;&gt;</span> <span class="var">colors</span> <span class="op">=</span> [<span class="col">-*red*-</span>, <span class="col">-*green*-</span>, <span class="col">-*yellow*-</span>, <span class="col">-*cyan*-</span>, <span class="col">-*magenta*-</span>, <span class="col">-*blue*-</span>]
+<span class="kw">&gt;&gt;</span> <span class="var">names</span>  <span class="op">=</span> [<span class="str">"red"</span>, <span class="str">"green"</span>, <span class="str">"yellow"</span>, <span class="str">"cyan"</span>, <span class="str">"magenta"</span>, <span class="str">"blue"</span>]
+
+<span class="cmt"># Print each color</span>
+<span class="kw">&gt;&gt;</span> <span class="var">i</span> <span class="op">=</span> <span class="num">0</span>
+<span class="kw">while</span> <span class="var">i</span> <span class="op">&lt;</span> <span class="fn">len</span>(<span class="var">colors</span>) <span class="op">+/</span>
+    <span class="fn">write</span>(<span class="var">colors</span>[<span class="var">i</span>] <span class="op">+</span> <span class="str">"  This is &amp;{names[i]}  "</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+    <span class="var">i</span> <span class="op">=</span> <span class="var">i</span> <span class="op">+</span> <span class="num">1</span>
+<span class="kw">ECB</span>
+
+<span class="fn">write</span>(<span class="str">""</span>)
+<span class="fn">write</span>(<span class="col">-*cyan*-</span> <span class="op">+</span> <span class="str">"Hello, AxonBlade!"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+
+<span class="cmt"># Typed function</span>
+<span class="kw">bladeFN</span> <span class="fn">greet</span>(<span class="var">name</span><span class="op">#</span><span class="kw">str</span>, <span class="var">n</span><span class="op">#</span><span class="kw">int</span>) <span class="op">+/</span>
+    <span class="kw">&gt;&gt;</span> <span class="var">i</span> <span class="op">=</span> <span class="num">0</span>
+    <span class="kw">while</span> <span class="var">i</span> <span class="op">&lt;</span> <span class="var">n</span> <span class="op">+/</span>
+        <span class="fn">write</span>(<span class="col">-*green*-</span> <span class="op">+</span> <span class="str">"Hi, &amp;{name}!"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+        <span class="var">i</span> <span class="op">=</span> <span class="var">i</span> <span class="op">+</span> <span class="num">1</span>
+    <span class="kw">ECB</span>
+<span class="kw">ECB</span>
+
+<span class="fn">greet</span>(<span class="str">"World"</span>, <span class="num">3</span>)</div>
+        <div class="ex-meta">
+          <div class="ex-meta-item"><strong>Concepts:</strong> variables, color literals, string interpolation, while loop, typed function</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fibonacci -->
+    <div id="ex-fibonacci" class="ex-pane">
+      <div class="ex-card">
+        <div class="ex-card-header">
+          <div>
+            <h2>Fibonacci</h2>
+            <p>Recursive function, closure generator, and higher-order functions.</p>
+          </div>
+        </div>
+        <div class="code-block"><span class="cmt"># Recursive Fibonacci</span>
+<span class="kw">bladeFN</span> <span class="fn">fib</span>(<span class="var">n</span><span class="op">#</span><span class="kw">int</span>) <span class="op">+/</span>
+    <span class="kw">if</span> <span class="var">n</span> <span class="op">&lt;=</span> <span class="num">1</span> <span class="op">+/</span>
+        <span class="kw">return</span> <span class="var">n</span>
+    <span class="kw">ECB</span>
+    <span class="kw">return</span> <span class="fn">fib</span>(<span class="var">n</span> <span class="op">-</span> <span class="num">1</span>) <span class="op">+</span> <span class="fn">fib</span>(<span class="var">n</span> <span class="op">-</span> <span class="num">2</span>)
+<span class="kw">ECB</span>
+
+<span class="fn">write</span>(<span class="col">-*cyan*-</span> <span class="op">+</span> <span class="str">"Recursive Fibonacci:"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10</span>) <span class="op">+/</span>
+    <span class="fn">write</span>(<span class="str">"fib(&amp;{i}) = &amp;{fib(i)}"</span>)
+<span class="kw">ECB</span>
+
+<span class="cmt"># Closure-based generator</span>
+<span class="kw">bladeFN</span> <span class="fn">fib_gen</span>() <span class="op">+/</span>
+    <span class="kw">&gt;&gt;</span> <span class="var">a</span> <span class="op">=</span> <span class="num">0</span>
+    <span class="kw">&gt;&gt;</span> <span class="var">b</span> <span class="op">=</span> <span class="num">1</span>
+    <span class="kw">return</span> <span class="kw">bladeFN</span>() <span class="op">+/</span>
+        <span class="kw">&gt;&gt;</span> <span class="var">v</span> <span class="op">=</span> <span class="var">a</span>
+        <span class="kw">&gt;&gt;</span> <span class="var">next</span> <span class="op">=</span> <span class="var">a</span> <span class="op">+</span> <span class="var">b</span>
+        <span class="var">a</span> <span class="op">=</span> <span class="var">b</span>
+        <span class="var">b</span> <span class="op">=</span> <span class="var">next</span>
+        <span class="kw">return</span> <span class="var">v</span>
+    <span class="kw">ECB</span>
+<span class="kw">ECB</span>
+
+<span class="fn">write</span>(<span class="str">""</span>)
+<span class="fn">write</span>(<span class="col">-*green*-</span> <span class="op">+</span> <span class="str">"Generator (first 10):"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="kw">&gt;&gt;</span> <span class="var">gen</span> <span class="op">=</span> <span class="fn">fib_gen</span>()
+<span class="kw">for</span> <span class="var">_</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10</span>) <span class="op">+/</span>
+    <span class="fn">write</span>(<span class="fn">gen</span>())
+<span class="kw">ECB</span></div>
+        <div class="ex-meta">
+          <div class="ex-meta-item"><strong>Concepts:</strong> recursion, closures, for loop, higher-order functions</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Closures -->
+    <div id="ex-closures" class="ex-pane">
+      <div class="ex-card">
+        <div class="ex-card-header">
+          <div>
+            <h2>Closures</h2>
+            <p>Counter factories, adder generators, and pipeline composition.</p>
+          </div>
+        </div>
+        <div class="code-block"><span class="cmt"># Counter factory</span>
+<span class="kw">bladeFN</span> <span class="fn">make_counter</span>(<span class="var">start</span>) <span class="op">+/</span>
+    <span class="kw">&gt;&gt;</span> <span class="var">n</span> <span class="op">=</span> <span class="var">start</span>
+    <span class="kw">return</span> <span class="kw">bladeFN</span>() <span class="op">+/</span>
+        <span class="var">n</span> <span class="op">=</span> <span class="var">n</span> <span class="op">+</span> <span class="num">1</span>
+        <span class="kw">return</span> <span class="var">n</span>
+    <span class="kw">ECB</span>
+<span class="kw">ECB</span>
+
+<span class="kw">&gt;&gt;</span> <span class="var">c1</span> <span class="op">=</span> <span class="fn">make_counter</span>(<span class="num">0</span>)
+<span class="kw">&gt;&gt;</span> <span class="var">c2</span> <span class="op">=</span> <span class="fn">make_counter</span>(<span class="num">100</span>)
+<span class="fn">write</span>(<span class="fn">c1</span>())  <span class="cmt"># 1</span>
+<span class="fn">write</span>(<span class="fn">c1</span>())  <span class="cmt"># 2</span>
+<span class="fn">write</span>(<span class="fn">c2</span>())  <span class="cmt"># 101 — independent state</span>
+
+<span class="cmt"># Adder factory + pipeline</span>
+<span class="kw">bladeFN</span> <span class="fn">make_adder</span>(<span class="var">n</span>) <span class="op">+/</span>
+    <span class="kw">return</span> <span class="kw">bladeFN</span>(<span class="var">x</span>) <span class="op">+/</span> <span class="kw">return</span> <span class="var">x</span> <span class="op">+</span> <span class="var">n</span> <span class="kw">ECB</span>
+<span class="kw">ECB</span>
+
+<span class="kw">bladeFN</span> <span class="fn">double</span>(<span class="var">x</span>) <span class="op">+/</span> <span class="kw">return</span> <span class="var">x</span> <span class="op">*</span> <span class="num">2</span> <span class="kw">ECB</span>
+
+<span class="kw">&gt;&gt;</span> <span class="var">add10</span> <span class="op">=</span> <span class="fn">make_adder</span>(<span class="num">10</span>)
+<span class="kw">&gt;&gt;</span> <span class="var">result</span> <span class="op">=</span> <span class="num">5</span> <span class="op">|&gt;</span> <span class="fn">double</span>() <span class="op">|&gt;</span> <span class="fn">add10</span>()
+<span class="fn">write</span>(<span class="var">result</span>)  <span class="cmt"># 20</span>
+
+<span class="cmt"># map_list helper</span>
+<span class="kw">bladeFN</span> <span class="fn">map_list</span>(<span class="var">lst</span>, <span class="var">fn</span>) <span class="op">+/</span>
+    <span class="kw">&gt;&gt;</span> <span class="var">out</span> <span class="op">=</span> []
+    <span class="kw">for</span> <span class="var">x</span> <span class="kw">in</span> <span class="var">lst</span> <span class="op">+/</span>
+        <span class="var">out</span>.<span class="fn">append</span>(<span class="fn">fn</span>(<span class="var">x</span>))
+    <span class="kw">ECB</span>
+    <span class="kw">return</span> <span class="var">out</span>
+<span class="kw">ECB</span>
+
+<span class="kw">&gt;&gt;</span> <span class="var">nums</span> <span class="op">=</span> [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>]
+<span class="fn">write</span>(<span class="fn">map_list</span>(<span class="var">nums</span>, <span class="var">double</span>))  <span class="cmt"># [2, 4, 6, 8, 10]</span></div>
+        <div class="ex-meta">
+          <div class="ex-meta-item"><strong>Concepts:</strong> closures, factory functions, pipeline operator, list methods</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Classes -->
+    <div id="ex-classes" class="ex-pane">
+      <div class="ex-card">
+        <div class="ex-card-header">
+          <div>
+            <h2>Classes</h2>
+            <p>OOP with bladeGRP — Animal health system, Point class, try/catch.</p>
+          </div>
+        </div>
+        <div class="code-block"><span class="kw">bladeGRP</span> <span class="fn">Animal</span> <span class="op">+/</span>
+    <span class="kw">bladeFN</span> <span class="fn">init</span>(<span class="var">name</span><span class="op">#</span><span class="kw">str</span>, <span class="var">hp</span><span class="op">#</span><span class="kw">int</span>) <span class="op">+/</span>
+        <span class="kw">blade</span>.<span class="var">name</span> <span class="op">=</span> <span class="var">name</span>
+        <span class="kw">blade</span>.<span class="var">hp</span>   <span class="op">=</span> <span class="var">hp</span>
+        <span class="kw">blade</span>.<span class="var">alive</span> <span class="op">=</span> <span class="kw">true</span>
+    <span class="kw">ECB</span>
+    <span class="kw">bladeFN</span> <span class="fn">damage</span>(<span class="var">amount</span><span class="op">#</span><span class="kw">int</span>) <span class="op">+/</span>
+        <span class="kw">blade</span>.<span class="var">hp</span> <span class="op">=</span> <span class="kw">blade</span>.<span class="var">hp</span> <span class="op">-</span> <span class="var">amount</span>
+        <span class="kw">if</span> <span class="kw">blade</span>.<span class="var">hp</span> <span class="op">&lt;=</span> <span class="num">0</span> <span class="op">+/</span>
+            <span class="kw">blade</span>.<span class="var">alive</span> <span class="op">=</span> <span class="kw">false</span>
+            <span class="fn">write</span>(<span class="col">-*red*-</span> <span class="op">+</span> <span class="str">"&amp;{blade.name} is defeated!"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+        <span class="kw">ECB</span> <span class="kw">else</span> <span class="op">+/</span>
+            <span class="fn">write</span>(<span class="str">"&amp;{blade.name}: &amp;{blade.hp} hp"</span>)
+        <span class="kw">ECB</span>
+    <span class="kw">ECB</span>
+<span class="kw">ECB</span>
+
+<span class="kw">&gt;&gt;</span> <span class="var">wolf</span> <span class="op">=</span> <span class="fn">Animal</span>(<span class="str">"Wolf"</span>, <span class="num">50</span>)
+<span class="var">wolf</span>.<span class="fn">damage</span>(<span class="num">20</span>)
+<span class="var">wolf</span>.<span class="fn">damage</span>(<span class="num">40</span>)
+
+<span class="cmt"># try/catch</span>
+<span class="fn">write</span>(<span class="str">""</span>)
+<span class="kw">try</span> <span class="op">+/</span>
+    <span class="kw">&gt;&gt;</span> <span class="var">bad</span> <span class="op">=</span> <span class="num">10</span> <span class="op">/</span> <span class="num">0</span>
+<span class="kw">ECB</span> <span class="kw">catch</span> <span class="var">e</span> <span class="op">+/</span>
+    <span class="fn">write</span>(<span class="col">-*yellow*-</span> <span class="op">+</span> <span class="str">"Caught: &amp;{e.message}"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="kw">ECB</span></div>
+        <div class="ex-meta">
+          <div class="ex-meta-item"><strong>Concepts:</strong> bladeGRP classes, blade keyword, type annotations, if/else, try/catch</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Snake -->
+    <div id="ex-snake" class="ex-pane">
+      <div class="ex-card">
+        <div class="ex-card-header">
+          <div>
+            <h2>Snake Game</h2>
+            <p>Playable Snake in the terminal — grid, game loop, keyboard input, borders.</p>
+          </div>
+        </div>
+        <div class="code-block"><span class="cmt"># Snake — run with: ablade run examples/snake.axb</span>
+<span class="cmt"># Controls: WASD to move, Q to quit</span>
+<span class="cmt"># (truncated for display — see full source in examples/snake.axb)</span>
+
+<span class="kw">&gt;&gt;</span> <span class="var">W</span> <span class="op">=</span> <span class="num">30</span>
+<span class="kw">&gt;&gt;</span> <span class="var">H</span> <span class="op">=</span> <span class="num">18</span>
+<span class="kw">&gt;&gt;</span> <span class="var">g</span> <span class="op">=</span> <span class="fn">grid</span>(<span class="var">W</span>, <span class="var">H</span>)
+
+<span class="cmt"># Snake body as list of [x, y] tiles</span>
+<span class="kw">&gt;&gt;</span> <span class="var">snake</span> <span class="op">=</span> [[<span class="num">5</span>, <span class="num">5</span>], [<span class="num">4</span>, <span class="num">5</span>], [<span class="num">3</span>, <span class="num">5</span>]]
+<span class="kw">&gt;&gt;</span> <span class="var">dir_x</span> <span class="op">=</span> <span class="num">1</span>
+<span class="kw">&gt;&gt;</span> <span class="var">dir_y</span> <span class="op">=</span> <span class="num">0</span>
+
+<span class="cmt"># Key bindings</span>
+<span class="var">g</span>.<span class="fn">on_key</span>(<span class="str">"w"</span>, <span class="kw">bladeFN</span>() <span class="op">+/</span> <span class="var">next_dx</span> <span class="op">=</span> <span class="num">0</span>  <span class="var">next_dy</span> <span class="op">=</span> <span class="op">-</span><span class="num">1</span> <span class="kw">ECB</span>)
+<span class="var">g</span>.<span class="fn">on_key</span>(<span class="str">"s"</span>, <span class="kw">bladeFN</span>() <span class="op">+/</span> <span class="var">next_dx</span> <span class="op">=</span> <span class="num">0</span>  <span class="var">next_dy</span> <span class="op">=</span>  <span class="num">1</span> <span class="kw">ECB</span>)
+<span class="var">g</span>.<span class="fn">on_key</span>(<span class="str">"a"</span>, <span class="kw">bladeFN</span>() <span class="op">+/</span> <span class="var">next_dx</span> <span class="op">=</span> <span class="op">-</span><span class="num">1</span> <span class="var">next_dy</span> <span class="op">=</span>  <span class="num">0</span> <span class="kw">ECB</span>)
+<span class="var">g</span>.<span class="fn">on_key</span>(<span class="str">"d"</span>, <span class="kw">bladeFN</span>() <span class="op">+/</span> <span class="var">next_dx</span> <span class="op">=</span>  <span class="num">1</span> <span class="var">next_dy</span> <span class="op">=</span>  <span class="num">0</span> <span class="kw">ECB</span>)
+<span class="var">g</span>.<span class="fn">on_key</span>(<span class="str">"q"</span>, <span class="kw">bladeFN</span>() <span class="op">+/</span> <span class="var">g</span>.<span class="fn">stop</span>() <span class="kw">ECB</span>)
+
+<span class="var">g</span>.<span class="fn">loop</span>(<span class="kw">bladeFN</span>() <span class="op">+/</span>
+    <span class="cmt"># move, draw, check collisions ...</span>
+<span class="kw">ECB</span>, <span class="num">10</span>)</div>
+        <div class="ex-meta">
+          <div class="ex-meta-item"><strong>Concepts:</strong> grid, on_key, loop, list methods, game loop pattern</div>
+          <div class="ex-meta-item"><strong>Run locally:</strong> <code>ablade run examples/snake.axb</code></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Life -->
+    <div id="ex-life" class="ex-pane">
+      <div class="ex-card">
+        <div class="ex-card-header">
+          <div>
+            <h2>Conway's Game of Life</h2>
+            <p>Interactive editor + live simulation. Draw cells, then press Enter to run.</p>
+          </div>
+        </div>
+        <div class="code-block"><span class="cmt"># Game of Life — interactive editor + simulation</span>
+<span class="cmt"># Controls: arrows = move cursor, space = toggle cell</span>
+<span class="cmt">#           enter = start sim, p = pause, q = quit</span>
+
+<span class="kw">&gt;&gt;</span> <span class="var">W</span> <span class="op">=</span> <span class="num">40</span>
+<span class="kw">&gt;&gt;</span> <span class="var">H</span> <span class="op">=</span> <span class="num">22</span>
+<span class="kw">&gt;&gt;</span> <span class="var">g</span> <span class="op">=</span> <span class="fn">grid</span>(<span class="var">W</span>, <span class="var">H</span>)
+
+<span class="kw">&gt;&gt;</span> <span class="var">cells</span>  <span class="op">=</span> []   <span class="cmt"># alive = list of [x, y]</span>
+<span class="kw">&gt;&gt;</span> <span class="var">paused</span> <span class="op">=</span> <span class="kw">true</span>
+<span class="kw">&gt;&gt;</span> <span class="var">cx</span>     <span class="op">=</span> <span class="num">20</span>
+<span class="kw">&gt;&gt;</span> <span class="var">cy</span>     <span class="op">=</span> <span class="num">11</span>
+
+<span class="kw">bladeFN</span> <span class="fn">count_neighbors</span>(<span class="var">x</span>, <span class="var">y</span>) <span class="op">+/</span>
+    <span class="kw">&gt;&gt;</span> <span class="var">count</span> <span class="op">=</span> <span class="num">0</span>
+    <span class="kw">for</span> <span class="var">nb</span> <span class="kw">in</span> <span class="var">cells</span> <span class="op">+/</span>
+        <span class="kw">&gt;&gt;</span> <span class="var">dx</span> <span class="op">=</span> <span class="var">nb</span>[<span class="num">0</span>] <span class="op">-</span> <span class="var">x</span>
+        <span class="kw">&gt;&gt;</span> <span class="var">dy</span> <span class="op">=</span> <span class="var">nb</span>[<span class="num">1</span>] <span class="op">-</span> <span class="var">y</span>
+        <span class="kw">if</span> (<span class="var">dx</span> <span class="op">*</span> <span class="var">dx</span> <span class="op">+</span> <span class="var">dy</span> <span class="op">*</span> <span class="var">dy</span> <span class="op">&lt;=</span> <span class="num">2</span>) <span class="op">-a</span> <span class="op">-n</span> (<span class="var">dx</span> <span class="op">==</span> <span class="num">0</span> <span class="op">-a</span> <span class="var">dy</span> <span class="op">==</span> <span class="num">0</span>) <span class="op">+/</span>
+            <span class="var">count</span> <span class="op">=</span> <span class="var">count</span> <span class="op">+</span> <span class="num">1</span>
+        <span class="kw">ECB</span>
+    <span class="kw">ECB</span>
+    <span class="kw">return</span> <span class="var">count</span>
+<span class="kw">ECB</span>
+
+<span class="var">g</span>.<span class="fn">loop</span>(<span class="kw">bladeFN</span>() <span class="op">+/</span>
+    <span class="cmt"># draw grid, advance simulation ...</span>
+<span class="kw">ECB</span>, <span class="num">10</span>)</div>
+        <div class="ex-meta">
+          <div class="ex-meta-item"><strong>Concepts:</strong> grid, interactive editor, simulation, list operations, -a / -n operators</div>
+          <div class="ex-meta-item"><strong>Run locally:</strong> <code>ablade run examples/life.axb</code></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<footer>
+  AxonBlade v1.0 &nbsp;·&nbsp; MIT License &nbsp;·&nbsp;
+  <a href="https://github.com/AI-Alon/axonblade">GitHub</a>
+</footer>
+
+<script>
+  function showEx(name) {
+    document.querySelectorAll('.ex-pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.ex-nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('ex-' + name).classList.add('active');
+    event.currentTarget.classList.add('active');
+  }
+</script>
+</body>
+</html>

@@ -1064,46 +1064,54 @@ Track a set of currently-loading modules. If a module is requested that is alrea
 ## 13. Project File Structure
 
 ```
-axonblade/
+axonblade/                      ← project root
 ├── core/
-│   ├── lexer.py            ← Lexer class, char-by-char scanner
-│   ├── tokens.py           ← TokenType enum, Token dataclass
-│   ├── ast_nodes.py        ← All AST node dataclasses
-│   ├── parser.py           ← Recursive descent parser
-│   ├── environment.py      ← Environment class (scope chain)
-│   ├── evaluator.py        ← Tree-walk evaluator
-│   └── errors.py           ← All AxonError subclasses
+│   ├── lexer.py                ← Lexer class, char-by-char scanner
+│   ├── tokens.py               ← TokenType enum, Token dataclass
+│   ├── ast_nodes.py            ← All AST node dataclasses
+│   ├── parser.py               ← Recursive descent parser
+│   ├── environment.py          ← Environment class (scope chain)
+│   ├── evaluator.py            ← Tree-walk evaluator
+│   └── errors.py               ← All AxonError subclasses
 ├── stdlib/
-│   ├── builtins.py         ← Python-backed built-in functions
-│   ├── math.axb            ← Math stdlib in AxonBlade
-│   └── string.axb          ← String stdlib in AxonBlade
+│   ├── builtins.py             ← Python-backed built-in functions
+│   ├── math.axb                ← Math stdlib in AxonBlade
+│   └── string.axb              ← String stdlib in AxonBlade
 ├── grid/
-│   ├── grid_object.py      ← AxonGrid Python class
-│   └── renderer_term.py    ← ANSI terminal render logic
-├── playground/
-│   ├── index.html          ← Web playground UI
-│   ├── editor.js           ← CodeMirror 6 setup + syntax rules
-│   ├── canvas_grid.js      ← HTML canvas grid renderer
-│   └── bridge.py           ← Pyodide bridge (run source → output)
+│   ├── grid_object.py          ← AxonGrid Python class
+│   └── renderer_term.py        ← ANSI terminal render logic
 ├── tests/
-│   ├── test_lexer.py       ← Lexer unit tests (30+ cases)
-│   ├── test_parser.py      ← Parser unit tests (40+ cases)
-│   ├── test_evaluator.py   ← Evaluator integration tests
-│   ├── test_grid.py        ← Grid object + renderer tests
-│   └── fixtures/           ← .axb files used as test inputs
+│   ├── test_lexer.py           ← Lexer unit tests (30+ cases)
+│   ├── test_parser.py          ← Parser unit tests (40+ cases)
+│   ├── test_evaluator.py       ← Evaluator integration tests
+│   ├── test_grid.py            ← Grid object + renderer tests
+│   └── fixtures/               ← .axb files used as test inputs
 │       ├── hello.axb
 │       ├── closures.axb
 │       ├── classes.axb
 │       └── errors.axb
 ├── examples/
-│   ├── hello.axb           ← Hello world
-│   ├── fibonacci.axb       ← Fibonacci with closures
-│   ├── snake.axb           ← Playable snake game using grid
-│   └── life.axb            ← Conway's Game of Life using grid
-├── main.py                 ← CLI entry point (axb run / axb repl)
-├── repl.py                 ← Interactive REPL
-├── requirements.txt        ← Python dependencies (none for core)
-└── README.md               ← Installation + usage guide
+│   ├── hello.axb               ← Hello world
+│   ├── fibonacci.axb           ← Fibonacci with closures
+│   ├── closures.axb            ← Closure and factory patterns
+│   ├── classes.axb             ← OOP with bladeGRP
+│   ├── snake.axb               ← Playable snake game using grid
+│   └── life.axb                ← Conway's Game of Life using grid
+├── website/                    ← Static website (GitHub Pages)
+│   ├── index.html              ← Home page (hero, features, get started)
+│   ├── examples.html           ← Examples gallery
+│   ├── docs/
+│   │   └── index.html          ← Full language documentation
+│   └── playground/
+│       ├── index.html          ← Interactive browser-based editor
+│       ├── canvas_grid.js      ← HTML canvas grid renderer
+│       └── bridge.py           ← Pyodide bridge (run source → output)
+├── axonblade/
+│   └── __main__.py             ← Package entry point (sets sys.path)
+├── main.py                     ← CLI entry point (ablade run / repl / version)
+├── repl.py                     ← Interactive REPL
+├── pyproject.toml              ← Build config + ablade script entry point
+└── README.md                   ← Installation + usage guide
 ```
 
 ---
@@ -1373,12 +1381,12 @@ python -m pytest tests/ -v
 
 ### 16.1 Pages
 
-| Page | Path | Description |
+| Page | File | Description |
 |------|------|-------------|
-| Home | `/` | Hero, features, install snippet, language preview |
-| Docs | `/docs/` | Full language documentation |
-| Playground | `/playground/` | Interactive browser-based editor |
-| Examples | `/examples/` | Annotated example programs |
+| Home | `website/index.html` | Hero, features, install snippet, language preview |
+| Docs | `website/docs/index.html` | Full language documentation |
+| Playground | `website/playground/index.html` | Interactive browser-based editor |
+| Examples | `website/examples.html` | Annotated example programs |
 
 ### 16.2 Tech Stack
 

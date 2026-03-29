@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Docs — AxonBlade</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:      #0d0d1a; --bg2: #12122a; --bg3: #1a1a3a;
+      --border:  #2a2a4a; --cyan: #00d4ff; --green: #39ff14;
+      --purple:  #a855f7; --text: #e2e8f0; --muted: #94a3b8;
+      --code-bg: #0a0a1a; --radius: 8px;
+    }
+    html { scroll-behavior: smooth; scroll-padding-top: 58px; overflow-y: scroll; scrollbar-gutter: stable; }
+    body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; line-height: 1.6; }
+    a { color: var(--cyan); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(13,13,26,.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border); padding: 0 2rem;
+      height: 58px;
+      display: flex; align-items: center; gap: 2rem;
+    }
+    .nav-inner { display: contents; }
+    .nav-logo { font-size: 1.25rem; font-weight: 700; color: var(--cyan); text-decoration: none; letter-spacing: -0.5px; white-space: nowrap; }
+    .nav-logo span { color: var(--green); }
+    .nav-links { display: flex; align-items: center; gap: 1.5rem; list-style: none; margin-left: auto; }
+    .nav-links a { color: var(--muted); font-size: .9rem; font-weight: 500; transition: color .2s; line-height: 1; }
+    .nav-links a:hover, .nav-links a.active { color: var(--cyan); text-decoration: none; }
+    .nav-cta { margin-left: 1rem; background: var(--cyan); color: #000; padding: .35rem .9rem; border-radius: var(--radius); font-size: .85rem; font-weight: 700; }
+    .nav-cta:hover { opacity: .85; text-decoration: none; }
+
+    /* layout */
+    .docs-layout { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 240px 1fr; gap: 0; min-height: calc(100vh - 58px); }
+    .docs-sidebar {
+      border-right: 1px solid var(--border); padding: 2rem 1.5rem;
+      position: sticky; top: 58px; height: calc(100vh - 58px); overflow-y: auto;
+    }
+    .sidebar-section { margin-bottom: 2rem; }
+    .sidebar-section h4 { font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: .75rem; }
+    .sidebar-section ul { list-style: none; display: flex; flex-direction: column; gap: .2rem; }
+    .sidebar-section a { color: var(--muted); font-size: .88rem; padding: .25rem .5rem; border-radius: 5px; display: block; transition: color .2s, background .2s; }
+    .sidebar-section a:hover, .sidebar-section a.active { color: var(--cyan); background: rgba(0,212,255,.08); text-decoration: none; }
+
+    .docs-content { padding: 3rem 3rem 4rem; max-width: 780px; }
+    h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: .5rem; }
+    h2 { font-size: 1.55rem; font-weight: 700; margin: 2.5rem 0 .75rem; padding-top: .5rem; border-top: 1px solid var(--border); }
+    h3 { font-size: 1.15rem; font-weight: 600; margin: 1.75rem 0 .5rem; color: var(--cyan); }
+    p { color: var(--muted); margin-bottom: 1rem; }
+    .lead { color: var(--text); font-size: 1.1rem; margin-bottom: 2rem; }
+    ul, ol { padding-left: 1.5rem; color: var(--muted); margin-bottom: 1rem; }
+    li { margin-bottom: .3rem; }
+    code {
+      font-family: 'Cascadia Code','Fira Code','Consolas',monospace;
+      background: var(--code-bg); border: 1px solid var(--border);
+      padding: .1rem .4rem; border-radius: 4px; font-size: .88em; color: var(--cyan);
+    }
+    pre {
+      background: var(--code-bg); border: 1px solid var(--border);
+      border-radius: 10px; padding: 1.25rem 1.5rem;
+      overflow-x: auto; margin: 1rem 0 1.5rem;
+      font-family: 'Cascadia Code','Fira Code','Consolas',monospace;
+      font-size: .88rem; line-height: 1.7;
+    }
+    pre code { background: none; border: none; padding: 0; color: var(--text); }
+    .kw { color: #c792ea; } .fn { color: #82aaff; } .str { color: #c3e88d; }
+    .num { color: #f78c6c; } .col { color: #ffcb6b; } .cmt { color: #546e7a; font-style: italic; }
+    .op  { color: #89ddff; } .var { color: #eeffff; }
+
+    .callout {
+      border-left: 3px solid var(--cyan); background: rgba(0,212,255,.06);
+      padding: .9rem 1.2rem; border-radius: 0 var(--radius) var(--radius) 0;
+      margin: 1rem 0 1.5rem; color: var(--text); font-size: .92rem;
+    }
+    .callout.warn { border-color: #ffcc00; background: rgba(255,204,0,.06); }
+
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.5rem; font-size: .9rem; }
+    th { background: var(--bg3); color: var(--cyan); text-align: left; padding: .6rem .9rem; border: 1px solid var(--border); }
+    td { padding: .55rem .9rem; border: 1px solid var(--border); color: var(--muted); }
+    td code { color: var(--text); }
+    tr:hover td { background: rgba(255,255,255,.02); }
+
+    footer { border-top: 1px solid var(--border); padding: 2rem; color: var(--muted); font-size: .85rem; text-align: center; }
+    @media(max-width:800px) { .docs-layout { grid-template-columns: 1fr; } .docs-sidebar { display: none; } .docs-content { padding: 2rem 1.5rem; } }
+  </style>
+</head>
+<body>
+<nav>
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">Axon<span>Blade</span></a>
+    <ul class="nav-links">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="index.html" class="active">Docs</a></li>
+      <li><a href="../examples.html">Examples</a></li>
+      <li><a href="https://github.com/AI-Alon/axonblade" target="_blank">GitHub</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="docs-layout">
+  <!-- Sidebar -->
+  <aside class="docs-sidebar">
+    <div class="sidebar-section">
+      <h4>Getting Started</h4>
+      <ul>
+        <li><a href="#install" class="active">Installation</a></li>
+        <li><a href="#first-program">First Program</a></li>
+        <li><a href="#running">Running Files</a></li>
+        <li><a href="#repl">REPL</a></li>
+      </ul>
+    </div>
+    <div class="sidebar-section">
+      <h4>Language Reference</h4>
+      <ul>
+        <li><a href="#variables">Variables</a></li>
+        <li><a href="#strings">Strings</a></li>
+        <li><a href="#operators">Operators</a></li>
+        <li><a href="#control-flow">Control Flow</a></li>
+        <li><a href="#functions">Functions</a></li>
+        <li><a href="#classes">Classes</a></li>
+        <li><a href="#types">Type Annotations</a></li>
+        <li><a href="#colors">Color Literals</a></li>
+        <li><a href="#errors">Error Handling</a></li>
+        <li><a href="#modules">Modules</a></li>
+      </ul>
+    </div>
+    <div class="sidebar-section">
+      <h4>Built-ins &amp; Grid</h4>
+      <ul>
+        <li><a href="#builtins">Built-in Functions</a></li>
+        <li><a href="#grid">Grid System</a></li>
+        <li><a href="#stdlib">Standard Library</a></li>
+      </ul>
+    </div>
+  </aside>
+
+  <!-- Content -->
+  <main class="docs-content">
+    <h1>AxonBlade Docs</h1>
+    <p class="lead">Everything you need to write, run, and understand AxonBlade programs.</p>
+
+    <!-- ── Install ── -->
+    <h2 id="install">Installation</h2>
+    <p>Requires Python 3.11 or newer. Clone the repo and install from source:</p>
+    <pre><code>git clone https://github.com/AI-Alon/axonblade.git
+cd axonblade
+pip install -e .</code></pre>
+    <p>This installs the <code>ablade</code> CLI command. Verify with:</p>
+    <pre><code>ablade version</code></pre>
+    <div class="callout">
+      If <code>ablade</code> is not found after install, add the pip scripts directory to your PATH:<br/>
+      <code>export PATH="$(python -m site --user-base)/bin:$PATH"</code>
+    </div>
+
+    <!-- ── First Program ── -->
+    <h2 id="first-program">First Program</h2>
+    <p>Create a file called <code>hello.axb</code>:</p>
+    <pre><code><span class="kw">&gt;&gt;</span> <span class="var">name</span> <span class="op">=</span> <span class="str">"World"</span>
+<span class="fn">write</span>(<span class="col">-*cyan*-</span> <span class="op">+</span> <span class="str">"Hello, &amp;{name}!"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)</code></pre>
+    <p>Run it:</p>
+    <pre><code>ablade run hello.axb</code></pre>
+
+    <!-- ── Running ── -->
+    <h2 id="running">Running Files</h2>
+    <pre><code>ablade run &lt;file.axb&gt;   # run a program
+ablade repl             # start interactive REPL
+ablade version          # print version</code></pre>
+
+    <!-- ── REPL ── -->
+    <h2 id="repl">REPL</h2>
+    <p>Start an interactive session with <code>ablade repl</code>. Each line is evaluated immediately. Multi-line blocks (functions, classes, loops) are entered by ending each line with a continuation — the REPL detects the open block and waits for <code>ECB</code>.</p>
+
+    <!-- ── Variables ── -->
+    <h2 id="variables">Variables</h2>
+    <p>Use <code>&gt;&gt;</code> to declare a new variable. Re-assign without it.</p>
+    <pre><code><span class="kw">&gt;&gt;</span> <span class="var">x</span> <span class="op">=</span> <span class="num">10</span>
+<span class="var">x</span> <span class="op">=</span> <span class="var">x</span> <span class="op">+</span> <span class="num">5</span>   <span class="cmt"># re-assign</span>
+<span class="fn">write</span>(<span class="var">x</span>)    <span class="cmt"># 15</span></code></pre>
+    <div class="callout warn">Assigning to an undeclared name raises <code>AxonNameError</code>. Always declare with <code>&gt;&gt;</code> first.</div>
+
+    <!-- ── Strings ── -->
+    <h2 id="strings">Strings</h2>
+    <p>String literals use double quotes. Embed expressions with <code>&amp;{}</code>.</p>
+    <pre><code><span class="kw">&gt;&gt;</span> <span class="var">n</span> <span class="op">=</span> <span class="num">42</span>
+<span class="fn">write</span>(<span class="str">"The answer is &amp;{n}"</span>)
+<span class="fn">write</span>(<span class="str">"2 + 2 = &amp;{2 + 2}"</span>)</code></pre>
+    <p>Concatenate with <code>+</code>:</p>
+    <pre><code><span class="kw">&gt;&gt;</span> <span class="var">s</span> <span class="op">=</span> <span class="str">"Hello"</span> <span class="op">+</span> <span class="str">", "</span> <span class="op">+</span> <span class="str">"World"</span></code></pre>
+    <p>Comments use <code>#</code> (single-line) or <code>#/ ... /#</code> (multi-line).</p>
+
+    <!-- ── Operators ── -->
+    <h2 id="operators">Operators</h2>
+    <table>
+      <tr><th>Operator</th><th>Meaning</th><th>Example</th></tr>
+      <tr><td><code>+  -  *  /  %  **</code></td><td>Arithmetic</td><td><code>2 ** 8</code></td></tr>
+      <tr><td><code>==  !=  &lt;  &gt;  &lt;=  &gt;=</code></td><td>Comparison</td><td><code>x &gt;= 0</code></td></tr>
+      <tr><td><code>-a</code></td><td>Logical AND</td><td><code>x &gt; 0 -a y &gt; 0</code></td></tr>
+      <tr><td><code>-o</code></td><td>Logical OR</td><td><code>done -o timeout</code></td></tr>
+      <tr><td><code>-n</code></td><td>Logical NOT</td><td><code>-n alive</code></td></tr>
+      <tr><td><code>|&gt;</code></td><td>Pipeline</td><td><code>x |&gt; double()</code></td></tr>
+      <tr><td><code>&gt;&gt;</code></td><td>Variable declaration</td><td><code>&gt;&gt; x = 5</code></td></tr>
+      <tr><td><code>+/</code></td><td>Block open</td><td><code>if cond +/ ... ECB</code></td></tr>
+    </table>
+
+    <!-- ── Control Flow ── -->
+    <h2 id="control-flow">Control Flow</h2>
+    <h3>if / elif / else</h3>
+    <pre><code><span class="kw">if</span> <span class="var">x</span> <span class="op">&gt;</span> <span class="num">0</span> <span class="op">+/</span>
+    <span class="fn">write</span>(<span class="str">"positive"</span>)
+<span class="kw">ECB</span> <span class="kw">elif</span> <span class="var">x</span> <span class="op">==</span> <span class="num">0</span> <span class="op">+/</span>
+    <span class="fn">write</span>(<span class="str">"zero"</span>)
+<span class="kw">ECB</span> <span class="kw">else</span> <span class="op">+/</span>
+    <span class="fn">write</span>(<span class="str">"negative"</span>)
+<span class="kw">ECB</span></code></pre>
+    <h3>while</h3>
+    <pre><code><span class="kw">&gt;&gt;</span> <span class="var">i</span> <span class="op">=</span> <span class="num">0</span>
+<span class="kw">while</span> <span class="var">i</span> <span class="op">&lt;</span> <span class="num">5</span> <span class="op">+/</span>
+    <span class="fn">write</span>(<span class="var">i</span>)
+    <span class="var">i</span> <span class="op">=</span> <span class="var">i</span> <span class="op">+</span> <span class="num">1</span>
+<span class="kw">ECB</span></code></pre>
+    <h3>for</h3>
+    <pre><code><span class="kw">for</span> <span class="var">item</span> <span class="kw">in</span> [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>] <span class="op">+/</span>
+    <span class="fn">write</span>(<span class="var">item</span>)
+<span class="kw">ECB</span>
+
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10</span>) <span class="op">+/</span>
+    <span class="fn">write</span>(<span class="var">i</span>)
+<span class="kw">ECB</span></code></pre>
+
+    <!-- ── Functions ── -->
+    <h2 id="functions">Functions</h2>
+    <pre><code><span class="kw">bladeFN</span> <span class="fn">greet</span>(<span class="var">name</span><span class="op">#</span><span class="kw">str</span>) <span class="op">+/</span>
+    <span class="fn">write</span>(<span class="str">"Hello, &amp;{name}!"</span>)
+<span class="kw">ECB</span>
+
+<span class="fn">greet</span>(<span class="str">"Alon"</span>)</code></pre>
+    <p>Functions are values — pass them around, return them, or define them inline:</p>
+    <pre><code><span class="kw">&gt;&gt;</span> <span class="var">double</span> <span class="op">=</span> <span class="kw">bladeFN</span>(<span class="var">x</span>) <span class="op">+/</span> <span class="kw">return</span> <span class="var">x</span> <span class="op">*</span> <span class="num">2</span> <span class="kw">ECB</span></code></pre>
+    <p>Closures capture the enclosing scope at definition time:</p>
+    <pre><code><span class="kw">bladeFN</span> <span class="fn">make_adder</span>(<span class="var">n</span>) <span class="op">+/</span>
+    <span class="kw">return</span> <span class="kw">bladeFN</span>(<span class="var">x</span>) <span class="op">+/</span>
+        <span class="kw">return</span> <span class="var">x</span> <span class="op">+</span> <span class="var">n</span>
+    <span class="kw">ECB</span>
+<span class="kw">ECB</span>
+
+<span class="kw">&gt;&gt;</span> <span class="var">add5</span> <span class="op">=</span> <span class="fn">make_adder</span>(<span class="num">5</span>)
+<span class="fn">write</span>(<span class="fn">add5</span>(<span class="num">3</span>))   <span class="cmt"># 8</span></code></pre>
+
+    <!-- ── Classes ── -->
+    <h2 id="classes">Classes</h2>
+    <p>Use <code>bladeGRP</code> to define a class. The instance reference is <code>blade</code> (not <code>self</code>).</p>
+    <pre><code><span class="kw">bladeGRP</span> <span class="fn">Point</span> <span class="op">+/</span>
+    <span class="kw">bladeFN</span> <span class="fn">init</span>(<span class="var">x</span><span class="op">#</span><span class="kw">int</span>, <span class="var">y</span><span class="op">#</span><span class="kw">int</span>) <span class="op">+/</span>
+        <span class="kw">blade</span>.<span class="var">x</span> <span class="op">=</span> <span class="var">x</span>
+        <span class="kw">blade</span>.<span class="var">y</span> <span class="op">=</span> <span class="var">y</span>
+    <span class="kw">ECB</span>
+    <span class="kw">bladeFN</span> <span class="fn">to_str</span>() <span class="op">+/</span>
+        <span class="kw">return</span> <span class="str">"(&amp;{blade.x}, &amp;{blade.y})"</span>
+    <span class="kw">ECB</span>
+<span class="kw">ECB</span>
+
+<span class="kw">&gt;&gt;</span> <span class="var">p</span> <span class="op">=</span> <span class="fn">Point</span>(<span class="num">3</span>, <span class="num">4</span>)
+<span class="fn">write</span>(<span class="var">p</span>.<span class="fn">to_str</span>())</code></pre>
+
+    <!-- ── Types ── -->
+    <h2 id="types">Type Annotations</h2>
+    <p>Add <code>#type</code> after a parameter name to enforce the type at call time.</p>
+    <table>
+      <tr><th>Annotation</th><th>Type checked</th></tr>
+      <tr><td><code>name#str</code></td><td>string</td></tr>
+      <tr><td><code>count#int</code></td><td>integer (whole number)</td></tr>
+      <tr><td><code>value#float</code></td><td>float or int</td></tr>
+      <tr><td><code>flag#bool</code></td><td>boolean</td></tr>
+    </table>
+    <p>Passing the wrong type raises <code>AxonTypeError</code>.</p>
+
+    <!-- ── Colors ── -->
+    <h2 id="colors">Color Literals</h2>
+    <p>Color literals are values of the form <code>-*name*-</code>. They produce ANSI escape codes when printed.</p>
+    <table>
+      <tr><th>Literal</th><th>Color</th><th>Literal</th><th>Color</th></tr>
+      <tr><td><code>-*red*-</code></td><td>Red</td><td><code>-*blue*-</code></td><td>Blue</td></tr>
+      <tr><td><code>-*green*-</code></td><td>Green</td><td><code>-*cyan*-</code></td><td>Cyan</td></tr>
+      <tr><td><code>-*yellow*-</code></td><td>Yellow</td><td><code>-*magenta*-</code></td><td>Magenta</td></tr>
+      <tr><td><code>-*white*-</code></td><td>White</td><td><code>-*black*-</code></td><td>Black</td></tr>
+      <tr><td><code>-*reset*-</code></td><td>Reset (no color)</td><td></td><td></td></tr>
+    </table>
+    <pre><code><span class="fn">write</span>(<span class="col">-*red*-</span> <span class="op">+</span> <span class="str">"Error!"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)</code></pre>
+
+    <!-- ── Errors ── -->
+    <h2 id="errors">Error Handling</h2>
+    <pre><code><span class="kw">try</span> <span class="op">+/</span>
+    <span class="kw">&gt;&gt;</span> <span class="var">x</span> <span class="op">=</span> <span class="num">10</span> <span class="op">/</span> <span class="num">0</span>
+<span class="kw">ECB</span> <span class="kw">catch</span> <span class="var">err</span> <span class="op">+/</span>
+    <span class="fn">write</span>(<span class="str">"Caught: &amp;{err.message}"</span>)
+<span class="kw">ECB</span></code></pre>
+    <p>The <code>err</code> variable is a dict with <code>type</code>, <code>message</code>, and <code>line</code> fields.</p>
+    <p>Raise your own errors with:</p>
+    <pre><code><span class="kw">raise</span> <span class="str">"something went wrong"</span></code></pre>
+
+    <!-- ── Modules ── -->
+    <h2 id="modules">Modules</h2>
+    <pre><code><span class="kw">uselib</span> <span class="op">-</span><span class="var">math</span><span class="op">-</span>
+<span class="fn">write</span>(<span class="var">math</span>.<span class="fn">sqrt</span>(<span class="num">16</span>))   <span class="cmt"># 4.0</span>
+
+<span class="kw">uselib</span> <span class="op">-</span><span class="var">string</span><span class="op">-</span>
+<span class="fn">write</span>(<span class="var">string</span>.<span class="fn">upper</span>(<span class="str">"hello"</span>))   <span class="cmt"># HELLO</span></code></pre>
+    <p>You can also import local files: <code>uselib -./myfile-</code> loads <code>myfile.axb</code>.</p>
+
+    <!-- ── Built-ins ── -->
+    <h2 id="builtins">Built-in Functions</h2>
+    <table>
+      <tr><th>Function</th><th>Description</th></tr>
+      <tr><td><code>write(val)</code></td><td>Print a value to stdout</td></tr>
+      <tr><td><code>len(x)</code></td><td>Length of a list or string</td></tr>
+      <tr><td><code>range(n)</code></td><td>List <code>[0, 1, ..., n-1]</code></td></tr>
+      <tr><td><code>type(x)</code></td><td>Type name as string</td></tr>
+      <tr><td><code>str(x)</code></td><td>Convert to string</td></tr>
+      <tr><td><code>int(x)</code></td><td>Convert to integer</td></tr>
+      <tr><td><code>float(x)</code></td><td>Convert to float</td></tr>
+      <tr><td><code>bool(x)</code></td><td>Convert to boolean</td></tr>
+      <tr><td><code>input(prompt)</code></td><td>Read a line from stdin</td></tr>
+      <tr><td><code>wait_key()</code></td><td>Block until any key is pressed</td></tr>
+      <tr><td><code>grid(cols, rows)</code></td><td>Create a terminal grid</td></tr>
+    </table>
+
+    <!-- ── Grid ── -->
+    <h2 id="grid">Grid System</h2>
+    <p><code>grid(cols, rows)</code> returns an <code>AxonGrid</code> object for terminal graphics.</p>
+    <table>
+      <tr><th>Method</th><th>Description</th></tr>
+      <tr><td><code>g.set(x, y, color)</code></td><td>Set tile background color</td></tr>
+      <tr><td><code>g.get(x, y)</code></td><td>Get tile color name</td></tr>
+      <tr><td><code>g.fill(color)</code></td><td>Fill entire grid with color</td></tr>
+      <tr><td><code>g.set_char(x, y, ch)</code></td><td>Set character on tile</td></tr>
+      <tr><td><code>g.get_char(x, y)</code></td><td>Get character on tile</td></tr>
+      <tr><td><code>g.clear()</code></td><td>Reset all tiles to black</td></tr>
+      <tr><td><code>g.loop(fn, fps)</code></td><td>Start game loop calling <code>fn</code> at given fps</td></tr>
+      <tr><td><code>g.on_key(key, fn)</code></td><td>Register key press handler</td></tr>
+      <tr><td><code>g.stop()</code></td><td>Stop the game loop</td></tr>
+    </table>
+
+    <!-- ── Stdlib ── -->
+    <h2 id="stdlib">Standard Library</h2>
+    <h3>math</h3>
+    <table>
+      <tr><th>Function</th><th>Description</th></tr>
+      <tr><td><code>math.sqrt(x)</code></td><td>Square root</td></tr>
+      <tr><td><code>math.abs(x)</code></td><td>Absolute value</td></tr>
+      <tr><td><code>math.floor(x)</code></td><td>Round down</td></tr>
+      <tr><td><code>math.ceil(x)</code></td><td>Round up</td></tr>
+      <tr><td><code>math.pow(x, n)</code></td><td>x to the power n</td></tr>
+      <tr><td><code>math.max(a, b)</code></td><td>Larger of two values</td></tr>
+      <tr><td><code>math.min(a, b)</code></td><td>Smaller of two values</td></tr>
+    </table>
+    <h3>string</h3>
+    <table>
+      <tr><th>Function</th><th>Description</th></tr>
+      <tr><td><code>string.upper(s)</code></td><td>Uppercase</td></tr>
+      <tr><td><code>string.lower(s)</code></td><td>Lowercase</td></tr>
+      <tr><td><code>string.split(s, sep)</code></td><td>Split into list</td></tr>
+      <tr><td><code>string.join(list, sep)</code></td><td>Join list into string</td></tr>
+      <tr><td><code>string.strip(s)</code></td><td>Remove leading/trailing whitespace</td></tr>
+      <tr><td><code>string.contains(s, sub)</code></td><td>Check substring</td></tr>
+      <tr><td><code>string.replace(s, old, new)</code></td><td>Replace occurrences</td></tr>
+    </table>
+
+  </main>
+</div>
+
+<footer>
+  AxonBlade v1.0 &nbsp;·&nbsp; MIT License &nbsp;·&nbsp;
+  <a href="https://github.com/AI-Alon/axonblade">GitHub</a>
+</footer>
+</body>
+</html>
