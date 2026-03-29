@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Examples — AxonBlade</title>
+  <title>AxonBlade — Examples</title>
+  <meta name="description" content="Example programs written in AxonBlade — from hello world to closures, classes, and grid-based games." />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -90,7 +91,13 @@
     .ex-meta-item { font-size: .82rem; color: var(--muted); }
     .ex-meta-item strong { color: var(--text); }
 
-    footer { border-top: 1px solid var(--border); padding: 2rem; color: var(--muted); font-size: .85rem; text-align: center; margin-top: 3rem; }
+    footer { border-top: 1px solid var(--border); padding: 2rem; color: var(--muted); font-size: .85rem; margin-top: 3rem; }
+    .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    .footer-left { font-size: .88rem; color: var(--muted); }
+    .footer-left strong { color: var(--cyan); }
+    .footer-links { display: flex; gap: 1.5rem; }
+    .footer-links a { color: var(--muted); font-size: .85rem; transition: color .2s; }
+    .footer-links a:hover { color: var(--cyan); text-decoration: none; }
   </style>
 </head>
 <body>
@@ -392,8 +399,18 @@
 </div>
 
 <footer>
-  AxonBlade v1.0 &nbsp;·&nbsp; MIT License &nbsp;·&nbsp;
-  <a href="https://github.com/AI-Alon/axonblade">GitHub</a>
+  <div class="footer-inner">
+    <div class="footer-left">
+      <strong>AxonBlade</strong> v1.0 &nbsp;·&nbsp; MIT License &nbsp;·&nbsp;
+      &copy; 2026 AI-Alon
+    </div>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="docs/index.html">Docs</a>
+      <a href="examples.html">Examples</a>
+      <a href="https://github.com/AI-Alon/axonblade" target="_blank">GitHub</a>
+    </div>
+  </div>
 </footer>
 
 <script>

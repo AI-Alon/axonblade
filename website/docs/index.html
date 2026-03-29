@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Docs — AxonBlade</title>
+  <title>AxonBlade — Docs</title>
+  <meta name="description" content="Full language reference for AxonBlade — variables, functions, classes, grid system, built-ins, and more." />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -84,7 +85,31 @@
     td code { color: var(--text); }
     tr:hover td { background: rgba(255,255,255,.02); }
 
-    footer { border-top: 1px solid var(--border); padding: 2rem; color: var(--muted); font-size: .85rem; text-align: center; }
+    footer { border-top: 1px solid var(--border); padding: 2rem; color: var(--muted); font-size: .85rem; }
+    .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    .footer-left { font-size: .88rem; color: var(--muted); }
+    .footer-left strong { color: var(--cyan); }
+    .footer-links { display: flex; gap: 1.5rem; }
+    .footer-links a { color: var(--muted); font-size: .85rem; transition: color .2s; }
+    .footer-links a:hover { color: var(--cyan); text-decoration: none; }
+
+    /* copy button */
+    pre { position: relative; }
+    .copy-btn {
+      position: absolute; top: .6rem; right: .6rem;
+      background: var(--bg3); border: 1px solid var(--border); color: var(--muted);
+      font-size: .75rem; padding: .2rem .55rem; border-radius: 5px; cursor: pointer;
+      font-family: inherit; transition: color .2s, border-color .2s;
+    }
+    .copy-btn:hover { color: var(--cyan); border-color: var(--cyan); }
+
+    /* back to top */
+    .back-to-top {
+      display: block; text-align: right; color: var(--muted); font-size: .85rem;
+      margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);
+    }
+    .back-to-top:hover { color: var(--cyan); text-decoration: none; }
+
     @media(max-width:800px) { .docs-layout { grid-template-columns: 1fr; } .docs-sidebar { display: none; } .docs-content { padding: 2rem 1.5rem; } }
   </style>
 </head>
@@ -187,7 +212,9 @@ axb&gt; bladeFN double(n) +/
 ...&gt;     return n * 2
 ...&gt; ECB
 axb&gt; write(double(x))
-20</code></pre>
+20
+axb&gt; EXIT</code></pre>
+    <p>Type <code>EXIT</code> to quit the REPL.</p>
 
     <!-- ── Variables ── -->
     <h2 id="variables">Variables</h2>
@@ -264,9 +291,14 @@ axb&gt; write(double(x))
     <span class="fn">write</span>(<span class="var">item</span>)   <span class="cmt"># prints 1 2 3</span>
 <span class="kw">ECB</span>
 
-<span class="cmt"># range(n) produces [0, 1, ..., n-1]</span>
+<span class="cmt"># range(n) → [0, 1, ..., n-1]</span>
 <span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">3</span>) <span class="op">+/</span>
     <span class="fn">write</span>(<span class="var">i</span>)   <span class="cmt"># 0  1  2</span>
+<span class="kw">ECB</span>
+
+<span class="cmt"># range(start, end) → [start, ..., end-1]</span>
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">5</span>, <span class="num">8</span>) <span class="op">+/</span>
+    <span class="fn">write</span>(<span class="var">i</span>)   <span class="cmt"># 5  6  7</span>
 <span class="kw">ECB</span></code></pre>
 
     <!-- ── Lists ── -->
@@ -277,20 +309,30 @@ axb&gt; write(double(x))
     <p>Index with <code>~i~</code> (tilde syntax):</p>
     <pre><code><span class="fn">write</span>(<span class="var">nums</span><span class="op">~</span><span class="num">0</span><span class="op">~</span>)   <span class="cmt"># 1</span>
 <span class="fn">write</span>(<span class="var">nums</span><span class="op">~</span><span class="num">3</span><span class="op">~</span>)   <span class="cmt"># 4</span></code></pre>
-    <p>Common list operations:</p>
+    <p>Slice with <code>~start:end~</code> — either bound can be omitted:</p>
+    <pre><code><span class="kw">&gt;&gt;</span> <span class="var">letters</span> <span class="op">=</span> [<span class="str">"a"</span>, <span class="str">"b"</span>, <span class="str">"c"</span>, <span class="str">"d"</span>, <span class="str">"e"</span>]
+<span class="fn">write</span>(<span class="var">letters</span><span class="op">~</span><span class="num">1</span><span class="op">:</span><span class="num">3</span><span class="op">~</span>)   <span class="cmt"># [b, c]</span>
+<span class="fn">write</span>(<span class="var">letters</span><span class="op">~</span><span class="op">:</span><span class="num">2</span><span class="op">~</span>)    <span class="cmt"># [a, b]</span>
+<span class="fn">write</span>(<span class="var">letters</span><span class="op">~</span><span class="num">3</span><span class="op">:</span><span class="op">~</span>)    <span class="cmt"># [d, e]</span></code></pre>
+    <p>Slicing works on strings too:</p>
+    <pre><code><span class="kw">&gt;&gt;</span> <span class="var">s</span> <span class="op">=</span> <span class="str">"hello"</span>
+<span class="fn">write</span>(<span class="var">s</span><span class="op">~</span><span class="num">1</span><span class="op">:</span><span class="num">4</span><span class="op">~</span>)   <span class="cmt"># ell</span></code></pre>
+    <p>List methods:</p>
     <table>
       <tr><th>Operation</th><th>Description</th></tr>
       <tr><td><code>lst.append(val)</code></td><td>Add to end</td></tr>
       <tr><td><code>lst.pop()</code></td><td>Remove and return last item</td></tr>
       <tr><td><code>lst.insert(i, val)</code></td><td>Insert at index</td></tr>
       <tr><td><code>lst.remove(val)</code></td><td>Remove first occurrence</td></tr>
+      <tr><td><code>lst.reverse()</code></td><td>Reverse in place</td></tr>
+      <tr><td><code>lst.copy()</code></td><td>Return a shallow copy</td></tr>
       <tr><td><code>len(lst)</code></td><td>Number of items</td></tr>
     </table>
     <pre><code><span class="kw">&gt;&gt;</span> <span class="var">items</span> <span class="op">=</span> [<span class="str">"a"</span>, <span class="str">"b"</span>, <span class="str">"c"</span>]
 <span class="var">items</span>.<span class="fn">append</span>(<span class="str">"d"</span>)
 <span class="fn">write</span>(<span class="var">items</span><span class="op">~</span><span class="num">3</span><span class="op">~</span>)   <span class="cmt"># d</span>
-<span class="var">items</span>.<span class="fn">pop</span>()
-<span class="fn">write</span>(<span class="fn">len</span>(<span class="var">items</span>))   <span class="cmt"># 3</span></code></pre>
+<span class="var">items</span>.<span class="fn">reverse</span>()
+<span class="fn">write</span>(<span class="var">items</span><span class="op">~</span><span class="num">0</span><span class="op">~</span>)   <span class="cmt"># d</span></code></pre>
 
     <!-- ── Dicts ── -->
     <h2 id="dicts">Dictionaries</h2>
@@ -301,6 +343,14 @@ axb&gt; write(double(x))
     <p>Assign new keys or update existing ones:</p>
     <pre><code><span class="var">person</span><span class="op">~</span><span class="str">"age"</span><span class="op">~</span> <span class="op">=</span> <span class="num">18</span>
 <span class="var">person</span><span class="op">~</span><span class="str">"city"</span><span class="op">~</span> <span class="op">=</span> <span class="str">"Tel Aviv"</span></code></pre>
+    <p>Built-in dictionary methods:</p>
+    <table>
+      <tr><th>Method</th><th>Description</th><th>Example</th></tr>
+      <tr><td><code>dict.keys()</code></td><td>List of all keys</td><td><code>person.keys()</code> → <code>["name", "age"]</code></td></tr>
+      <tr><td><code>dict.values()</code></td><td>List of all values</td><td><code>person.values()</code> → <code>["Alon", 17]</code></td></tr>
+      <tr><td><code>dict.items()</code></td><td>List of <code>[key, value]</code> pairs</td><td><code>person.items()</code> → <code>[["name","Alon"],...]</code></td></tr>
+      <tr><td><code>dict.get(key, default)</code></td><td>Get value or default if key missing</td><td><code>person.get("phone", "N/A")</code> → <code>N/A</code></td></tr>
+    </table>
 
     <!-- ── Functions ── -->
     <h2 id="functions">Functions</h2>
@@ -427,7 +477,7 @@ axb&gt; write(double(x))
     <table>
       <tr><th>Method</th><th>Description</th></tr>
       <tr><td><code>g.set(x, y, color)</code></td><td>Set tile background color</td></tr>
-      <tr><td><code>g.get(x, y)</code></td><td>Get tile color name</td></tr>
+      <tr><td><code>g.get(x, y)</code></td><td>Get tile ANSI color code</td></tr>
       <tr><td><code>g.fill(color)</code></td><td>Fill entire grid with color</td></tr>
       <tr><td><code>g.set_char(x, y, ch)</code></td><td>Set character on tile</td></tr>
       <tr><td><code>g.get_char(x, y)</code></td><td>Get character on tile</td></tr>
@@ -435,6 +485,9 @@ axb&gt; write(double(x))
       <tr><td><code>g.loop(fn, fps)</code></td><td>Start game loop calling <code>fn</code> at given fps</td></tr>
       <tr><td><code>g.on_key(key, fn)</code></td><td>Register key press handler</td></tr>
       <tr><td><code>g.stop()</code></td><td>Stop the game loop</td></tr>
+      <tr><td><code>g.width()</code></td><td>Number of columns</td></tr>
+      <tr><td><code>g.height()</code></td><td>Number of rows</td></tr>
+      <tr><td><code>g.render()</code></td><td>Manually render the grid to terminal</td></tr>
     </table>
     <p>Example — a simple bouncing dot:</p>
     <pre><code><span class="kw">&gt;&gt;</span> <span class="var">g</span> <span class="op">=</span> <span class="fn">grid</span>(<span class="num">20</span>, <span class="num">10</span>)
@@ -478,12 +531,23 @@ axb&gt; write(double(x))
       <tr><td><code>string.replace(s, old, new)</code></td><td>Replace occurrences</td></tr>
     </table>
 
+    <a href="#" class="back-to-top">↑ Back to top</a>
   </main>
 </div>
 
 <footer>
-  AxonBlade v1.0 &nbsp;·&nbsp; MIT License &nbsp;·&nbsp;
-  <a href="https://github.com/AI-Alon/axonblade">GitHub</a>
+  <div class="footer-inner">
+    <div class="footer-left">
+      <strong>AxonBlade</strong> v1.0 &nbsp;·&nbsp; MIT License &nbsp;·&nbsp;
+      &copy; 2026 AI-Alon
+    </div>
+    <div class="footer-links">
+      <a href="../index.html">Home</a>
+      <a href="index.html">Docs</a>
+      <a href="../examples.html">Examples</a>
+      <a href="https://github.com/AI-Alon/axonblade" target="_blank">GitHub</a>
+    </div>
+  </div>
 </footer>
 <script>
   const sidebarLinks = document.querySelectorAll(".sidebar-section a[href^='#']");
@@ -502,6 +566,20 @@ axb&gt; write(double(x))
   document.querySelector(".docs-sidebar").addEventListener("scroll", setActive);
   window.addEventListener("scroll", setActive);
   setActive();
+
+  // copy buttons
+  document.querySelectorAll("pre").forEach(pre => {
+    const btn = document.createElement("button");
+    btn.className = "copy-btn";
+    btn.textContent = "Copy";
+    btn.addEventListener("click", () => {
+      navigator.clipboard.writeText(pre.querySelector("code")?.innerText ?? pre.innerText).then(() => {
+        btn.textContent = "Copied!";
+        setTimeout(() => btn.textContent = "Copy", 1500);
+      });
+    });
+    pre.appendChild(btn);
+  });
 </script>
 </body>
 </html>
