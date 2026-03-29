@@ -16,3 +16,7 @@ venv/
 env/
 *.log
 .DS_Store
+
+# Internal dev docs — not useful to contributors
+Phases.md
+ProjectPlan.md

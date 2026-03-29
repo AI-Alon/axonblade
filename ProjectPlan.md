@@ -26,7 +26,7 @@
 13. [Project File Structure](#13-project-file-structure)
 14. [Week-by-Week Roadmap](#14-week-by-week-roadmap)
 15. [Testing Strategy](#15-testing-strategy)
-16. [Web Playground](#16-web-playground)
+16. [Website](#16-website)
 17. [Example Programs](#17-example-programs)
 18. [Future Roadmap (Post v1)](#18-future-roadmap-post-v1)
 
@@ -48,7 +48,7 @@ The language distinguishes itself from existing scripting languages through thre
 |------|-------------|
 | Learn | Deeply understand how interpreters work — lexing, parsing, evaluation, environments, closures |
 | Build | Produce a real, runnable programming language with a complete feature set |
-| Portfolio | Ship a full website at `AI-Alon.github.io/axonblade` with docs, interactive playground, and examples — a flagship portfolio piece |
+| Portfolio | Ship a full website at `AI-Alon.github.io/axonblade` with docs and examples — a flagship portfolio piece |
 
 ### Non-goals (v1)
 
@@ -1100,12 +1100,8 @@ axonblade/                      ← project root
 ├── website/                    ← Static website (GitHub Pages)
 │   ├── index.html              ← Home page (hero, features, get started)
 │   ├── examples.html           ← Examples gallery
-│   ├── docs/
-│   │   └── index.html          ← Full language documentation
-│   └── playground/
-│       ├── index.html          ← Interactive browser-based editor
-│       ├── canvas_grid.js      ← HTML canvas grid renderer
-│       └── bridge.py           ← Pyodide bridge (run source → output)
+│   └── docs/
+│       └── index.html          ← Full language documentation
 ├── axonblade/
 │   └── __main__.py             ← Package entry point (sets sys.path)
 ├── main.py                     ← CLI entry point (ablade run / repl / version)
@@ -1368,72 +1364,49 @@ python -m pytest tests/ -v
 |------|------|-------------|
 | Home | `website/index.html` | Hero, features, install snippet, language preview |
 | Docs | `website/docs/index.html` | Full language documentation |
-| Playground | `website/playground/index.html` | Interactive browser-based editor |
 | Examples | `website/examples.html` | Annotated example programs |
+
+> **Note:** The interactive playground (Phase 9) was scrapped. The Pyodide bridge between Python and JavaScript proved too unreliable. All three pages are complete and deployed.
 
 ### 16.2 Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
 | Site | Plain HTML/CSS/JS — zero build step |
-| Code editor | CodeMirror 6 |
-| Python runtime | Pyodide (Python 3.11 WASM) |
-| Grid renderer | HTML Canvas API |
-| Hosting | GitHub Pages |
+| Hosting | GitHub Pages at `AI-Alon.github.io/axonblade` |
 
 ### 16.3 Site Layout
 
 ```
-┌─────────────────────────────────────────────────────┐
-│  AxonBlade    Home  Docs  Playground  Examples  GitHub│
-├─────────────────────────────────────────────────────┤
-│                                                      │
-│   [page content]                                     │
-│                                                      │
-├─────────────────────────────────────────────────────┤
-│  AxonBlade v1.0  ·  MIT License  ·  GitHub          │
-└─────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────┐
+│  AxonBlade    Home  Docs  Examples  GitHub        │
+├──────────────────────────────────────────────────┤
+│                                                   │
+│   [page content]                                  │
+│                                                   │
+├──────────────────────────────────────────────────┤
+│  AxonBlade v1.0  ·  MIT  ·  © 2026 AI-Alon       │
+└──────────────────────────────────────────────────┘
 ```
 
-### 16.4 Playground Layout
+### 16.4 Documentation Sections
 
-```
-┌─────────────────────────────────────────────────────────┐
-│  AxonBlade Playground     [Examples ▾]  [Share]  [Run ▶]│
-├──────────────────────────┬──────────────────────────────┤
-│                          │  Output                       │
-│   CodeMirror editor      │  ─────────────────────────── │
-│                          │  > Hello, AxonBlade!          │
-│   bladeFN greet() +/     │                               │
-│     write(-*cyan*- +     │  Grid                         │
-│       "Hello!")          │  ─────────────────────────── │
-│   ECB                    │  [canvas renders here]        │
-│                          │                               │
-└──────────────────────────┴──────────────────────────────┘
-```
-
-### 16.5 Documentation Sections
-
-1. Getting Started
-2. Syntax Reference
-3. Operators
-4. Type System
-5. Color Literals
-6. Grid System
-7. Standard Library
-8. Error Handling
-9. Module System
-
-### 16.6 CodeMirror Syntax Rules
-
-- Keywords: `bladeFN`, `bladeGRP`, `if`, `elif`, `else`, `while`, `for`, `in`, `return`, `try`, `catch`, `raise`, `uselib`, `ECB`, `blade`
-- Logical operators: `-n`, `-a`, `-o`
-- Structural operators: `>>`, `+/`, `|>`
-- Color literals: `-*...*-` highlighted distinctly
-- String interpolation: `&{...}` highlighted inside strings
-- Type annotations: `#type` after parameter names
-- Comments: `# ...` and `#/ ... /#` grayed out
-- Numbers, strings, booleans highlighted as standard
+1. Getting Started (install, first program, REPL, CLI)
+2. Variables & Strings
+3. Operators (full table, ECB, `>>`, `+/`, `|>`, `-n`/`-a`/`-o`)
+4. Pipeline operator
+5. Control Flow
+6. Lists (tilde indexing, slice syntax, methods)
+7. Dictionaries (tilde access, methods)
+8. Functions (closures, first-class)
+9. Classes (bladeGRP, `blade` self)
+10. Type Annotations
+11. Color Literals
+12. Error Handling
+13. Modules (uselib)
+14. Built-in Functions
+15. Grid System
+16. Standard Library (math, string)
 
 ---
 
