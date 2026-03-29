@@ -451,7 +451,11 @@ axb&gt; EXIT</code></pre>
 
 <span class="kw">uselib</span> <span class="op">-</span><span class="var">string</span><span class="op">-</span>
 <span class="fn">write</span>(<span class="var">string</span>.<span class="fn">upper</span>(<span class="str">"hello"</span>))   <span class="cmt"># HELLO</span></code></pre>
-    <p>You can also import local files: <code>uselib -./myfile-</code> loads <code>myfile.axb</code>.</p>
+    <p>Import a local file in the same directory: <code>uselib -"./myfile"-</code> loads <code>myfile.axb</code>.</p>
+    <p>Use relative paths to import files from other directories:</p>
+    <pre><code><span class="cmt"># From sandbox/projects/script.axb:</span>
+<span class="kw">uselib</span> <span class="str">-"../libs/useful"-</span>
+<span class="fn">write</span>(<span class="var">useful</span>.<span class="fn">hello</span>())   <span class="cmt"># loads sandbox/libs/useful.axb</span></code></pre>
 
     <!-- ── Built-ins ── -->
     <h2 id="builtins">Built-in Functions</h2>
