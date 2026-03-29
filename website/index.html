@@ -419,7 +419,7 @@
     <p class="section-label">Get Started</p>
     <h2>Up and running in seconds</h2>
     <p class="section-desc">
-      Install via pip, write your first program, and run it.
+      Clone the repo, install with pip, write your first program, and run it.
     </p>
     <div class="gs-grid">
       <!-- Steps -->
@@ -428,7 +428,7 @@
           <li>
             <div>
               <h4>Install AxonBlade</h4>
-              <p>Requires Python 3.11+. Install with pip and the <code>ablade</code> CLI is ready.</p>
+              <p>Requires Python 3.11+. Clone the repo and install with pip — the <code>ablade</code> CLI is ready.</p>
             </div>
           </li>
           <li>
@@ -456,9 +456,14 @@
       <!-- Commands -->
       <div>
         <div class="install-wrap">
-          <div class="install-cmd" onclick="copyText(this, 'pip install axonblade')">
+          <div class="install-cmd" onclick="copyText(this, 'git clone https://github.com/AI-Alon/axonblade && cd axonblade && pip install -e .')">
             <span class="prompt">$</span>
-            <span class="cmd-text">pip install axonblade</span>
+            <span class="cmd-text">git clone https://github.com/AI-Alon/axonblade</span>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="install-cmd" onclick="copyText(this, 'pip install -e .')">
+            <span class="prompt">$</span>
+            <span class="cmd-text">pip install -e .</span>
             <button class="copy-btn">Copy</button>
           </div>
           <div class="install-cmd" onclick="copyText(this, 'ablade run hello.axb')">
