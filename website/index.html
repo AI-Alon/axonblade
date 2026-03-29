@@ -456,9 +456,14 @@
       <!-- Commands -->
       <div>
         <div class="install-wrap">
-          <div class="install-cmd" onclick="copyText(this, 'git clone https://github.com/AI-Alon/axonblade && cd axonblade && pip install -e .')">
+          <div class="install-cmd" onclick="copyText(this, 'git clone https://github.com/AI-Alon/axonblade')">
             <span class="prompt">$</span>
             <span class="cmd-text">git clone https://github.com/AI-Alon/axonblade</span>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="install-cmd" onclick="copyText(this, 'cd axonblade')">
+            <span class="prompt">$</span>
+            <span class="cmd-text">cd axonblade</span>
             <button class="copy-btn">Copy</button>
           </div>
           <div class="install-cmd" onclick="copyText(this, 'pip install -e .')">
@@ -469,11 +474,6 @@
           <div class="install-cmd" onclick="copyText(this, 'ablade run hello.axb')">
             <span class="prompt">$</span>
             <span class="cmd-text">ablade run hello.axb</span>
-            <button class="copy-btn">Copy</button>
-          </div>
-          <div class="install-cmd" onclick="copyText(this, 'ablade repl')">
-            <span class="prompt">$</span>
-            <span class="cmd-text">ablade repl</span>
             <button class="copy-btn">Copy</button>
           </div>
         </div>
