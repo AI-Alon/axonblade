@@ -37,7 +37,9 @@
     .docs-sidebar {
       border-right: 1px solid var(--border); padding: 2rem 1.5rem;
       position: sticky; top: 58px; height: calc(100vh - 58px); overflow-y: auto;
+      scrollbar-width: none;
     }
+    .docs-sidebar::-webkit-scrollbar { display: none; }
     .sidebar-section { margin-bottom: 2rem; }
     .sidebar-section h4 { font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: .75rem; }
     .sidebar-section ul { list-style: none; display: flex; flex-direction: column; gap: .2rem; }
@@ -50,8 +52,8 @@
     h3 { font-size: 1.15rem; font-weight: 600; margin: 1.75rem 0 .5rem; color: var(--cyan); }
     p { color: var(--muted); margin-bottom: 1rem; }
     .lead { color: var(--text); font-size: 1.1rem; margin-bottom: 2rem; }
-    ul, ol { padding-left: 1.5rem; color: var(--muted); margin-bottom: 1rem; }
-    li { margin-bottom: .3rem; }
+    .docs-content ul, .docs-content ol { padding-left: 1.5rem; color: var(--muted); margin-bottom: 1rem; }
+    .docs-content li { margin-bottom: .3rem; }
     code {
       font-family: 'Cascadia Code','Fira Code','Consolas',monospace;
       background: var(--code-bg); border: 1px solid var(--border);
@@ -105,7 +107,7 @@
     <div class="sidebar-section">
       <h4>Getting Started</h4>
       <ul>
-        <li><a href="#install" class="active">Installation</a></li>
+        <li><a href="#install">Installation</a></li>
         <li><a href="#first-program">First Program</a></li>
         <li><a href="#running">Running Files</a></li>
         <li><a href="#repl">REPL</a></li>
@@ -117,7 +119,10 @@
         <li><a href="#variables">Variables</a></li>
         <li><a href="#strings">Strings</a></li>
         <li><a href="#operators">Operators</a></li>
+        <li><a href="#pipeline">Pipeline</a></li>
         <li><a href="#control-flow">Control Flow</a></li>
+        <li><a href="#lists">Lists</a></li>
+        <li><a href="#dicts">Dictionaries</a></li>
         <li><a href="#functions">Functions</a></li>
         <li><a href="#classes">Classes</a></li>
         <li><a href="#types">Type Annotations</a></li>
@@ -150,8 +155,11 @@ pip install -e .</code></pre>
     <p>This installs the <code>ablade</code> CLI command. Verify with:</p>
     <pre><code>ablade version</code></pre>
     <div class="callout">
-      If <code>ablade</code> is not found after install, add the pip scripts directory to your PATH:<br/>
-      <code>export PATH="$(python -m site --user-base)/bin:$PATH"</code>
+      If <code>ablade</code> is not found after install, add the pip scripts directory to your PATH:<br/><br/>
+      <strong>Linux / macOS:</strong><br/>
+      <code>export PATH="$(python3 -m site --user-base)/bin:$PATH"</code><br/><br/>
+      <strong>Windows (PowerShell):</strong><br/>
+      <code>$env:PATH += ";" + (python -m site --user-site).Replace("site-packages","Scripts")</code>
     </div>
 
     <!-- ── First Program ── -->
@@ -170,7 +178,16 @@ ablade version          # print version</code></pre>
 
     <!-- ── REPL ── -->
     <h2 id="repl">REPL</h2>
-    <p>Start an interactive session with <code>ablade repl</code>. Each line is evaluated immediately. Multi-line blocks (functions, classes, loops) are entered by ending each line with a continuation — the REPL detects the open block and waits for <code>ECB</code>.</p>
+    <p>Start an interactive session with <code>ablade repl</code>. Each line is evaluated immediately.</p>
+    <p>For multi-line blocks, open the block with <code>+/</code> — the REPL will keep reading lines until you close it with <code>ECB</code>:</p>
+    <pre><code>axb&gt; >> x = 10
+axb&gt; write(x)
+10
+axb&gt; bladeFN double(n) +/
+...&gt;     return n * 2
+...&gt; ECB
+axb&gt; write(double(x))
+20</code></pre>
 
     <!-- ── Variables ── -->
     <h2 id="variables">Variables</h2>
@@ -182,13 +199,22 @@ ablade version          # print version</code></pre>
 
     <!-- ── Strings ── -->
     <h2 id="strings">Strings</h2>
-    <p>String literals use double quotes. Embed expressions with <code>&amp;{}</code>.</p>
+    <p>String literals use double quotes. Embed any expression with <code>&amp;{}</code> — variables, arithmetic, and function calls all work:</p>
     <pre><code><span class="kw">&gt;&gt;</span> <span class="var">n</span> <span class="op">=</span> <span class="num">42</span>
-<span class="fn">write</span>(<span class="str">"The answer is &amp;{n}"</span>)
-<span class="fn">write</span>(<span class="str">"2 + 2 = &amp;{2 + 2}"</span>)</code></pre>
+<span class="fn">write</span>(<span class="str">"The answer is &amp;{n}"</span>)        <span class="cmt"># The answer is 42</span>
+<span class="fn">write</span>(<span class="str">"2 + 2 = &amp;{2 + 2}"</span>)          <span class="cmt"># 2 + 2 = 4</span>
+<span class="kw">&gt;&gt;</span> <span class="var">a</span> <span class="op">=</span> <span class="num">3</span>
+<span class="kw">&gt;&gt;</span> <span class="var">b</span> <span class="op">=</span> <span class="num">4</span>
+<span class="fn">write</span>(<span class="str">"&amp;{a} * &amp;{b} = &amp;{a * b}"</span>)   <span class="cmt"># 3 * 4 = 12</span></code></pre>
     <p>Concatenate with <code>+</code>:</p>
-    <pre><code><span class="kw">&gt;&gt;</span> <span class="var">s</span> <span class="op">=</span> <span class="str">"Hello"</span> <span class="op">+</span> <span class="str">", "</span> <span class="op">+</span> <span class="str">"World"</span></code></pre>
-    <p>Comments use <code>#</code> (single-line) or <code>#/ ... /#</code> (multi-line).</p>
+    <pre><code><span class="kw">&gt;&gt;</span> <span class="var">s</span> <span class="op">=</span> <span class="str">"Hello"</span> <span class="op">+</span> <span class="str">", "</span> <span class="op">+</span> <span class="str">"World"</span>   <span class="cmt"># Hello, World</span></code></pre>
+    <p>Comments use <code>#</code> for single-line and <code>#/ ... /#</code> for multi-line:</p>
+    <pre><code><span class="cmt"># this is a single-line comment</span>
+
+<span class="cmt">#/
+  this spans
+  multiple lines
+/#</span></code></pre>
 
     <!-- ── Operators ── -->
     <h2 id="operators">Operators</h2>
@@ -202,7 +228,20 @@ ablade version          # print version</code></pre>
       <tr><td><code>|&gt;</code></td><td>Pipeline</td><td><code>x |&gt; double()</code></td></tr>
       <tr><td><code>&gt;&gt;</code></td><td>Variable declaration</td><td><code>&gt;&gt; x = 5</code></td></tr>
       <tr><td><code>+/</code></td><td>Block open</td><td><code>if cond +/ ... ECB</code></td></tr>
+      <tr><td><code>ECB</code></td><td>End Code Block (closes a block)</td><td><code>while x &gt; 0 +/ ... ECB</code></td></tr>
     </table>
+    <p><code>ECB</code> (End Code Block) closes every block — functions, loops, conditionals, and classes all end with <code>ECB</code>.</p>
+
+    <!-- ── Pipeline ── -->
+    <h2 id="pipeline">Pipeline</h2>
+    <p>The <code>|&gt;</code> operator passes the left-hand value as the first argument to the right-hand function call.</p>
+    <pre><code><span class="kw">bladeFN</span> <span class="fn">double</span>(<span class="var">x</span><span class="op">#</span><span class="kw">int</span>) <span class="op">+/</span> <span class="kw">return</span> <span class="var">x</span> <span class="op">*</span> <span class="num">2</span> <span class="kw">ECB</span>
+<span class="kw">bladeFN</span> <span class="fn">inc</span>(<span class="var">x</span><span class="op">#</span><span class="kw">int</span>) <span class="op">+/</span> <span class="kw">return</span> <span class="var">x</span> <span class="op">+</span> <span class="num">1</span> <span class="kw">ECB</span>
+<span class="kw">bladeFN</span> <span class="fn">square</span>(<span class="var">x</span><span class="op">#</span><span class="kw">int</span>) <span class="op">+/</span> <span class="kw">return</span> <span class="var">x</span> <span class="op">*</span> <span class="var">x</span> <span class="kw">ECB</span>
+
+<span class="cmt"># 3 → double → inc → square = 49</span>
+<span class="kw">&gt;&gt;</span> <span class="var">result</span> <span class="op">=</span> <span class="num">3</span> <span class="op">|&gt;</span> <span class="fn">double</span>() <span class="op">|&gt;</span> <span class="fn">inc</span>() <span class="op">|&gt;</span> <span class="fn">square</span>()
+<span class="fn">write</span>(<span class="var">result</span>)   <span class="cmt"># 49</span></code></pre>
 
     <!-- ── Control Flow ── -->
     <h2 id="control-flow">Control Flow</h2>
@@ -217,17 +256,51 @@ ablade version          # print version</code></pre>
     <h3>while</h3>
     <pre><code><span class="kw">&gt;&gt;</span> <span class="var">i</span> <span class="op">=</span> <span class="num">0</span>
 <span class="kw">while</span> <span class="var">i</span> <span class="op">&lt;</span> <span class="num">5</span> <span class="op">+/</span>
-    <span class="fn">write</span>(<span class="var">i</span>)
+    <span class="fn">write</span>(<span class="var">i</span>)    <span class="cmt"># prints 0 1 2 3 4</span>
     <span class="var">i</span> <span class="op">=</span> <span class="var">i</span> <span class="op">+</span> <span class="num">1</span>
 <span class="kw">ECB</span></code></pre>
     <h3>for</h3>
     <pre><code><span class="kw">for</span> <span class="var">item</span> <span class="kw">in</span> [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>] <span class="op">+/</span>
-    <span class="fn">write</span>(<span class="var">item</span>)
+    <span class="fn">write</span>(<span class="var">item</span>)   <span class="cmt"># prints 1 2 3</span>
 <span class="kw">ECB</span>
 
-<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10</span>) <span class="op">+/</span>
-    <span class="fn">write</span>(<span class="var">i</span>)
+<span class="cmt"># range(n) produces [0, 1, ..., n-1]</span>
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">3</span>) <span class="op">+/</span>
+    <span class="fn">write</span>(<span class="var">i</span>)   <span class="cmt"># 0  1  2</span>
 <span class="kw">ECB</span></code></pre>
+
+    <!-- ── Lists ── -->
+    <h2 id="lists">Lists</h2>
+    <p>Lists are ordered collections. Create them with square brackets.</p>
+    <pre><code><span class="kw">&gt;&gt;</span> <span class="var">nums</span> <span class="op">=</span> [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>]
+<span class="fn">write</span>(<span class="fn">len</span>(<span class="var">nums</span>))   <span class="cmt"># 4</span></code></pre>
+    <p>Index with <code>~i~</code> (tilde syntax):</p>
+    <pre><code><span class="fn">write</span>(<span class="var">nums</span><span class="op">~</span><span class="num">0</span><span class="op">~</span>)   <span class="cmt"># 1</span>
+<span class="fn">write</span>(<span class="var">nums</span><span class="op">~</span><span class="num">3</span><span class="op">~</span>)   <span class="cmt"># 4</span></code></pre>
+    <p>Common list operations:</p>
+    <table>
+      <tr><th>Operation</th><th>Description</th></tr>
+      <tr><td><code>lst.append(val)</code></td><td>Add to end</td></tr>
+      <tr><td><code>lst.pop()</code></td><td>Remove and return last item</td></tr>
+      <tr><td><code>lst.insert(i, val)</code></td><td>Insert at index</td></tr>
+      <tr><td><code>lst.remove(val)</code></td><td>Remove first occurrence</td></tr>
+      <tr><td><code>len(lst)</code></td><td>Number of items</td></tr>
+    </table>
+    <pre><code><span class="kw">&gt;&gt;</span> <span class="var">items</span> <span class="op">=</span> [<span class="str">"a"</span>, <span class="str">"b"</span>, <span class="str">"c"</span>]
+<span class="var">items</span>.<span class="fn">append</span>(<span class="str">"d"</span>)
+<span class="fn">write</span>(<span class="var">items</span><span class="op">~</span><span class="num">3</span><span class="op">~</span>)   <span class="cmt"># d</span>
+<span class="var">items</span>.<span class="fn">pop</span>()
+<span class="fn">write</span>(<span class="fn">len</span>(<span class="var">items</span>))   <span class="cmt"># 3</span></code></pre>
+
+    <!-- ── Dicts ── -->
+    <h2 id="dicts">Dictionaries</h2>
+    <p>Dictionaries store key-value pairs. Create them with <code>{key: value}</code> syntax.</p>
+    <pre><code><span class="kw">&gt;&gt;</span> <span class="var">person</span> <span class="op">=</span> {<span class="str">name</span>: <span class="str">"Alon"</span>, <span class="str">age</span>: <span class="num">17</span>}
+<span class="fn">write</span>(<span class="var">person</span><span class="op">~</span><span class="str">"name"</span><span class="op">~</span>)   <span class="cmt"># Alon</span>
+<span class="fn">write</span>(<span class="var">person</span><span class="op">~</span><span class="str">"age"</span><span class="op">~</span>)    <span class="cmt"># 17</span></code></pre>
+    <p>Assign new keys or update existing ones:</p>
+    <pre><code><span class="var">person</span><span class="op">~</span><span class="str">"age"</span><span class="op">~</span> <span class="op">=</span> <span class="num">18</span>
+<span class="var">person</span><span class="op">~</span><span class="str">"city"</span><span class="op">~</span> <span class="op">=</span> <span class="str">"Tel Aviv"</span></code></pre>
 
     <!-- ── Functions ── -->
     <h2 id="functions">Functions</h2>
@@ -252,11 +325,11 @@ ablade version          # print version</code></pre>
     <h2 id="classes">Classes</h2>
     <p>Use <code>bladeGRP</code> to define a class. The instance reference is <code>blade</code> (not <code>self</code>).</p>
     <pre><code><span class="kw">bladeGRP</span> <span class="fn">Point</span> <span class="op">+/</span>
-    <span class="kw">bladeFN</span> <span class="fn">init</span>(<span class="var">x</span><span class="op">#</span><span class="kw">int</span>, <span class="var">y</span><span class="op">#</span><span class="kw">int</span>) <span class="op">+/</span>
+    <span class="kw">bladeFN</span> <span class="fn">init</span>(<span class="kw">blade</span>, <span class="var">x</span><span class="op">#</span><span class="kw">int</span>, <span class="var">y</span><span class="op">#</span><span class="kw">int</span>) <span class="op">+/</span>
         <span class="kw">blade</span>.<span class="var">x</span> <span class="op">=</span> <span class="var">x</span>
         <span class="kw">blade</span>.<span class="var">y</span> <span class="op">=</span> <span class="var">y</span>
     <span class="kw">ECB</span>
-    <span class="kw">bladeFN</span> <span class="fn">to_str</span>() <span class="op">+/</span>
+    <span class="kw">bladeFN</span> <span class="fn">to_str</span>(<span class="kw">blade</span>) <span class="op">+/</span>
         <span class="kw">return</span> <span class="str">"(&amp;{blade.x}, &amp;{blade.y})"</span>
     <span class="kw">ECB</span>
 <span class="kw">ECB</span>
@@ -266,14 +339,24 @@ ablade version          # print version</code></pre>
 
     <!-- ── Types ── -->
     <h2 id="types">Type Annotations</h2>
-    <p>Add <code>#type</code> after a parameter name to enforce the type at call time.</p>
+    <p>Add <code>#type</code> after a parameter name to enforce the type at call time. Unannotated parameters accept any type.</p>
     <table>
       <tr><th>Annotation</th><th>Type checked</th></tr>
       <tr><td><code>name#str</code></td><td>string</td></tr>
       <tr><td><code>count#int</code></td><td>integer (whole number)</td></tr>
       <tr><td><code>value#float</code></td><td>float or int</td></tr>
       <tr><td><code>flag#bool</code></td><td>boolean</td></tr>
+      <tr><td><code>fn#fn</code></td><td>function / callable</td></tr>
+      <tr><td><code>items#list</code></td><td>list</td></tr>
     </table>
+    <pre><code><span class="kw">bladeFN</span> <span class="fn">greet</span>(<span class="var">name</span><span class="op">#</span><span class="kw">str</span>, <span class="var">times</span><span class="op">#</span><span class="kw">int</span>) <span class="op">+/</span>
+    <span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="var">times</span>) <span class="op">+/</span>
+        <span class="fn">write</span>(<span class="str">"Hello, &amp;{name}!"</span>)
+    <span class="kw">ECB</span>
+<span class="kw">ECB</span>
+
+<span class="fn">greet</span>(<span class="str">"Alon"</span>, <span class="num">2</span>)   <span class="cmt"># Hello, Alon! (×2)</span>
+<span class="fn">greet</span>(<span class="num">42</span>, <span class="num">1</span>)       <span class="cmt"># AxonTypeError: expected str, got int</span></code></pre>
     <p>Passing the wrong type raises <code>AxonTypeError</code>.</p>
 
     <!-- ── Colors ── -->
@@ -291,14 +374,25 @@ ablade version          # print version</code></pre>
 
     <!-- ── Errors ── -->
     <h2 id="errors">Error Handling</h2>
+    <p>Use <code>try / catch</code> to handle runtime errors. The caught value is the error message string:</p>
     <pre><code><span class="kw">try</span> <span class="op">+/</span>
     <span class="kw">&gt;&gt;</span> <span class="var">x</span> <span class="op">=</span> <span class="num">10</span> <span class="op">/</span> <span class="num">0</span>
 <span class="kw">ECB</span> <span class="kw">catch</span> <span class="var">err</span> <span class="op">+/</span>
-    <span class="fn">write</span>(<span class="str">"Caught: &amp;{err.message}"</span>)
+    <span class="fn">write</span>(<span class="str">"Caught: &amp;{err}"</span>)   <span class="cmt"># Caught: division by zero</span>
 <span class="kw">ECB</span></code></pre>
-    <p>The <code>err</code> variable is a dict with <code>type</code>, <code>message</code>, and <code>line</code> fields.</p>
-    <p>Raise your own errors with:</p>
-    <pre><code><span class="kw">raise</span> <span class="str">"something went wrong"</span></code></pre>
+    <p>Raise your own errors with <code>raise</code>:</p>
+    <pre><code><span class="kw">bladeFN</span> <span class="fn">divide</span>(<span class="var">a</span><span class="op">#</span><span class="kw">int</span>, <span class="var">b</span><span class="op">#</span><span class="kw">int</span>) <span class="op">+/</span>
+    <span class="kw">if</span> <span class="var">b</span> <span class="op">==</span> <span class="num">0</span> <span class="op">+/</span>
+        <span class="kw">raise</span> <span class="str">"cannot divide by zero"</span>
+    <span class="kw">ECB</span>
+    <span class="kw">return</span> <span class="var">a</span> <span class="op">/</span> <span class="var">b</span>
+<span class="kw">ECB</span>
+
+<span class="kw">try</span> <span class="op">+/</span>
+    <span class="fn">write</span>(<span class="fn">divide</span>(<span class="num">10</span>, <span class="num">0</span>))
+<span class="kw">ECB</span> <span class="kw">catch</span> <span class="var">e</span> <span class="op">+/</span>
+    <span class="fn">write</span>(<span class="col">-*red*-</span> <span class="op">+</span> <span class="str">"Error: &amp;{e}"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)   <span class="cmt"># Error: cannot divide by zero</span>
+<span class="kw">ECB</span></code></pre>
 
     <!-- ── Modules ── -->
     <h2 id="modules">Modules</h2>
@@ -328,7 +422,8 @@ ablade version          # print version</code></pre>
 
     <!-- ── Grid ── -->
     <h2 id="grid">Grid System</h2>
-    <p><code>grid(cols, rows)</code> returns an <code>AxonGrid</code> object for terminal graphics.</p>
+    <p>Create a grid with <code>grid(cols, rows)</code>, then call methods on the returned object:</p>
+    <pre><code><span class="kw">&gt;&gt;</span> <span class="var">g</span> <span class="op">=</span> <span class="fn">grid</span>(<span class="num">20</span>, <span class="num">10</span>)   <span class="cmt"># 20 columns, 10 rows</span></code></pre>
     <table>
       <tr><th>Method</th><th>Description</th></tr>
       <tr><td><code>g.set(x, y, color)</code></td><td>Set tile background color</td></tr>
@@ -341,6 +436,22 @@ ablade version          # print version</code></pre>
       <tr><td><code>g.on_key(key, fn)</code></td><td>Register key press handler</td></tr>
       <tr><td><code>g.stop()</code></td><td>Stop the game loop</td></tr>
     </table>
+    <p>Example — a simple bouncing dot:</p>
+    <pre><code><span class="kw">&gt;&gt;</span> <span class="var">g</span> <span class="op">=</span> <span class="fn">grid</span>(<span class="num">20</span>, <span class="num">10</span>)
+<span class="kw">&gt;&gt;</span> <span class="var">x</span> <span class="op">=</span> <span class="num">0</span>
+<span class="kw">&gt;&gt;</span> <span class="var">dx</span> <span class="op">=</span> <span class="num">1</span>
+
+<span class="kw">bladeFN</span> <span class="fn">update</span>() <span class="op">+/</span>
+    <span class="var">g</span>.<span class="fn">fill</span>(<span class="col">-*black*-</span>)
+    <span class="var">x</span> <span class="op">=</span> <span class="var">x</span> <span class="op">+</span> <span class="var">dx</span>
+    <span class="kw">if</span> <span class="var">x</span> <span class="op">&gt;=</span> <span class="num">19</span> <span class="op">-o</span> <span class="var">x</span> <span class="op">&lt;=</span> <span class="num">0</span> <span class="op">+/</span>
+        <span class="var">dx</span> <span class="op">=</span> <span class="var">dx</span> <span class="op">*</span> <span class="op">-</span><span class="num">1</span>
+    <span class="kw">ECB</span>
+    <span class="var">g</span>.<span class="fn">set</span>(<span class="var">x</span>, <span class="num">5</span>, <span class="col">-*cyan*-</span>)
+<span class="kw">ECB</span>
+
+<span class="var">g</span>.<span class="fn">on_key</span>(<span class="str">"q"</span>, <span class="kw">bladeFN</span>() <span class="op">+/</span> <span class="var">g</span>.<span class="fn">stop</span>() <span class="kw">ECB</span>)
+<span class="var">g</span>.<span class="fn">loop</span>(<span class="var">update</span>, <span class="num">10</span>)   <span class="cmt"># 10 fps, press q to quit</span></code></pre>
 
     <!-- ── Stdlib ── -->
     <h2 id="stdlib">Standard Library</h2>
@@ -374,5 +485,23 @@ ablade version          # print version</code></pre>
   AxonBlade v1.0 &nbsp;·&nbsp; MIT License &nbsp;·&nbsp;
   <a href="https://github.com/AI-Alon/axonblade">GitHub</a>
 </footer>
+<script>
+  const sidebarLinks = document.querySelectorAll(".sidebar-section a[href^='#']");
+  const headings = Array.from(sidebarLinks).map(a => document.querySelector(a.getAttribute("href")));
+
+  function setActive() {
+    let current = headings[0];
+    for (const h of headings) {
+      if (h && h.getBoundingClientRect().top <= 80) current = h;
+    }
+    sidebarLinks.forEach(a => {
+      a.classList.toggle("active", a.getAttribute("href") === "#" + current.id);
+    });
+  }
+
+  document.querySelector(".docs-sidebar").addEventListener("scroll", setActive);
+  window.addEventListener("scroll", setActive);
+  setActive();
+</script>
 </body>
 </html>
