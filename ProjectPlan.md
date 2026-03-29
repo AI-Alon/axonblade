@@ -1291,32 +1291,22 @@ axonblade/                      ← project root
 
 ---
 
-### Phase 5 — Website: Docs + Playground (Weeks 9–10)
+### Phase 5 — Website (Weeks 9–10)
 
-#### Week 9 — Pyodide Bridge + Canvas Renderer
+#### Week 9 — ~~Pyodide Bridge + Canvas Renderer~~ (Scrapped)
 
-**Goal:** Make AxonBlade run entirely in the browser.
-
-**Tasks:**
-- Set up Pyodide — load Python 3.11 WASM runtime, install axonblade package
-- Write `playground/bridge.py` — `run(source: str) -> dict` returns `{output, error, grid_state}`
-- Grid state is serialized as a JSON array of `{x, y, color_name, char}` objects
-- Write `playground/canvas_grid.js` — reads grid state, draws colored tiles on HTML canvas
-- Map AxonBlade color names to hex values for canvas rendering
-- Test round-trip: write AxonBlade source in JS, run via Pyodide, render grid on canvas
-
-**Deliverable:** AxonBlade runs in browser, grid renders correctly on canvas
+**Status: Cancelled.** The Pyodide bridge between Python and JS was not possible. The playground has been removed from the site.
 
 ---
 
-#### Week 10 — Website: Docs + Playground + Deploy
+#### Week 10 — Website: Docs + Examples + Deploy
 
-**Goal:** Ship a complete AxonBlade website with documentation, an interactive playground, and example showcase — all statically hosted on GitHub Pages.
+**Goal:** Ship a complete AxonBlade website with documentation and example showcase — statically hosted on GitHub Pages.
 
 **Tasks:**
 
 *Site structure:*
-- Multi-page static site: Home, Docs, Playground, Examples
+- Multi-page static site: Home, Docs, Examples
 - Shared navbar, dark AxonBlade-themed design (dark bg, cyan/green accents)
 - Responsive layout, footer with version + GitHub link
 
@@ -1330,13 +1320,6 @@ axonblade/                      ← project root
 - Operators — full table including `-n`/`-a`/`-o`, `>>`, `+/`, `|>`, `**`
 - Type System, Color Literals, Grid System, Standard Library, Error Handling, Module System
 - Syntax-highlighted code blocks on every page
-
-*Playground:*
-- CodeMirror 6 with full AxonBlade syntax highlighting
-- Split-pane layout — editor (55%) / output + canvas (45%)
-- Example dropdown, Run button, `Ctrl+Enter` shortcut
-- ANSI-to-HTML color output, inline error display, canvas grid renderer
-- "Share" button encodes source in URL hash
 
 *Deploy:*
 - Zero build step — plain HTML/CSS/JS
