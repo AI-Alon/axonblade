@@ -488,21 +488,38 @@
             <p>Playable Snake in the terminal — grid, game loop, keyboard input, borders.</p>
           </div>
         </div>
-        <div class="code-block"><span class="cmt"># Snake — run with: ablade run examples/snake.axb</span>
+        <div class="code-block"><span class="cmt"># snake.axb — Playable Snake</span>
 <span class="cmt"># Controls: w/a/s/d to move, q to quit</span>
+<span class="cmt"># Eat the * to grow. Hit the wall or yourself = game over.</span>
 
-<span class="kw">&gt;&gt;</span> <span class="var">W</span> <span class="op">=</span> <span class="num">24</span>  <span class="kw">&gt;&gt;</span> <span class="var">H</span> <span class="op">=</span> <span class="num">16</span>  <span class="kw">&gt;&gt;</span> <span class="var">g</span> <span class="op">=</span> <span class="fn">grid</span>(<span class="var">W</span>, <span class="var">H</span>)
-<span class="kw">&gt;&gt;</span> <span class="var">snake</span>  <span class="op">=</span> [{<span class="var">x</span>: <span class="num">12</span>, <span class="var">y</span>: <span class="num">8</span>}, {<span class="var">x</span>: <span class="num">11</span>, <span class="var">y</span>: <span class="num">8</span>}, {<span class="var">x</span>: <span class="num">10</span>, <span class="var">y</span>: <span class="num">8</span>}]
-<span class="kw">&gt;&gt;</span> <span class="var">dir_x</span>  <span class="op">=</span> <span class="num">1</span>  <span class="kw">&gt;&gt;</span> <span class="var">dir_y</span>  <span class="op">=</span> <span class="num">0</span>
-<span class="kw">&gt;&gt;</span> <span class="var">next_dx</span> <span class="op">=</span> <span class="num">1</span>  <span class="kw">&gt;&gt;</span> <span class="var">next_dy</span> <span class="op">=</span> <span class="num">0</span>
-<span class="kw">&gt;&gt;</span> <span class="var">food_x</span> <span class="op">=</span> <span class="num">5</span>  <span class="kw">&gt;&gt;</span> <span class="var">food_y</span> <span class="op">=</span> <span class="num">4</span>
-<span class="kw">&gt;&gt;</span> <span class="var">score</span>  <span class="op">=</span> <span class="num">0</span>  <span class="kw">&gt;&gt;</span> <span class="var">alive</span>  <span class="op">=</span> <span class="kw">true</span>  <span class="kw">&gt;&gt;</span> <span class="var">tick</span> <span class="op">=</span> <span class="num">0</span>
+<span class="kw">&gt;&gt;</span> <span class="var">W</span> <span class="op">=</span> <span class="num">24</span>
+<span class="kw">&gt;&gt;</span> <span class="var">H</span> <span class="op">=</span> <span class="num">16</span>
+<span class="kw">&gt;&gt;</span> <span class="var">g</span> <span class="op">=</span> <span class="fn">grid</span>(<span class="var">W</span>, <span class="var">H</span>)
+
+<span class="kw">&gt;&gt;</span> <span class="var">snake</span>   <span class="op">=</span> [{<span class="var">x</span>: <span class="num">12</span>, <span class="var">y</span>: <span class="num">8</span>}, {<span class="var">x</span>: <span class="num">11</span>, <span class="var">y</span>: <span class="num">8</span>}, {<span class="var">x</span>: <span class="num">10</span>, <span class="var">y</span>: <span class="num">8</span>}]
+<span class="kw">&gt;&gt;</span> <span class="var">dir_x</span>  <span class="op">=</span> <span class="num">1</span>
+<span class="kw">&gt;&gt;</span> <span class="var">dir_y</span>  <span class="op">=</span> <span class="num">0</span>
+<span class="kw">&gt;&gt;</span> <span class="var">next_dx</span> <span class="op">=</span> <span class="num">1</span>
+<span class="kw">&gt;&gt;</span> <span class="var">next_dy</span> <span class="op">=</span> <span class="num">0</span>
+<span class="kw">&gt;&gt;</span> <span class="var">food_x</span>  <span class="op">=</span> <span class="num">5</span>
+<span class="kw">&gt;&gt;</span> <span class="var">food_y</span>  <span class="op">=</span> <span class="num">4</span>
+<span class="kw">&gt;&gt;</span> <span class="var">score</span>   <span class="op">=</span> <span class="num">0</span>
+<span class="kw">&gt;&gt;</span> <span class="var">alive</span>   <span class="op">=</span> <span class="kw">true</span>
+<span class="kw">&gt;&gt;</span> <span class="var">tick</span>    <span class="op">=</span> <span class="num">0</span>
+
+<span class="cmt"># Pseudo-random food placement using tick as seed</span>
+<span class="kw">bladeFN</span> <span class="fn">new_food</span>() <span class="op">+/</span>
+    <span class="var">food_x</span> <span class="op">=</span> (<span class="var">food_x</span> <span class="op">*</span> <span class="num">7</span> <span class="op">+</span> <span class="var">tick</span> <span class="op">*</span> <span class="num">3</span> <span class="op">+</span> <span class="num">1</span>) <span class="op">%</span> (<span class="var">W</span> <span class="op">-</span> <span class="num">2</span>) <span class="op">+</span> <span class="num">1</span>
+    <span class="var">food_y</span> <span class="op">=</span> (<span class="var">food_y</span> <span class="op">*</span> <span class="num">5</span> <span class="op">+</span> <span class="var">tick</span> <span class="op">*</span> <span class="num">2</span> <span class="op">+</span> <span class="num">1</span>) <span class="op">%</span> (<span class="var">H</span> <span class="op">-</span> <span class="num">2</span>) <span class="op">+</span> <span class="num">1</span>
+<span class="kw">ECB</span>
 
 <span class="kw">bladeFN</span> <span class="fn">is_on_snake</span>(<span class="var">px</span>, <span class="var">py</span>) <span class="op">+/</span>
     <span class="kw">&gt;&gt;</span> <span class="var">i</span> <span class="op">=</span> <span class="num">0</span>
     <span class="kw">while</span> <span class="var">i</span> <span class="op">&lt;</span> <span class="fn">len</span>(<span class="var">snake</span>) <span class="op">+/</span>
         <span class="kw">&gt;&gt;</span> <span class="var">seg</span> <span class="op">=</span> <span class="var">snake</span><span class="op">~</span><span class="var">i</span><span class="op">~</span>
-        <span class="kw">if</span> <span class="var">seg</span><span class="op">~</span><span class="str">"x"</span><span class="op">~</span> <span class="op">==</span> <span class="var">px</span> <span class="op">-a</span> <span class="var">seg</span><span class="op">~</span><span class="str">"y"</span><span class="op">~</span> <span class="op">==</span> <span class="var">py</span> <span class="op">+/</span> <span class="kw">return</span> <span class="kw">true</span> <span class="kw">ECB</span>
+        <span class="kw">if</span> <span class="var">seg</span><span class="op">~</span><span class="str">"x"</span><span class="op">~</span> <span class="op">==</span> <span class="var">px</span> <span class="op">-a</span> <span class="var">seg</span><span class="op">~</span><span class="str">"y"</span><span class="op">~</span> <span class="op">==</span> <span class="var">py</span> <span class="op">+/</span>
+            <span class="kw">return</span> <span class="kw">true</span>
+        <span class="kw">ECB</span>
         <span class="var">i</span> <span class="op">=</span> <span class="var">i</span> <span class="op">+</span> <span class="num">1</span>
     <span class="kw">ECB</span>
     <span class="kw">return</span> <span class="kw">false</span>
@@ -510,47 +527,134 @@
 
 <span class="kw">bladeFN</span> <span class="fn">draw</span>() <span class="op">+/</span>
     <span class="var">g</span>.<span class="fn">fill</span>(<span class="col">-*black*-</span>)
+
+    <span class="cmt"># Border</span>
     <span class="kw">&gt;&gt;</span> <span class="var">bx</span> <span class="op">=</span> <span class="num">0</span>
-    <span class="kw">while</span> <span class="var">bx</span> <span class="op">&lt;</span> <span class="var">W</span> <span class="op">+/</span> <span class="var">g</span>.<span class="fn">set</span>(<span class="var">bx</span>, <span class="num">0</span>, <span class="col">-*white*-</span>) <span class="var">g</span>.<span class="fn">set</span>(<span class="var">bx</span>, <span class="var">H</span><span class="op">-</span><span class="num">1</span>, <span class="col">-*white*-</span>) <span class="var">bx</span><span class="op">=</span><span class="var">bx</span><span class="op">+</span><span class="num">1</span> <span class="kw">ECB</span>
+    <span class="kw">while</span> <span class="var">bx</span> <span class="op">&lt;</span> <span class="var">W</span> <span class="op">+/</span>
+        <span class="var">g</span>.<span class="fn">set</span>(<span class="var">bx</span>, <span class="num">0</span>, <span class="col">-*white*-</span>)
+        <span class="var">g</span>.<span class="fn">set</span>(<span class="var">bx</span>, <span class="var">H</span> <span class="op">-</span> <span class="num">1</span>, <span class="col">-*white*-</span>)
+        <span class="var">bx</span> <span class="op">=</span> <span class="var">bx</span> <span class="op">+</span> <span class="num">1</span>
+    <span class="kw">ECB</span>
+    <span class="kw">&gt;&gt;</span> <span class="var">by</span> <span class="op">=</span> <span class="num">0</span>
+    <span class="kw">while</span> <span class="var">by</span> <span class="op">&lt;</span> <span class="var">H</span> <span class="op">+/</span>
+        <span class="var">g</span>.<span class="fn">set</span>(<span class="num">0</span>, <span class="var">by</span>, <span class="col">-*white*-</span>)
+        <span class="var">g</span>.<span class="fn">set</span>(<span class="var">W</span> <span class="op">-</span> <span class="num">1</span>, <span class="var">by</span>, <span class="col">-*white*-</span>)
+        <span class="var">by</span> <span class="op">=</span> <span class="var">by</span> <span class="op">+</span> <span class="num">1</span>
+    <span class="kw">ECB</span>
+
+    <span class="cmt"># Food</span>
     <span class="var">g</span>.<span class="fn">set</span>(<span class="var">food_x</span>, <span class="var">food_y</span>, <span class="col">-*red*-</span>)
     <span class="var">g</span>.<span class="fn">set_char</span>(<span class="var">food_x</span>, <span class="var">food_y</span>, <span class="str">"*"</span>)
+
+    <span class="cmt"># Snake body</span>
     <span class="kw">&gt;&gt;</span> <span class="var">i</span> <span class="op">=</span> <span class="num">1</span>
     <span class="kw">while</span> <span class="var">i</span> <span class="op">&lt;</span> <span class="fn">len</span>(<span class="var">snake</span>) <span class="op">+/</span>
-        <span class="kw">&gt;&gt;</span> <span class="var">s</span> <span class="op">=</span> <span class="var">snake</span><span class="op">~</span><span class="var">i</span><span class="op">~</span>
-        <span class="var">g</span>.<span class="fn">set</span>(<span class="var">s</span><span class="op">~</span><span class="str">"x"</span><span class="op">~</span>, <span class="var">s</span><span class="op">~</span><span class="str">"y"</span><span class="op">~</span>, <span class="col">-*green*-</span>) <span class="var">i</span><span class="op">=</span><span class="var">i</span><span class="op">+</span><span class="num">1</span>
+        <span class="kw">&gt;&gt;</span> <span class="var">seg</span> <span class="op">=</span> <span class="var">snake</span><span class="op">~</span><span class="var">i</span><span class="op">~</span>
+        <span class="var">g</span>.<span class="fn">set</span>(<span class="var">seg</span><span class="op">~</span><span class="str">"x"</span><span class="op">~</span>, <span class="var">seg</span><span class="op">~</span><span class="str">"y"</span><span class="op">~</span>, <span class="col">-*green*-</span>)
+        <span class="var">g</span>.<span class="fn">set_char</span>(<span class="var">seg</span><span class="op">~</span><span class="str">"x"</span><span class="op">~</span>, <span class="var">seg</span><span class="op">~</span><span class="str">"y"</span><span class="op">~</span>, <span class="str">"o"</span>)
+        <span class="var">i</span> <span class="op">=</span> <span class="var">i</span> <span class="op">+</span> <span class="num">1</span>
     <span class="kw">ECB</span>
+
+    <span class="cmt"># Snake head</span>
     <span class="kw">&gt;&gt;</span> <span class="var">head</span> <span class="op">=</span> <span class="var">snake</span><span class="op">~</span><span class="num">0</span><span class="op">~</span>
     <span class="var">g</span>.<span class="fn">set</span>(<span class="var">head</span><span class="op">~</span><span class="str">"x"</span><span class="op">~</span>, <span class="var">head</span><span class="op">~</span><span class="str">"y"</span><span class="op">~</span>, <span class="col">-*cyan*-</span>)
     <span class="var">g</span>.<span class="fn">set_char</span>(<span class="var">head</span><span class="op">~</span><span class="str">"x"</span><span class="op">~</span>, <span class="var">head</span><span class="op">~</span><span class="str">"y"</span><span class="op">~</span>, <span class="str">"@"</span>)
 <span class="kw">ECB</span>
 
+<span class="kw">bladeFN</span> <span class="fn">game_over</span>() <span class="op">+/</span>
+    <span class="var">alive</span> <span class="op">=</span> <span class="kw">false</span>
+    <span class="var">g</span>.<span class="fn">stop</span>()
+<span class="kw">ECB</span>
+
 <span class="kw">bladeFN</span> <span class="fn">update</span>() <span class="op">+/</span>
-    <span class="kw">if</span> <span class="op">-n</span> <span class="var">alive</span> <span class="op">+/</span> <span class="kw">return</span> <span class="kw">null</span> <span class="kw">ECB</span>
+    <span class="kw">if</span> <span class="op">-n</span> <span class="var">alive</span> <span class="op">+/</span>
+        <span class="kw">return</span> <span class="kw">null</span>
+    <span class="kw">ECB</span>
+
     <span class="var">tick</span> <span class="op">=</span> <span class="var">tick</span> <span class="op">+</span> <span class="num">1</span>
-    <span class="var">dir_x</span> <span class="op">=</span> <span class="var">next_dx</span>  <span class="var">dir_y</span> <span class="op">=</span> <span class="var">next_dy</span>
+
+    <span class="cmt"># Commit buffered direction</span>
+    <span class="var">dir_x</span> <span class="op">=</span> <span class="var">next_dx</span>
+    <span class="var">dir_y</span> <span class="op">=</span> <span class="var">next_dy</span>
+
     <span class="kw">&gt;&gt;</span> <span class="var">head</span> <span class="op">=</span> <span class="var">snake</span><span class="op">~</span><span class="num">0</span><span class="op">~</span>
     <span class="kw">&gt;&gt;</span> <span class="var">nx</span> <span class="op">=</span> <span class="var">head</span><span class="op">~</span><span class="str">"x"</span><span class="op">~</span> <span class="op">+</span> <span class="var">dir_x</span>
     <span class="kw">&gt;&gt;</span> <span class="var">ny</span> <span class="op">=</span> <span class="var">head</span><span class="op">~</span><span class="str">"y"</span><span class="op">~</span> <span class="op">+</span> <span class="var">dir_y</span>
-    <span class="kw">if</span> <span class="var">nx</span> <span class="op">&lt;=</span> <span class="num">0</span> <span class="op">-o</span> <span class="var">nx</span> <span class="op">&gt;=</span> <span class="var">W</span><span class="op">-</span><span class="num">1</span> <span class="op">-o</span> <span class="var">ny</span> <span class="op">&lt;=</span> <span class="num">0</span> <span class="op">-o</span> <span class="var">ny</span> <span class="op">&gt;=</span> <span class="var">H</span><span class="op">-</span><span class="num">1</span> <span class="op">+/</span>
-        <span class="var">alive</span> <span class="op">=</span> <span class="kw">false</span>  <span class="var">g</span>.<span class="fn">stop</span>()  <span class="kw">return</span> <span class="kw">null</span>
+
+    <span class="cmt"># Wall collision = death</span>
+    <span class="kw">if</span> <span class="var">nx</span> <span class="op">&lt;=</span> <span class="num">0</span> <span class="op">-o</span> <span class="var">nx</span> <span class="op">&gt;=</span> <span class="var">W</span> <span class="op">-</span> <span class="num">1</span> <span class="op">-o</span> <span class="var">ny</span> <span class="op">&lt;=</span> <span class="num">0</span> <span class="op">-o</span> <span class="var">ny</span> <span class="op">&gt;=</span> <span class="var">H</span> <span class="op">-</span> <span class="num">1</span> <span class="op">+/</span>
+        <span class="fn">game_over</span>()
+        <span class="kw">return</span> <span class="kw">null</span>
     <span class="kw">ECB</span>
-    <span class="kw">if</span> <span class="fn">is_on_snake</span>(<span class="var">nx</span>, <span class="var">ny</span>) <span class="op">+/</span> <span class="var">alive</span><span class="op">=</span><span class="kw">false</span>  <span class="var">g</span>.<span class="fn">stop</span>()  <span class="kw">return</span> <span class="kw">null</span> <span class="kw">ECB</span>
-    <span class="var">snake</span>.<span class="fn">insert</span>(<span class="num">0</span>, {<span class="var">x</span>: <span class="var">nx</span>, <span class="var">y</span>: <span class="var">ny</span>})
+
+    <span class="cmt"># Self collision = death</span>
+    <span class="kw">if</span> <span class="fn">is_on_snake</span>(<span class="var">nx</span>, <span class="var">ny</span>) <span class="op">+/</span>
+        <span class="fn">game_over</span>()
+        <span class="kw">return</span> <span class="kw">null</span>
+    <span class="kw">ECB</span>
+
+    <span class="kw">&gt;&gt;</span> <span class="var">new_head</span> <span class="op">=</span> {<span class="var">x</span>: <span class="var">nx</span>, <span class="var">y</span>: <span class="var">ny</span>}
+    <span class="var">snake</span>.<span class="fn">insert</span>(<span class="num">0</span>, <span class="var">new_head</span>)
+
+    <span class="cmt"># Ate food?</span>
     <span class="kw">if</span> <span class="var">nx</span> <span class="op">==</span> <span class="var">food_x</span> <span class="op">-a</span> <span class="var">ny</span> <span class="op">==</span> <span class="var">food_y</span> <span class="op">+/</span>
         <span class="var">score</span> <span class="op">=</span> <span class="var">score</span> <span class="op">+</span> <span class="num">1</span>
-        <span class="var">food_x</span> <span class="op">=</span> (<span class="var">food_x</span> <span class="op">*</span> <span class="num">7</span> <span class="op">+</span> <span class="var">tick</span> <span class="op">*</span> <span class="num">3</span> <span class="op">+</span> <span class="num">1</span>) <span class="op">%</span> (<span class="var">W</span><span class="op">-</span><span class="num">2</span>) <span class="op">+</span> <span class="num">1</span>
-        <span class="var">food_y</span> <span class="op">=</span> (<span class="var">food_y</span> <span class="op">*</span> <span class="num">5</span> <span class="op">+</span> <span class="var">tick</span> <span class="op">*</span> <span class="num">2</span> <span class="op">+</span> <span class="num">1</span>) <span class="op">%</span> (<span class="var">H</span><span class="op">-</span><span class="num">2</span>) <span class="op">+</span> <span class="num">1</span>
-    <span class="kw">ECB</span> <span class="kw">else</span> <span class="op">+/</span> <span class="var">snake</span>.<span class="fn">pop</span>() <span class="kw">ECB</span>
+        <span class="fn">new_food</span>()
+    <span class="kw">ECB</span>
+    <span class="kw">else</span> <span class="op">+/</span>
+        <span class="var">snake</span>.<span class="fn">pop</span>()
+    <span class="kw">ECB</span>
+
     <span class="fn">draw</span>()
 <span class="kw">ECB</span>
 
-<span class="var">g</span>.<span class="fn">on_key</span>(<span class="str">"w"</span>, <span class="kw">bladeFN</span>() <span class="op">+/</span> <span class="kw">if</span> <span class="var">dir_y</span><span class="op">==</span><span class="num">0</span> <span class="op">+/</span> <span class="var">next_dx</span><span class="op">=</span><span class="num">0</span>  <span class="var">next_dy</span><span class="op">=-</span><span class="num">1</span> <span class="kw">ECB</span> <span class="kw">ECB</span>)
-<span class="var">g</span>.<span class="fn">on_key</span>(<span class="str">"s"</span>, <span class="kw">bladeFN</span>() <span class="op">+/</span> <span class="kw">if</span> <span class="var">dir_y</span><span class="op">==</span><span class="num">0</span> <span class="op">+/</span> <span class="var">next_dx</span><span class="op">=</span><span class="num">0</span>  <span class="var">next_dy</span><span class="op">=</span><span class="num">1</span>  <span class="kw">ECB</span> <span class="kw">ECB</span>)
-<span class="var">g</span>.<span class="fn">on_key</span>(<span class="str">"a"</span>, <span class="kw">bladeFN</span>() <span class="op">+/</span> <span class="kw">if</span> <span class="var">dir_x</span><span class="op">==</span><span class="num">0</span> <span class="op">+/</span> <span class="var">next_dx</span><span class="op">=-</span><span class="num">1</span> <span class="var">next_dy</span><span class="op">=</span><span class="num">0</span>  <span class="kw">ECB</span> <span class="kw">ECB</span>)
-<span class="var">g</span>.<span class="fn">on_key</span>(<span class="str">"d"</span>, <span class="kw">bladeFN</span>() <span class="op">+/</span> <span class="kw">if</span> <span class="var">dir_x</span><span class="op">==</span><span class="num">0</span> <span class="op">+/</span> <span class="var">next_dx</span><span class="op">=</span><span class="num">1</span>  <span class="var">next_dy</span><span class="op">=</span><span class="num">0</span>  <span class="kw">ECB</span> <span class="kw">ECB</span>)
+<span class="cmt"># w/a/s/d — buffer next direction, prevent 180-degree reversal</span>
+<span class="var">g</span>.<span class="fn">on_key</span>(<span class="str">"w"</span>, <span class="kw">bladeFN</span>() <span class="op">+/</span>
+    <span class="kw">if</span> <span class="var">dir_y</span> <span class="op">==</span> <span class="num">0</span> <span class="op">+/</span>
+        <span class="var">next_dx</span> <span class="op">=</span> <span class="num">0</span>
+        <span class="var">next_dy</span> <span class="op">=</span> <span class="op">-</span><span class="num">1</span>
+    <span class="kw">ECB</span>
+<span class="kw">ECB</span>)
+<span class="var">g</span>.<span class="fn">on_key</span>(<span class="str">"s"</span>, <span class="kw">bladeFN</span>() <span class="op">+/</span>
+    <span class="kw">if</span> <span class="var">dir_y</span> <span class="op">==</span> <span class="num">0</span> <span class="op">+/</span>
+        <span class="var">next_dx</span> <span class="op">=</span> <span class="num">0</span>
+        <span class="var">next_dy</span> <span class="op">=</span> <span class="num">1</span>
+    <span class="kw">ECB</span>
+<span class="kw">ECB</span>)
+<span class="var">g</span>.<span class="fn">on_key</span>(<span class="str">"a"</span>, <span class="kw">bladeFN</span>() <span class="op">+/</span>
+    <span class="kw">if</span> <span class="var">dir_x</span> <span class="op">==</span> <span class="num">0</span> <span class="op">+/</span>
+        <span class="var">next_dx</span> <span class="op">=</span> <span class="op">-</span><span class="num">1</span>
+        <span class="var">next_dy</span> <span class="op">=</span> <span class="num">0</span>
+    <span class="kw">ECB</span>
+<span class="kw">ECB</span>)
+<span class="var">g</span>.<span class="fn">on_key</span>(<span class="str">"d"</span>, <span class="kw">bladeFN</span>() <span class="op">+/</span>
+    <span class="kw">if</span> <span class="var">dir_x</span> <span class="op">==</span> <span class="num">0</span> <span class="op">+/</span>
+        <span class="var">next_dx</span> <span class="op">=</span> <span class="num">1</span>
+        <span class="var">next_dy</span> <span class="op">=</span> <span class="num">0</span>
+    <span class="kw">ECB</span>
+<span class="kw">ECB</span>)
 <span class="var">g</span>.<span class="fn">on_key</span>(<span class="str">"q"</span>, <span class="kw">bladeFN</span>() <span class="op">+/</span> <span class="var">g</span>.<span class="fn">stop</span>() <span class="kw">ECB</span>)
+
+<span class="fn">write</span>(<span class="col">-*cyan*-</span> <span class="op">+</span> <span class="str">"  ╔══════════════════════╗"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="fn">write</span>(<span class="col">-*cyan*-</span> <span class="op">+</span> <span class="str">"  ║   S N A K E          ║"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="fn">write</span>(<span class="col">-*cyan*-</span> <span class="op">+</span> <span class="str">"  ╠══════════════════════╣"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="fn">write</span>(<span class="col">-*cyan*-</span> <span class="op">+</span> <span class="str">"  ║  w/a/s/d  — move     ║"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="fn">write</span>(<span class="col">-*cyan*-</span> <span class="op">+</span> <span class="str">"  ║  eat  *   — grow      ║"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="fn">write</span>(<span class="col">-*cyan*-</span> <span class="op">+</span> <span class="str">"  ║  hit wall — game over ║"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="fn">write</span>(<span class="col">-*cyan*-</span> <span class="op">+</span> <span class="str">"  ║  q        — quit      ║"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="fn">write</span>(<span class="col">-*cyan*-</span> <span class="op">+</span> <span class="str">"  ╚══════════════════════╝"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="fn">write</span>(<span class="str">""</span>)
+<span class="fn">write</span>(<span class="str">"  Press any key to begin..."</span>)
+<span class="fn">write</span>(<span class="str">""</span>)
+<span class="fn">wait_key</span>()
+
 <span class="fn">draw</span>()
-<span class="var">g</span>.<span class="fn">loop</span>(<span class="var">update</span>, <span class="num">8</span>)</div>
+<span class="var">g</span>.<span class="fn">loop</span>(<span class="var">update</span>, <span class="num">8</span>)
+
+<span class="kw">if</span> <span class="op">-n</span> <span class="var">alive</span> <span class="op">+/</span>
+    <span class="fn">write</span>(<span class="str">""</span>)
+    <span class="fn">write</span>(<span class="col">-*red*-</span> <span class="op">+</span> <span class="str">"  You lost!  Score: &amp;{score}"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="kw">ECB</span></div>
         <div class="ex-meta">
           <div class="ex-meta-item"><strong>Concepts:</strong> grid, on_key, loop, list methods, game loop pattern</div>
           <div class="ex-meta-item"><strong>Run locally:</strong> <code>ablade run examples/snake.axb</code></div>
@@ -567,86 +671,177 @@
             <p>Interactive editor + live simulation. Draw cells, then press Enter to run.</p>
           </div>
         </div>
-        <div class="code-block"><span class="cmt"># Game of Life — interactive editor + simulation</span>
-<span class="cmt"># EDIT: w/a/s/d move cursor, space toggle, enter start</span>
-<span class="cmt"># RUN:  p pause/resume, q quit</span>
+        <div class="code-block"><span class="cmt"># life.axb — Conway's Game of Life</span>
+<span class="cmt"># EDIT MODE: w/a/s/d move cursor, space toggles cell, enter starts simulation</span>
+<span class="cmt"># RUN MODE:  q quits, p pauses/resumes</span>
 
-<span class="kw">&gt;&gt;</span> <span class="var">W</span> <span class="op">=</span> <span class="num">30</span>  <span class="kw">&gt;&gt;</span> <span class="var">H</span> <span class="op">=</span> <span class="num">20</span>  <span class="kw">&gt;&gt;</span> <span class="var">g</span> <span class="op">=</span> <span class="fn">grid</span>(<span class="var">W</span>, <span class="var">H</span>)
-<span class="kw">&gt;&gt;</span> <span class="var">paused</span> <span class="op">=</span> <span class="kw">true</span>  <span class="kw">&gt;&gt;</span> <span class="var">cx</span> <span class="op">=</span> <span class="num">15</span>  <span class="kw">&gt;&gt;</span> <span class="var">cy</span> <span class="op">=</span> <span class="num">10</span>
+<span class="kw">&gt;&gt;</span> <span class="var">W</span> <span class="op">=</span> <span class="num">30</span>
+<span class="kw">&gt;&gt;</span> <span class="var">H</span> <span class="op">=</span> <span class="num">20</span>
+<span class="kw">&gt;&gt;</span> <span class="var">g</span> <span class="op">=</span> <span class="fn">grid</span>(<span class="var">W</span>, <span class="var">H</span>)
 
+<span class="cmt"># Board state</span>
 <span class="kw">bladeFN</span> <span class="fn">make_board</span>() <span class="op">+/</span>
-    <span class="kw">&gt;&gt;</span> <span class="var">b</span> <span class="op">=</span> []  <span class="kw">&gt;&gt;</span> <span class="var">y</span> <span class="op">=</span> <span class="num">0</span>
+    <span class="kw">&gt;&gt;</span> <span class="var">board</span> <span class="op">=</span> []
+    <span class="kw">&gt;&gt;</span> <span class="var">y</span> <span class="op">=</span> <span class="num">0</span>
     <span class="kw">while</span> <span class="var">y</span> <span class="op">&lt;</span> <span class="var">H</span> <span class="op">+/</span>
-        <span class="kw">&gt;&gt;</span> <span class="var">row</span> <span class="op">=</span> []  <span class="kw">&gt;&gt;</span> <span class="var">x</span> <span class="op">=</span> <span class="num">0</span>
-        <span class="kw">while</span> <span class="var">x</span> <span class="op">&lt;</span> <span class="var">W</span> <span class="op">+/</span> <span class="var">row</span>.<span class="fn">append</span>(<span class="num">0</span>) <span class="var">x</span><span class="op">=</span><span class="var">x</span><span class="op">+</span><span class="num">1</span> <span class="kw">ECB</span>
-        <span class="var">b</span>.<span class="fn">append</span>(<span class="var">row</span>) <span class="var">y</span><span class="op">=</span><span class="var">y</span><span class="op">+</span><span class="num">1</span>
+        <span class="kw">&gt;&gt;</span> <span class="var">row</span> <span class="op">=</span> []
+        <span class="kw">&gt;&gt;</span> <span class="var">x</span> <span class="op">=</span> <span class="num">0</span>
+        <span class="kw">while</span> <span class="var">x</span> <span class="op">&lt;</span> <span class="var">W</span> <span class="op">+/</span>
+            <span class="var">row</span>.<span class="fn">append</span>(<span class="num">0</span>)
+            <span class="var">x</span> <span class="op">=</span> <span class="var">x</span> <span class="op">+</span> <span class="num">1</span>
+        <span class="kw">ECB</span>
+        <span class="var">board</span>.<span class="fn">append</span>(<span class="var">row</span>)
+        <span class="var">y</span> <span class="op">=</span> <span class="var">y</span> <span class="op">+</span> <span class="num">1</span>
     <span class="kw">ECB</span>
-    <span class="kw">return</span> <span class="var">b</span>
+    <span class="kw">return</span> <span class="var">board</span>
 <span class="kw">ECB</span>
 
 <span class="kw">&gt;&gt;</span> <span class="var">board</span> <span class="op">=</span> <span class="fn">make_board</span>()
 
+<span class="cmt"># Editor state</span>
+<span class="kw">&gt;&gt;</span> <span class="var">paused</span> <span class="op">=</span> <span class="kw">true</span>
+<span class="kw">&gt;&gt;</span> <span class="var">cx</span> <span class="op">=</span> <span class="num">15</span>
+<span class="kw">&gt;&gt;</span> <span class="var">cy</span> <span class="op">=</span> <span class="num">10</span>
+
 <span class="kw">bladeFN</span> <span class="fn">count_neighbors</span>(<span class="var">brd</span>, <span class="var">px</span>, <span class="var">py</span>) <span class="op">+/</span>
-    <span class="kw">&gt;&gt;</span> <span class="var">total</span> <span class="op">=</span> <span class="num">0</span>  <span class="kw">&gt;&gt;</span> <span class="var">dy</span> <span class="op">=</span> <span class="op">-</span><span class="num">1</span>
+    <span class="kw">&gt;&gt;</span> <span class="var">total</span> <span class="op">=</span> <span class="num">0</span>
+    <span class="kw">&gt;&gt;</span> <span class="var">dy</span> <span class="op">=</span> <span class="op">-</span><span class="num">1</span>
     <span class="kw">while</span> <span class="var">dy</span> <span class="op">&lt;=</span> <span class="num">1</span> <span class="op">+/</span>
         <span class="kw">&gt;&gt;</span> <span class="var">dx</span> <span class="op">=</span> <span class="op">-</span><span class="num">1</span>
         <span class="kw">while</span> <span class="var">dx</span> <span class="op">&lt;=</span> <span class="num">1</span> <span class="op">+/</span>
-            <span class="kw">if</span> <span class="op">-n</span> (<span class="var">dx</span><span class="op">==</span><span class="num">0</span> <span class="op">-a</span> <span class="var">dy</span><span class="op">==</span><span class="num">0</span>) <span class="op">+/</span>
-                <span class="kw">&gt;&gt;</span> <span class="var">nx</span><span class="op">=</span><span class="var">px</span><span class="op">+</span><span class="var">dx</span>  <span class="kw">&gt;&gt;</span> <span class="var">ny</span><span class="op">=</span><span class="var">py</span><span class="op">+</span><span class="var">dy</span>
-                <span class="kw">if</span> <span class="var">nx</span><span class="op">&gt;=</span><span class="num">0</span> <span class="op">-a</span> <span class="var">nx</span><span class="op">&lt;</span><span class="var">W</span> <span class="op">-a</span> <span class="var">ny</span><span class="op">&gt;=</span><span class="num">0</span> <span class="op">-a</span> <span class="var">ny</span><span class="op">&lt;</span><span class="var">H</span> <span class="op">+/</span>
+            <span class="kw">if</span> <span class="op">-n</span> (<span class="var">dx</span> <span class="op">==</span> <span class="num">0</span> <span class="op">-a</span> <span class="var">dy</span> <span class="op">==</span> <span class="num">0</span>) <span class="op">+/</span>
+                <span class="kw">&gt;&gt;</span> <span class="var">nx</span> <span class="op">=</span> <span class="var">px</span> <span class="op">+</span> <span class="var">dx</span>
+                <span class="kw">&gt;&gt;</span> <span class="var">ny</span> <span class="op">=</span> <span class="var">py</span> <span class="op">+</span> <span class="var">dy</span>
+                <span class="kw">if</span> <span class="var">nx</span> <span class="op">&gt;=</span> <span class="num">0</span> <span class="op">-a</span> <span class="var">nx</span> <span class="op">&lt;</span> <span class="var">W</span> <span class="op">-a</span> <span class="var">ny</span> <span class="op">&gt;=</span> <span class="num">0</span> <span class="op">-a</span> <span class="var">ny</span> <span class="op">&lt;</span> <span class="var">H</span> <span class="op">+/</span>
                     <span class="var">total</span> <span class="op">=</span> <span class="var">total</span> <span class="op">+</span> <span class="var">brd</span><span class="op">~</span><span class="var">ny</span><span class="op">~~</span><span class="var">nx</span><span class="op">~</span>
                 <span class="kw">ECB</span>
             <span class="kw">ECB</span>
-            <span class="var">dx</span><span class="op">=</span><span class="var">dx</span><span class="op">+</span><span class="num">1</span>
+            <span class="var">dx</span> <span class="op">=</span> <span class="var">dx</span> <span class="op">+</span> <span class="num">1</span>
         <span class="kw">ECB</span>
-        <span class="var">dy</span><span class="op">=</span><span class="var">dy</span><span class="op">+</span><span class="num">1</span>
+        <span class="var">dy</span> <span class="op">=</span> <span class="var">dy</span> <span class="op">+</span> <span class="num">1</span>
     <span class="kw">ECB</span>
     <span class="kw">return</span> <span class="var">total</span>
 <span class="kw">ECB</span>
 
 <span class="kw">bladeFN</span> <span class="fn">step</span>() <span class="op">+/</span>
     <span class="kw">&gt;&gt;</span> <span class="var">next</span> <span class="op">=</span> <span class="fn">make_board</span>()
-    <span class="kw">&gt;&gt;</span> <span class="var">y</span><span class="op">=</span><span class="num">0</span>
-    <span class="kw">while</span> <span class="var">y</span><span class="op">&lt;</span><span class="var">H</span> <span class="op">+/</span>
-        <span class="kw">&gt;&gt;</span> <span class="var">x</span><span class="op">=</span><span class="num">0</span>
-        <span class="kw">while</span> <span class="var">x</span><span class="op">&lt;</span><span class="var">W</span> <span class="op">+/</span>
-            <span class="kw">&gt;&gt;</span> <span class="var">n</span><span class="op">=</span><span class="fn">count_neighbors</span>(<span class="var">board</span>,<span class="var">x</span>,<span class="var">y</span>)
-            <span class="kw">if</span> <span class="var">board</span><span class="op">~</span><span class="var">y</span><span class="op">~~</span><span class="var">x</span><span class="op">~==</span><span class="num">1</span> <span class="op">-a</span> (<span class="var">n</span><span class="op">==</span><span class="num">2</span> <span class="op">-o</span> <span class="var">n</span><span class="op">==</span><span class="num">3</span>) <span class="op">+/</span> <span class="var">next</span><span class="op">~</span><span class="var">y</span><span class="op">~~</span><span class="var">x</span><span class="op">~=</span><span class="num">1</span> <span class="kw">ECB</span>
-            <span class="kw">elif</span> <span class="var">board</span><span class="op">~</span><span class="var">y</span><span class="op">~~</span><span class="var">x</span><span class="op">~==</span><span class="num">0</span> <span class="op">-a</span> <span class="var">n</span><span class="op">==</span><span class="num">3</span> <span class="op">+/</span> <span class="var">next</span><span class="op">~</span><span class="var">y</span><span class="op">~~</span><span class="var">x</span><span class="op">~=</span><span class="num">1</span> <span class="kw">ECB</span>
-            <span class="var">x</span><span class="op">=</span><span class="var">x</span><span class="op">+</span><span class="num">1</span>
+    <span class="kw">&gt;&gt;</span> <span class="var">y</span> <span class="op">=</span> <span class="num">0</span>
+    <span class="kw">while</span> <span class="var">y</span> <span class="op">&lt;</span> <span class="var">H</span> <span class="op">+/</span>
+        <span class="kw">&gt;&gt;</span> <span class="var">x</span> <span class="op">=</span> <span class="num">0</span>
+        <span class="kw">while</span> <span class="var">x</span> <span class="op">&lt;</span> <span class="var">W</span> <span class="op">+/</span>
+            <span class="kw">&gt;&gt;</span> <span class="var">alive</span> <span class="op">=</span> <span class="var">board</span><span class="op">~</span><span class="var">y</span><span class="op">~~</span><span class="var">x</span><span class="op">~</span>
+            <span class="kw">&gt;&gt;</span> <span class="var">n</span> <span class="op">=</span> <span class="fn">count_neighbors</span>(<span class="var">board</span>, <span class="var">x</span>, <span class="var">y</span>)
+            <span class="kw">if</span> <span class="var">alive</span> <span class="op">==</span> <span class="num">1</span> <span class="op">-a</span> (<span class="var">n</span> <span class="op">==</span> <span class="num">2</span> <span class="op">-o</span> <span class="var">n</span> <span class="op">==</span> <span class="num">3</span>) <span class="op">+/</span>
+                <span class="var">next</span><span class="op">~</span><span class="var">y</span><span class="op">~~</span><span class="var">x</span><span class="op">~</span> <span class="op">=</span> <span class="num">1</span>
+            <span class="kw">ECB</span>
+            <span class="kw">elif</span> <span class="var">alive</span> <span class="op">==</span> <span class="num">0</span> <span class="op">-a</span> <span class="var">n</span> <span class="op">==</span> <span class="num">3</span> <span class="op">+/</span>
+                <span class="var">next</span><span class="op">~</span><span class="var">y</span><span class="op">~~</span><span class="var">x</span><span class="op">~</span> <span class="op">=</span> <span class="num">1</span>
+            <span class="kw">ECB</span>
+            <span class="var">x</span> <span class="op">=</span> <span class="var">x</span> <span class="op">+</span> <span class="num">1</span>
         <span class="kw">ECB</span>
-        <span class="var">y</span><span class="op">=</span><span class="var">y</span><span class="op">+</span><span class="num">1</span>
+        <span class="var">y</span> <span class="op">=</span> <span class="var">y</span> <span class="op">+</span> <span class="num">1</span>
     <span class="kw">ECB</span>
     <span class="var">board</span> <span class="op">=</span> <span class="var">next</span>
 <span class="kw">ECB</span>
 
-<span class="kw">bladeFN</span> <span class="fn">update</span>() <span class="op">+/</span>
-    <span class="kw">if</span> <span class="op">-n</span> <span class="var">paused</span> <span class="op">+/</span> <span class="fn">step</span>() <span class="kw">ECB</span>
-    <span class="kw">&gt;&gt;</span> <span class="var">y</span><span class="op">=</span><span class="num">0</span>
-    <span class="kw">while</span> <span class="var">y</span><span class="op">&lt;</span><span class="var">H</span> <span class="op">+/</span>
-        <span class="kw">&gt;&gt;</span> <span class="var">x</span><span class="op">=</span><span class="num">0</span>
-        <span class="kw">while</span> <span class="var">x</span><span class="op">&lt;</span><span class="var">W</span> <span class="op">+/</span>
-            <span class="kw">if</span> <span class="var">board</span><span class="op">~</span><span class="var">y</span><span class="op">~~</span><span class="var">x</span><span class="op">~==</span><span class="num">1</span> <span class="op">+/</span> <span class="var">g</span>.<span class="fn">set</span>(<span class="var">x</span>,<span class="var">y</span>,<span class="col">-*green*-</span>) <span class="kw">ECB</span>
-            <span class="kw">else</span> <span class="op">+/</span> <span class="var">g</span>.<span class="fn">set</span>(<span class="var">x</span>,<span class="var">y</span>,<span class="col">-*black*-</span>) <span class="kw">ECB</span>
-            <span class="var">x</span><span class="op">=</span><span class="var">x</span><span class="op">+</span><span class="num">1</span>
+<span class="kw">bladeFN</span> <span class="fn">draw</span>() <span class="op">+/</span>
+    <span class="kw">&gt;&gt;</span> <span class="var">y</span> <span class="op">=</span> <span class="num">0</span>
+    <span class="kw">while</span> <span class="var">y</span> <span class="op">&lt;</span> <span class="var">H</span> <span class="op">+/</span>
+        <span class="kw">&gt;&gt;</span> <span class="var">x</span> <span class="op">=</span> <span class="num">0</span>
+        <span class="kw">while</span> <span class="var">x</span> <span class="op">&lt;</span> <span class="var">W</span> <span class="op">+/</span>
+            <span class="kw">if</span> <span class="var">board</span><span class="op">~</span><span class="var">y</span><span class="op">~~</span><span class="var">x</span><span class="op">~</span> <span class="op">==</span> <span class="num">1</span> <span class="op">+/</span>
+                <span class="kw">if</span> <span class="var">paused</span> <span class="op">-a</span> <span class="var">x</span> <span class="op">==</span> <span class="var">cx</span> <span class="op">-a</span> <span class="var">y</span> <span class="op">==</span> <span class="var">cy</span> <span class="op">+/</span>
+                    <span class="var">g</span>.<span class="fn">set</span>(<span class="var">x</span>, <span class="var">y</span>, <span class="col">-*yellow*-</span>)
+                <span class="kw">ECB</span>
+                <span class="kw">else</span> <span class="op">+/</span>
+                    <span class="var">g</span>.<span class="fn">set</span>(<span class="var">x</span>, <span class="var">y</span>, <span class="col">-*green*-</span>)
+                <span class="kw">ECB</span>
+            <span class="kw">ECB</span>
+            <span class="kw">else</span> <span class="op">+/</span>
+                <span class="kw">if</span> <span class="var">paused</span> <span class="op">-a</span> <span class="var">x</span> <span class="op">==</span> <span class="var">cx</span> <span class="op">-a</span> <span class="var">y</span> <span class="op">==</span> <span class="var">cy</span> <span class="op">+/</span>
+                    <span class="var">g</span>.<span class="fn">set</span>(<span class="var">x</span>, <span class="var">y</span>, <span class="col">-*cyan*-</span>)
+                <span class="kw">ECB</span>
+                <span class="kw">else</span> <span class="op">+/</span>
+                    <span class="var">g</span>.<span class="fn">set</span>(<span class="var">x</span>, <span class="var">y</span>, <span class="col">-*black*-</span>)
+                <span class="kw">ECB</span>
+            <span class="kw">ECB</span>
+            <span class="var">x</span> <span class="op">=</span> <span class="var">x</span> <span class="op">+</span> <span class="num">1</span>
         <span class="kw">ECB</span>
-        <span class="var">y</span><span class="op">=</span><span class="var">y</span><span class="op">+</span><span class="num">1</span>
+        <span class="var">y</span> <span class="op">=</span> <span class="var">y</span> <span class="op">+</span> <span class="num">1</span>
     <span class="kw">ECB</span>
 <span class="kw">ECB</span>
 
-<span class="var">g</span>.<span class="fn">on_key</span>(<span class="str">"w"</span>, <span class="kw">bladeFN</span>() <span class="op">+/</span> <span class="kw">if</span> <span class="var">cy</span><span class="op">&gt;</span><span class="num">0</span>   <span class="op">+/</span> <span class="var">cy</span><span class="op">=</span><span class="var">cy</span><span class="op">-</span><span class="num">1</span> <span class="kw">ECB</span> <span class="kw">ECB</span>)
-<span class="var">g</span>.<span class="fn">on_key</span>(<span class="str">"s"</span>, <span class="kw">bladeFN</span>() <span class="op">+/</span> <span class="kw">if</span> <span class="var">cy</span><span class="op">&lt;</span><span class="var">H</span><span class="op">-</span><span class="num">1</span> <span class="op">+/</span> <span class="var">cy</span><span class="op">=</span><span class="var">cy</span><span class="op">+</span><span class="num">1</span> <span class="kw">ECB</span> <span class="kw">ECB</span>)
-<span class="var">g</span>.<span class="fn">on_key</span>(<span class="str">"a"</span>, <span class="kw">bladeFN</span>() <span class="op">+/</span> <span class="kw">if</span> <span class="var">cx</span><span class="op">&gt;</span><span class="num">0</span>   <span class="op">+/</span> <span class="var">cx</span><span class="op">=</span><span class="var">cx</span><span class="op">-</span><span class="num">1</span> <span class="kw">ECB</span> <span class="kw">ECB</span>)
-<span class="var">g</span>.<span class="fn">on_key</span>(<span class="str">"d"</span>, <span class="kw">bladeFN</span>() <span class="op">+/</span> <span class="kw">if</span> <span class="var">cx</span><span class="op">&lt;</span><span class="var">W</span><span class="op">-</span><span class="num">1</span> <span class="op">+/</span> <span class="var">cx</span><span class="op">=</span><span class="var">cx</span><span class="op">+</span><span class="num">1</span> <span class="kw">ECB</span> <span class="kw">ECB</span>)
-<span class="var">g</span>.<span class="fn">on_key</span>(<span class="str">" "</span>, <span class="kw">bladeFN</span>() <span class="op">+/</span>
-    <span class="kw">if</span> <span class="var">paused</span> <span class="op">+/</span>
-        <span class="kw">if</span> <span class="var">board</span><span class="op">~</span><span class="var">cy</span><span class="op">~~</span><span class="var">cx</span><span class="op">~==</span><span class="num">1</span> <span class="op">+/</span> <span class="var">board</span><span class="op">~</span><span class="var">cy</span><span class="op">~~</span><span class="var">cx</span><span class="op">~=</span><span class="num">0</span> <span class="kw">ECB</span>
-        <span class="kw">else</span> <span class="op">+/</span> <span class="var">board</span><span class="op">~</span><span class="var">cy</span><span class="op">~~</span><span class="var">cx</span><span class="op">~=</span><span class="num">1</span> <span class="kw">ECB</span>
+<span class="kw">bladeFN</span> <span class="fn">update</span>() <span class="op">+/</span>
+    <span class="kw">if</span> <span class="op">-n</span> <span class="var">paused</span> <span class="op">+/</span>
+        <span class="fn">step</span>()
+    <span class="kw">ECB</span>
+    <span class="fn">draw</span>()
+<span class="kw">ECB</span>
+
+<span class="cmt"># Editor controls</span>
+<span class="var">g</span>.<span class="fn">on_key</span>(<span class="str">"w"</span>, <span class="kw">bladeFN</span>() <span class="op">+/</span>
+    <span class="kw">if</span> <span class="var">cy</span> <span class="op">&gt;</span> <span class="num">0</span> <span class="op">+/</span>
+        <span class="var">cy</span> <span class="op">=</span> <span class="var">cy</span> <span class="op">-</span> <span class="num">1</span>
     <span class="kw">ECB</span>
 <span class="kw">ECB</span>)
-<span class="var">g</span>.<span class="fn">on_key</span>(<span class="str">"\r"</span>, <span class="kw">bladeFN</span>() <span class="op">+/</span> <span class="var">paused</span><span class="op">=</span><span class="kw">false</span> <span class="kw">ECB</span>)
-<span class="var">g</span>.<span class="fn">on_key</span>(<span class="str">"p"</span>,  <span class="kw">bladeFN</span>() <span class="op">+/</span> <span class="kw">if</span> <span class="var">paused</span> <span class="op">+/</span> <span class="var">paused</span><span class="op">=</span><span class="kw">false</span> <span class="kw">ECB</span> <span class="kw">else</span> <span class="op">+/</span> <span class="var">paused</span><span class="op">=</span><span class="kw">true</span> <span class="kw">ECB</span> <span class="kw">ECB</span>)
-<span class="var">g</span>.<span class="fn">on_key</span>(<span class="str">"q"</span>,  <span class="kw">bladeFN</span>() <span class="op">+/</span> <span class="var">g</span>.<span class="fn">stop</span>() <span class="kw">ECB</span>)
+<span class="var">g</span>.<span class="fn">on_key</span>(<span class="str">"s"</span>, <span class="kw">bladeFN</span>() <span class="op">+/</span>
+    <span class="kw">if</span> <span class="var">cy</span> <span class="op">&lt;</span> <span class="var">H</span> <span class="op">-</span> <span class="num">1</span> <span class="op">+/</span>
+        <span class="var">cy</span> <span class="op">=</span> <span class="var">cy</span> <span class="op">+</span> <span class="num">1</span>
+    <span class="kw">ECB</span>
+<span class="kw">ECB</span>)
+<span class="var">g</span>.<span class="fn">on_key</span>(<span class="str">"a"</span>, <span class="kw">bladeFN</span>() <span class="op">+/</span>
+    <span class="kw">if</span> <span class="var">cx</span> <span class="op">&gt;</span> <span class="num">0</span> <span class="op">+/</span>
+        <span class="var">cx</span> <span class="op">=</span> <span class="var">cx</span> <span class="op">-</span> <span class="num">1</span>
+    <span class="kw">ECB</span>
+<span class="kw">ECB</span>)
+<span class="var">g</span>.<span class="fn">on_key</span>(<span class="str">"d"</span>, <span class="kw">bladeFN</span>() <span class="op">+/</span>
+    <span class="kw">if</span> <span class="var">cx</span> <span class="op">&lt;</span> <span class="var">W</span> <span class="op">-</span> <span class="num">1</span> <span class="op">+/</span>
+        <span class="var">cx</span> <span class="op">=</span> <span class="var">cx</span> <span class="op">+</span> <span class="num">1</span>
+    <span class="kw">ECB</span>
+<span class="kw">ECB</span>)
+
+<span class="cmt"># Space: toggle cell under cursor</span>
+<span class="var">g</span>.<span class="fn">on_key</span>(<span class="str">" "</span>, <span class="kw">bladeFN</span>() <span class="op">+/</span>
+    <span class="kw">if</span> <span class="var">paused</span> <span class="op">+/</span>
+        <span class="kw">if</span> <span class="var">board</span><span class="op">~</span><span class="var">cy</span><span class="op">~~</span><span class="var">cx</span><span class="op">~</span> <span class="op">==</span> <span class="num">1</span> <span class="op">+/</span>
+            <span class="var">board</span><span class="op">~</span><span class="var">cy</span><span class="op">~~</span><span class="var">cx</span><span class="op">~</span> <span class="op">=</span> <span class="num">0</span>
+        <span class="kw">ECB</span>
+        <span class="kw">else</span> <span class="op">+/</span>
+            <span class="var">board</span><span class="op">~</span><span class="var">cy</span><span class="op">~~</span><span class="var">cx</span><span class="op">~</span> <span class="op">=</span> <span class="num">1</span>
+        <span class="kw">ECB</span>
+    <span class="kw">ECB</span>
+<span class="kw">ECB</span>)
+
+<span class="cmt"># Enter: start / p: pause-resume / q: quit</span>
+<span class="var">g</span>.<span class="fn">on_key</span>(<span class="str">"\r"</span>, <span class="kw">bladeFN</span>() <span class="op">+/</span> <span class="var">paused</span> <span class="op">=</span> <span class="kw">false</span> <span class="kw">ECB</span>)
+<span class="var">g</span>.<span class="fn">on_key</span>(<span class="str">"p"</span>, <span class="kw">bladeFN</span>() <span class="op">+/</span>
+    <span class="kw">if</span> <span class="var">paused</span> <span class="op">+/</span>
+        <span class="var">paused</span> <span class="op">=</span> <span class="kw">false</span>
+    <span class="kw">ECB</span>
+    <span class="kw">else</span> <span class="op">+/</span>
+        <span class="var">paused</span> <span class="op">=</span> <span class="kw">true</span>
+    <span class="kw">ECB</span>
+<span class="kw">ECB</span>)
+<span class="var">g</span>.<span class="fn">on_key</span>(<span class="str">"q"</span>, <span class="kw">bladeFN</span>() <span class="op">+/</span> <span class="var">g</span>.<span class="fn">stop</span>() <span class="kw">ECB</span>)
+
+<span class="fn">write</span>(<span class="col">-*green*-</span> <span class="op">+</span> <span class="str">"  ╔══════════════════════════════╗"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="fn">write</span>(<span class="col">-*green*-</span> <span class="op">+</span> <span class="str">"  ║  CONWAY'S GAME OF LIFE       ║"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="fn">write</span>(<span class="col">-*green*-</span> <span class="op">+</span> <span class="str">"  ╠══════════════════════════════╣"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="fn">write</span>(<span class="col">-*green*-</span> <span class="op">+</span> <span class="str">"  ║  EDIT MODE (start here)      ║"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="fn">write</span>(<span class="col">-*green*-</span> <span class="op">+</span> <span class="str">"  ║  w/a/s/d — move cursor       ║"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="fn">write</span>(<span class="col">-*green*-</span> <span class="op">+</span> <span class="str">"  ║  space   — toggle cell       ║"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="fn">write</span>(<span class="col">-*green*-</span> <span class="op">+</span> <span class="str">"  ║  enter   — start simulation  ║"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="fn">write</span>(<span class="col">-*green*-</span> <span class="op">+</span> <span class="str">"  ╠══════════════════════════════╣"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="fn">write</span>(<span class="col">-*green*-</span> <span class="op">+</span> <span class="str">"  ║  RUN MODE                    ║"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="fn">write</span>(<span class="col">-*green*-</span> <span class="op">+</span> <span class="str">"  ║  p       — pause / resume    ║"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="fn">write</span>(<span class="col">-*green*-</span> <span class="op">+</span> <span class="str">"  ║  q       — quit              ║"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="fn">write</span>(<span class="col">-*green*-</span> <span class="op">+</span> <span class="str">"  ╚══════════════════════════════╝"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="fn">write</span>(<span class="str">""</span>)
+<span class="fn">write</span>(<span class="str">"  Cursor shown in cyan. Move it and press space to draw cells."</span>)
+<span class="fn">write</span>(<span class="str">"  Press any key to begin..."</span>)
+<span class="fn">wait_key</span>()
+
+<span class="fn">draw</span>()
 <span class="var">g</span>.<span class="fn">loop</span>(<span class="var">update</span>, <span class="num">10</span>)</div>
         <div class="ex-meta">
           <div class="ex-meta-item"><strong>Concepts:</strong> grid, interactive editor, simulation, list operations, -a / -n operators</div>
