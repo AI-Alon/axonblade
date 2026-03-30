@@ -149,31 +149,39 @@
             <p>Colors, string interpolation, and a simple typed function.</p>
           </div>
         </div>
-        <div class="code-block"><span class="cmt"># AxonBlade — Hello World</span>
+        <div class="code-block"><span class="cmt"># hello.axb — Welcome to AxonBlade</span>
+<span class="cmt"># Demonstrates: variables, string interpolation, colors, loops, functions</span>
 
-<span class="kw">&gt;&gt;</span> <span class="var">colors</span> <span class="op">=</span> [<span class="col">-*red*-</span>, <span class="col">-*green*-</span>, <span class="col">-*yellow*-</span>, <span class="col">-*cyan*-</span>, <span class="col">-*magenta*-</span>, <span class="col">-*blue*-</span>]
-<span class="kw">&gt;&gt;</span> <span class="var">names</span>  <span class="op">=</span> [<span class="str">"red"</span>, <span class="str">"green"</span>, <span class="str">"yellow"</span>, <span class="str">"cyan"</span>, <span class="str">"magenta"</span>, <span class="str">"blue"</span>]
+<span class="kw">&gt;&gt;</span> <span class="var">name</span> <span class="op">=</span> <span class="str">"AxonBlade"</span>
+<span class="kw">&gt;&gt;</span> <span class="var">version</span> <span class="op">=</span> <span class="num">1</span>
 
-<span class="cmt"># Print each color</span>
+<span class="fn">write</span>(<span class="col">-*cyan*-</span> <span class="op">+</span> <span class="str">"Welcome to &amp;{name} v&amp;{version}"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="fn">write</span>(<span class="str">""</span>)
+
+<span class="cmt"># Colors as first-class values</span>
+<span class="kw">&gt;&gt;</span> <span class="var">colors</span> <span class="op">=</span> [<span class="col">-*red*-</span>, <span class="col">-*yellow*-</span>, <span class="col">-*green*-</span>, <span class="col">-*cyan*-</span>, <span class="col">-*blue*-</span>, <span class="col">-*magenta*-</span>]
+<span class="kw">&gt;&gt;</span> <span class="var">labels</span> <span class="op">=</span> [<span class="str">"red"</span>, <span class="str">"yellow"</span>, <span class="str">"green"</span>, <span class="str">"cyan"</span>, <span class="str">"blue"</span>, <span class="str">"magenta"</span>]
+
 <span class="kw">&gt;&gt;</span> <span class="var">i</span> <span class="op">=</span> <span class="num">0</span>
 <span class="kw">while</span> <span class="var">i</span> <span class="op">&lt;</span> <span class="fn">len</span>(<span class="var">colors</span>) <span class="op">+/</span>
-    <span class="fn">write</span>(<span class="var">colors</span><span class="op">~</span><span class="var">i</span><span class="op">~</span> <span class="op">+</span> <span class="str">"  This is &amp;{names~i~}  "</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+    <span class="fn">write</span>(<span class="var">colors</span><span class="op">~</span><span class="var">i</span><span class="op">~</span> <span class="op">+</span> <span class="str">"  "</span> <span class="op">+</span> <span class="var">labels</span><span class="op">~</span><span class="var">i</span><span class="op">~</span> <span class="op">+</span> <span class="str">"  "</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
     <span class="var">i</span> <span class="op">=</span> <span class="var">i</span> <span class="op">+</span> <span class="num">1</span>
 <span class="kw">ECB</span>
 
 <span class="fn">write</span>(<span class="str">""</span>)
-<span class="fn">write</span>(<span class="col">-*cyan*-</span> <span class="op">+</span> <span class="str">"Hello, AxonBlade!"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
 
-<span class="cmt"># Typed function</span>
-<span class="kw">bladeFN</span> <span class="fn">greet</span>(<span class="var">name</span><span class="op">#</span><span class="kw">str</span>, <span class="var">n</span><span class="op">#</span><span class="kw">int</span>) <span class="op">+/</span>
-    <span class="kw">&gt;&gt;</span> <span class="var">i</span> <span class="op">=</span> <span class="num">0</span>
-    <span class="kw">while</span> <span class="var">i</span> <span class="op">&lt;</span> <span class="var">n</span> <span class="op">+/</span>
-        <span class="fn">write</span>(<span class="col">-*green*-</span> <span class="op">+</span> <span class="str">"Hi, &amp;{name}!"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
-        <span class="var">i</span> <span class="op">=</span> <span class="var">i</span> <span class="op">+</span> <span class="num">1</span>
-    <span class="kw">ECB</span>
+<span class="cmt"># String interpolation with expressions</span>
+<span class="kw">&gt;&gt;</span> <span class="var">a</span> <span class="op">=</span> <span class="num">6</span>
+<span class="kw">&gt;&gt;</span> <span class="var">b</span> <span class="op">=</span> <span class="num">7</span>
+<span class="fn">write</span>(<span class="str">"&amp;{a} * &amp;{b} = &amp;{a * b}"</span>)
+
+<span class="cmt"># Function definition</span>
+<span class="kw">bladeFN</span> <span class="fn">greet</span>(<span class="var">who</span><span class="op">#</span><span class="kw">str</span>) <span class="op">+/</span>
+    <span class="kw">return</span> <span class="col">-*green*-</span> <span class="op">+</span> <span class="str">"Hello, &amp;{who}!"</span> <span class="op">+</span> <span class="col">-*reset*-</span>
 <span class="kw">ECB</span>
 
-<span class="fn">greet</span>(<span class="str">"World"</span>, <span class="num">3</span>)</div>
+<span class="fn">write</span>(<span class="fn">greet</span>(<span class="str">"world"</span>))
+<span class="fn">write</span>(<span class="fn">greet</span>(<span class="var">name</span>))</div>
         <div class="ex-meta">
           <div class="ex-meta-item"><strong>Concepts:</strong> variables, color literals, string interpolation, while loop, typed function</div>
         </div>
@@ -189,7 +197,10 @@
             <p>Recursive function, closure generator, and higher-order functions.</p>
           </div>
         </div>
-        <div class="code-block"><span class="cmt"># Recursive Fibonacci</span>
+        <div class="code-block"><span class="cmt"># fibonacci.axb — Fibonacci sequence</span>
+<span class="cmt"># Demonstrates: recursion, closures, first-class functions, pipeline</span>
+
+<span class="cmt"># Recursive Fibonacci</span>
 <span class="kw">bladeFN</span> <span class="fn">fib</span>(<span class="var">n</span><span class="op">#</span><span class="kw">int</span>) <span class="op">+/</span>
     <span class="kw">if</span> <span class="var">n</span> <span class="op">&lt;=</span> <span class="num">1</span> <span class="op">+/</span>
         <span class="kw">return</span> <span class="var">n</span>
@@ -198,28 +209,52 @@
 <span class="kw">ECB</span>
 
 <span class="fn">write</span>(<span class="col">-*cyan*-</span> <span class="op">+</span> <span class="str">"Recursive Fibonacci:"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
-<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10</span>) <span class="op">+/</span>
-    <span class="fn">write</span>(<span class="str">"fib(&amp;{i}) = &amp;{fib(i)}"</span>)
-<span class="kw">ECB</span>
-
-<span class="cmt"># Closure-based generator</span>
-<span class="kw">bladeFN</span> <span class="fn">fib_gen</span>() <span class="op">+/</span>
-    <span class="kw">&gt;&gt;</span> <span class="var">a</span> <span class="op">=</span> <span class="num">0</span>
-    <span class="kw">&gt;&gt;</span> <span class="var">b</span> <span class="op">=</span> <span class="num">1</span>
-    <span class="kw">return</span> <span class="kw">bladeFN</span>() <span class="op">+/</span>
-        <span class="kw">&gt;&gt;</span> <span class="var">v</span> <span class="op">=</span> <span class="var">a</span>
-        <span class="kw">&gt;&gt;</span> <span class="var">next</span> <span class="op">=</span> <span class="var">a</span> <span class="op">+</span> <span class="var">b</span>
-        <span class="var">a</span> <span class="op">=</span> <span class="var">b</span>
-        <span class="var">b</span> <span class="op">=</span> <span class="var">next</span>
-        <span class="kw">return</span> <span class="var">v</span>
-    <span class="kw">ECB</span>
+<span class="kw">&gt;&gt;</span> <span class="var">i</span> <span class="op">=</span> <span class="num">0</span>
+<span class="kw">while</span> <span class="var">i</span> <span class="op">&lt;</span> <span class="num">10</span> <span class="op">+/</span>
+    <span class="fn">write</span>(<span class="str">"  fib(&amp;{i}) = &amp;{fib(i)}"</span>)
+    <span class="var">i</span> <span class="op">=</span> <span class="var">i</span> <span class="op">+</span> <span class="num">1</span>
 <span class="kw">ECB</span>
 
 <span class="fn">write</span>(<span class="str">""</span>)
-<span class="fn">write</span>(<span class="col">-*green*-</span> <span class="op">+</span> <span class="str">"Generator (first 10):"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
-<span class="kw">&gt;&gt;</span> <span class="var">gen</span> <span class="op">=</span> <span class="fn">fib_gen</span>()
-<span class="kw">for</span> <span class="var">_</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10</span>) <span class="op">+/</span>
-    <span class="fn">write</span>(<span class="fn">gen</span>())
+
+<span class="cmt"># Fibonacci using a closure-based memoizing generator</span>
+<span class="kw">bladeFN</span> <span class="fn">make_fib_gen</span>() <span class="op">+/</span>
+    <span class="kw">&gt;&gt;</span> <span class="var">a</span> <span class="op">=</span> <span class="num">0</span>
+    <span class="kw">&gt;&gt;</span> <span class="var">b</span> <span class="op">=</span> <span class="num">1</span>
+    <span class="kw">bladeFN</span> <span class="fn">next</span>() <span class="op">+/</span>
+        <span class="kw">&gt;&gt;</span> <span class="var">val</span> <span class="op">=</span> <span class="var">a</span>
+        <span class="kw">&gt;&gt;</span> <span class="var">tmp</span> <span class="op">=</span> <span class="var">b</span>
+        <span class="var">b</span> <span class="op">=</span> <span class="var">a</span> <span class="op">+</span> <span class="var">b</span>
+        <span class="var">a</span> <span class="op">=</span> <span class="var">tmp</span>
+        <span class="kw">return</span> <span class="var">val</span>
+    <span class="kw">ECB</span>
+    <span class="kw">return</span> <span class="var">next</span>
+<span class="kw">ECB</span>
+
+<span class="fn">write</span>(<span class="col">-*cyan*-</span> <span class="op">+</span> <span class="str">"Generator Fibonacci:"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="kw">&gt;&gt;</span> <span class="var">gen</span> <span class="op">=</span> <span class="fn">make_fib_gen</span>()
+<span class="kw">&gt;&gt;</span> <span class="var">j</span> <span class="op">=</span> <span class="num">0</span>
+<span class="kw">while</span> <span class="var">j</span> <span class="op">&lt;</span> <span class="num">10</span> <span class="op">+/</span>
+    <span class="fn">write</span>(<span class="str">"  &amp;{gen()}"</span>)
+    <span class="var">j</span> <span class="op">=</span> <span class="var">j</span> <span class="op">+</span> <span class="num">1</span>
+<span class="kw">ECB</span>
+
+<span class="fn">write</span>(<span class="str">""</span>)
+
+<span class="cmt"># First-class functions: apply a transform to each fib number</span>
+<span class="kw">bladeFN</span> <span class="fn">apply</span>(<span class="var">fn</span><span class="op">#</span><span class="kw">fn</span>, <span class="var">n</span><span class="op">#</span><span class="kw">int</span>) <span class="op">+/</span>
+    <span class="kw">return</span> <span class="fn">fn</span>(<span class="var">n</span>)
+<span class="kw">ECB</span>
+
+<span class="kw">bladeFN</span> <span class="fn">square</span>(<span class="var">x</span><span class="op">#</span><span class="kw">int</span>) <span class="op">+/</span>
+    <span class="kw">return</span> <span class="var">x</span> <span class="op">*</span> <span class="var">x</span>
+<span class="kw">ECB</span>
+
+<span class="fn">write</span>(<span class="col">-*cyan*-</span> <span class="op">+</span> <span class="str">"Squared Fibonacci:"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="kw">&gt;&gt;</span> <span class="var">k</span> <span class="op">=</span> <span class="num">0</span>
+<span class="kw">while</span> <span class="var">k</span> <span class="op">&lt;</span> <span class="num">8</span> <span class="op">+/</span>
+    <span class="fn">write</span>(<span class="str">"  fib(&amp;{k})^2 = &amp;{apply(square, fib(k))}"</span>)
+    <span class="var">k</span> <span class="op">=</span> <span class="var">k</span> <span class="op">+</span> <span class="num">1</span>
 <span class="kw">ECB</span></div>
         <div class="ex-meta">
           <div class="ex-meta-item"><strong>Concepts:</strong> recursion, closures, for loop, higher-order functions</div>
@@ -236,43 +271,90 @@
             <p>Counter factories, adder generators, and pipeline composition.</p>
           </div>
         </div>
-        <div class="code-block"><span class="cmt"># Counter factory</span>
-<span class="kw">bladeFN</span> <span class="fn">make_counter</span>(<span class="var">start</span>) <span class="op">+/</span>
-    <span class="kw">&gt;&gt;</span> <span class="var">n</span> <span class="op">=</span> <span class="var">start</span>
-    <span class="kw">return</span> <span class="kw">bladeFN</span>() <span class="op">+/</span>
-        <span class="var">n</span> <span class="op">=</span> <span class="var">n</span> <span class="op">+</span> <span class="num">1</span>
-        <span class="kw">return</span> <span class="var">n</span>
+        <div class="code-block"><span class="cmt"># closures.axb — Closures and higher-order functions</span>
+<span class="cmt"># Demonstrates: closures, captured state, returning functions, pipelines</span>
+
+<span class="cmt"># 1. Counter — closure captures and mutates its own variable</span>
+<span class="kw">bladeFN</span> <span class="fn">make_counter</span>(<span class="var">start</span><span class="op">#</span><span class="kw">int</span>) <span class="op">+/</span>
+    <span class="kw">&gt;&gt;</span> <span class="var">count</span> <span class="op">=</span> <span class="var">start</span>
+    <span class="kw">bladeFN</span> <span class="fn">increment</span>() <span class="op">+/</span>
+        <span class="var">count</span> <span class="op">=</span> <span class="var">count</span> <span class="op">+</span> <span class="num">1</span>
+        <span class="kw">return</span> <span class="var">count</span>
     <span class="kw">ECB</span>
+    <span class="kw">bladeFN</span> <span class="fn">reset</span>() <span class="op">+/</span>
+        <span class="var">count</span> <span class="op">=</span> <span class="var">start</span>
+    <span class="kw">ECB</span>
+    <span class="kw">bladeFN</span> <span class="fn">get</span>() <span class="op">+/</span>
+        <span class="kw">return</span> <span class="var">count</span>
+    <span class="kw">ECB</span>
+    <span class="kw">return</span> [<span class="var">increment</span>, <span class="var">reset</span>, <span class="var">get</span>]
 <span class="kw">ECB</span>
 
-<span class="kw">&gt;&gt;</span> <span class="var">c1</span> <span class="op">=</span> <span class="fn">make_counter</span>(<span class="num">0</span>)
-<span class="kw">&gt;&gt;</span> <span class="var">c2</span> <span class="op">=</span> <span class="fn">make_counter</span>(<span class="num">100</span>)
-<span class="fn">write</span>(<span class="fn">c1</span>())  <span class="cmt"># 1</span>
-<span class="fn">write</span>(<span class="fn">c1</span>())  <span class="cmt"># 2</span>
-<span class="fn">write</span>(<span class="fn">c2</span>())  <span class="cmt"># 101 — independent state</span>
+<span class="fn">write</span>(<span class="col">-*cyan*-</span> <span class="op">+</span> <span class="str">"Counter:"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="kw">&gt;&gt;</span> <span class="var">fns</span> <span class="op">=</span> <span class="fn">make_counter</span>(<span class="num">0</span>)
+<span class="kw">&gt;&gt;</span> <span class="var">inc</span> <span class="op">=</span> <span class="var">fns</span><span class="op">~</span><span class="num">0</span><span class="op">~</span>
+<span class="kw">&gt;&gt;</span> <span class="var">rst</span> <span class="op">=</span> <span class="var">fns</span><span class="op">~</span><span class="num">1</span><span class="op">~</span>
+<span class="kw">&gt;&gt;</span> <span class="var">get</span> <span class="op">=</span> <span class="var">fns</span><span class="op">~</span><span class="num">2</span><span class="op">~</span>
+<span class="fn">write</span>(<span class="str">"  start: &amp;{get()}"</span>)
+<span class="fn">write</span>(<span class="str">"  after 3 increments: &amp;{inc()} &amp;{inc()} &amp;{inc()}"</span>)
+<span class="fn">write</span>(<span class="str">"  reset"</span>)
+<span class="fn">rst</span>()
+<span class="fn">write</span>(<span class="str">"  after reset: &amp;{get()}"</span>)
 
-<span class="cmt"># Adder factory + pipeline</span>
-<span class="kw">bladeFN</span> <span class="fn">make_adder</span>(<span class="var">n</span>) <span class="op">+/</span>
-    <span class="kw">return</span> <span class="kw">bladeFN</span>(<span class="var">x</span>) <span class="op">+/</span> <span class="kw">return</span> <span class="var">x</span> <span class="op">+</span> <span class="var">n</span> <span class="kw">ECB</span>
+<span class="fn">write</span>(<span class="str">""</span>)
+
+<span class="cmt"># 2. Adder factory — each closure captures a different value</span>
+<span class="kw">bladeFN</span> <span class="fn">make_adder</span>(<span class="var">n</span><span class="op">#</span><span class="kw">int</span>) <span class="op">+/</span>
+    <span class="kw">bladeFN</span> <span class="fn">add</span>(<span class="var">x</span><span class="op">#</span><span class="kw">int</span>) <span class="op">+/</span>
+        <span class="kw">return</span> <span class="var">x</span> <span class="op">+</span> <span class="var">n</span>
+    <span class="kw">ECB</span>
+    <span class="kw">return</span> <span class="var">add</span>
 <span class="kw">ECB</span>
 
-<span class="kw">bladeFN</span> <span class="fn">double</span>(<span class="var">x</span>) <span class="op">+/</span> <span class="kw">return</span> <span class="var">x</span> <span class="op">*</span> <span class="num">2</span> <span class="kw">ECB</span>
+<span class="fn">write</span>(<span class="col">-*cyan*-</span> <span class="op">+</span> <span class="str">"Adder factory:"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="kw">&gt;&gt;</span> <span class="var">add5</span>   <span class="op">=</span> <span class="fn">make_adder</span>(<span class="num">5</span>)
+<span class="kw">&gt;&gt;</span> <span class="var">add10</span>  <span class="op">=</span> <span class="fn">make_adder</span>(<span class="num">10</span>)
+<span class="kw">&gt;&gt;</span> <span class="var">add100</span> <span class="op">=</span> <span class="fn">make_adder</span>(<span class="num">100</span>)
+<span class="fn">write</span>(<span class="str">"  add5(3)   = &amp;{add5(3)}"</span>)
+<span class="fn">write</span>(<span class="str">"  add10(3)  = &amp;{add10(3)}"</span>)
+<span class="fn">write</span>(<span class="str">"  add100(3) = &amp;{add100(3)}"</span>)
 
-<span class="kw">&gt;&gt;</span> <span class="var">add10</span> <span class="op">=</span> <span class="fn">make_adder</span>(<span class="num">10</span>)
-<span class="kw">&gt;&gt;</span> <span class="var">result</span> <span class="op">=</span> <span class="num">5</span> <span class="op">|&gt;</span> <span class="fn">double</span>() <span class="op">|&gt;</span> <span class="fn">add10</span>()
-<span class="fn">write</span>(<span class="var">result</span>)  <span class="cmt"># 20</span>
+<span class="fn">write</span>(<span class="str">""</span>)
 
-<span class="cmt"># map_list helper</span>
-<span class="kw">bladeFN</span> <span class="fn">map_list</span>(<span class="var">lst</span>, <span class="var">fn</span>) <span class="op">+/</span>
+<span class="cmt"># 3. Pipeline: chain functions with |&gt;</span>
+<span class="kw">bladeFN</span> <span class="fn">double</span>(<span class="var">x</span><span class="op">#</span><span class="kw">int</span>) <span class="op">+/</span>
+    <span class="kw">return</span> <span class="var">x</span> <span class="op">*</span> <span class="num">2</span>
+<span class="kw">ECB</span>
+
+<span class="kw">bladeFN</span> <span class="fn">inc</span>(<span class="var">x</span><span class="op">#</span><span class="kw">int</span>) <span class="op">+/</span>
+    <span class="kw">return</span> <span class="var">x</span> <span class="op">+</span> <span class="num">1</span>
+<span class="kw">ECB</span>
+
+<span class="kw">bladeFN</span> <span class="fn">square</span>(<span class="var">x</span><span class="op">#</span><span class="kw">int</span>) <span class="op">+/</span>
+    <span class="kw">return</span> <span class="var">x</span> <span class="op">*</span> <span class="var">x</span>
+<span class="kw">ECB</span>
+
+<span class="fn">write</span>(<span class="col">-*cyan*-</span> <span class="op">+</span> <span class="str">"Pipeline  3 |&gt; double |&gt; inc |&gt; square:"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="kw">&gt;&gt;</span> <span class="var">result</span> <span class="op">=</span> <span class="num">3</span> <span class="op">|&gt;</span> <span class="fn">double</span>() <span class="op">|&gt;</span> <span class="fn">inc</span>() <span class="op">|&gt;</span> <span class="fn">square</span>()
+<span class="fn">write</span>(<span class="str">"  result = &amp;{result}"</span>)
+
+<span class="fn">write</span>(<span class="str">""</span>)
+
+<span class="cmt"># 4. Higher-order map</span>
+<span class="kw">bladeFN</span> <span class="fn">map_list</span>(<span class="var">lst</span><span class="op">#</span><span class="kw">list</span>, <span class="var">fn</span><span class="op">#</span><span class="kw">fn</span>) <span class="op">+/</span>
     <span class="kw">&gt;&gt;</span> <span class="var">out</span> <span class="op">=</span> []
-    <span class="kw">for</span> <span class="var">x</span> <span class="kw">in</span> <span class="var">lst</span> <span class="op">+/</span>
-        <span class="var">out</span>.<span class="fn">append</span>(<span class="fn">fn</span>(<span class="var">x</span>))
+    <span class="kw">for</span> <span class="var">item</span> <span class="kw">in</span> <span class="var">lst</span> <span class="op">+/</span>
+        <span class="var">out</span>.<span class="fn">append</span>(<span class="fn">fn</span>(<span class="var">item</span>))
     <span class="kw">ECB</span>
     <span class="kw">return</span> <span class="var">out</span>
 <span class="kw">ECB</span>
 
 <span class="kw">&gt;&gt;</span> <span class="var">nums</span> <span class="op">=</span> [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>]
-<span class="fn">write</span>(<span class="fn">map_list</span>(<span class="var">nums</span>, <span class="var">double</span>))  <span class="cmt"># [2, 4, 6, 8, 10]</span></div>
+<span class="fn">write</span>(<span class="col">-*cyan*-</span> <span class="op">+</span> <span class="str">"map double over &amp;{nums}:"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="kw">&gt;&gt;</span> <span class="var">doubled</span> <span class="op">=</span> <span class="fn">map_list</span>(<span class="var">nums</span>, <span class="var">double</span>)
+<span class="kw">for</span> <span class="var">n</span> <span class="kw">in</span> <span class="var">doubled</span> <span class="op">+/</span>
+    <span class="fn">write</span>(<span class="str">"  &amp;{n}"</span>)
+<span class="kw">ECB</span></div>
         <div class="ex-meta">
           <div class="ex-meta-item"><strong>Concepts:</strong> closures, factory functions, pipeline operator, list methods</div>
         </div>
@@ -288,33 +370,108 @@
             <p>OOP with bladeGRP — Animal health system, Point class, try/catch.</p>
           </div>
         </div>
-        <div class="code-block"><span class="kw">bladeGRP</span> <span class="fn">Animal</span> <span class="op">+/</span>
-    <span class="kw">bladeFN</span> <span class="fn">init</span>(<span class="var">name</span><span class="op">#</span><span class="kw">str</span>, <span class="var">hp</span><span class="op">#</span><span class="kw">int</span>) <span class="op">+/</span>
-        <span class="kw">blade</span>.<span class="var">name</span> <span class="op">=</span> <span class="var">name</span>
-        <span class="kw">blade</span>.<span class="var">hp</span>   <span class="op">=</span> <span class="var">hp</span>
-        <span class="kw">blade</span>.<span class="var">alive</span> <span class="op">=</span> <span class="kw">true</span>
+        <div class="code-block"><span class="cmt"># classes.axb — bladeGRP (classes) and instances</span>
+<span class="cmt"># Demonstrates: bladeGRP definition, init, methods, fields, try/catch, error handling</span>
+
+<span class="kw">bladeGRP</span> <span class="fn">Animal</span> <span class="op">+/</span>
+    <span class="kw">bladeFN</span> <span class="fn">init</span>(<span class="var">blade</span>, <span class="var">name</span><span class="op">#</span><span class="kw">str</span>, <span class="var">sound</span><span class="op">#</span><span class="kw">str</span>, <span class="var">hp</span><span class="op">#</span><span class="kw">int</span>) <span class="op">+/</span>
+        <span class="var">blade</span>.<span class="var">name</span>  <span class="op">=</span> <span class="var">name</span>
+        <span class="var">blade</span>.<span class="var">sound</span> <span class="op">=</span> <span class="var">sound</span>
+        <span class="var">blade</span>.<span class="var">hp</span>    <span class="op">=</span> <span class="var">hp</span>
+        <span class="var">blade</span>.<span class="var">alive</span> <span class="op">=</span> <span class="kw">true</span>
     <span class="kw">ECB</span>
-    <span class="kw">bladeFN</span> <span class="fn">damage</span>(<span class="var">amount</span><span class="op">#</span><span class="kw">int</span>) <span class="op">+/</span>
-        <span class="kw">blade</span>.<span class="var">hp</span> <span class="op">=</span> <span class="kw">blade</span>.<span class="var">hp</span> <span class="op">-</span> <span class="var">amount</span>
-        <span class="kw">if</span> <span class="kw">blade</span>.<span class="var">hp</span> <span class="op">&lt;=</span> <span class="num">0</span> <span class="op">+/</span>
-            <span class="kw">blade</span>.<span class="var">alive</span> <span class="op">=</span> <span class="kw">false</span>
-            <span class="fn">write</span>(<span class="col">-*red*-</span> <span class="op">+</span> <span class="str">"&amp;{blade.name} is defeated!"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
-        <span class="kw">ECB</span> <span class="kw">else</span> <span class="op">+/</span>
-            <span class="fn">write</span>(<span class="str">"&amp;{blade.name}: &amp;{blade.hp} hp"</span>)
+
+    <span class="kw">bladeFN</span> <span class="fn">speak</span>(<span class="var">blade</span>) <span class="op">+/</span>
+        <span class="kw">if</span> <span class="var">blade</span>.<span class="var">alive</span> <span class="op">+/</span>
+            <span class="fn">write</span>(<span class="str">"&amp;{blade.name} says: &amp;{blade.sound}!"</span>)
         <span class="kw">ECB</span>
+        <span class="kw">else</span> <span class="op">+/</span>
+            <span class="fn">write</span>(<span class="str">"&amp;{blade.name} is silent."</span>)
+        <span class="kw">ECB</span>
+    <span class="kw">ECB</span>
+
+    <span class="kw">bladeFN</span> <span class="fn">take_damage</span>(<span class="var">blade</span>, <span class="var">amount</span><span class="op">#</span><span class="kw">int</span>) <span class="op">+/</span>
+        <span class="var">blade</span>.<span class="var">hp</span> <span class="op">=</span> <span class="var">blade</span>.<span class="var">hp</span> <span class="op">-</span> <span class="var">amount</span>
+        <span class="kw">if</span> <span class="var">blade</span>.<span class="var">hp</span> <span class="op">&lt;=</span> <span class="num">0</span> <span class="op">+/</span>
+            <span class="var">blade</span>.<span class="var">hp</span>    <span class="op">=</span> <span class="num">0</span>
+            <span class="var">blade</span>.<span class="var">alive</span> <span class="op">=</span> <span class="kw">false</span>
+            <span class="fn">write</span>(<span class="col">-*red*-</span> <span class="op">+</span> <span class="str">"&amp;{blade.name} has been defeated!"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+        <span class="kw">ECB</span>
+        <span class="kw">else</span> <span class="op">+/</span>
+            <span class="fn">write</span>(<span class="str">"&amp;{blade.name} takes &amp;{amount} damage. HP: &amp;{blade.hp}"</span>)
+        <span class="kw">ECB</span>
+    <span class="kw">ECB</span>
+
+    <span class="kw">bladeFN</span> <span class="fn">describe</span>(<span class="var">blade</span>) <span class="op">+/</span>
+        <span class="kw">&gt;&gt;</span> <span class="var">status</span> <span class="op">=</span> <span class="str">"alive"</span>
+        <span class="kw">if</span> <span class="op">-n</span> <span class="var">blade</span>.<span class="var">alive</span> <span class="op">+/</span>
+            <span class="var">status</span> <span class="op">=</span> <span class="str">"defeated"</span>
+        <span class="kw">ECB</span>
+        <span class="kw">return</span> <span class="str">"&amp;{blade.name} [HP: &amp;{blade.hp}] (&amp;{status})"</span>
     <span class="kw">ECB</span>
 <span class="kw">ECB</span>
 
-<span class="kw">&gt;&gt;</span> <span class="var">wolf</span> <span class="op">=</span> <span class="fn">Animal</span>(<span class="str">"Wolf"</span>, <span class="num">50</span>)
-<span class="var">wolf</span>.<span class="fn">damage</span>(<span class="num">20</span>)
-<span class="var">wolf</span>.<span class="fn">damage</span>(<span class="num">40</span>)
+<span class="kw">bladeGRP</span> <span class="fn">Point</span> <span class="op">+/</span>
+    <span class="kw">bladeFN</span> <span class="fn">init</span>(<span class="var">blade</span>, <span class="var">x</span><span class="op">#</span><span class="kw">int</span>, <span class="var">y</span><span class="op">#</span><span class="kw">int</span>) <span class="op">+/</span>
+        <span class="var">blade</span>.<span class="var">x</span> <span class="op">=</span> <span class="var">x</span>
+        <span class="var">blade</span>.<span class="var">y</span> <span class="op">=</span> <span class="var">y</span>
+    <span class="kw">ECB</span>
 
-<span class="cmt"># try/catch</span>
+    <span class="kw">bladeFN</span> <span class="fn">distance</span>(<span class="var">blade</span>, <span class="var">other</span>) <span class="op">+/</span>
+        <span class="kw">&gt;&gt;</span> <span class="var">dx</span> <span class="op">=</span> <span class="var">blade</span>.<span class="var">x</span> <span class="op">-</span> <span class="var">other</span>.<span class="var">x</span>
+        <span class="kw">&gt;&gt;</span> <span class="var">dy</span> <span class="op">=</span> <span class="var">blade</span>.<span class="var">y</span> <span class="op">-</span> <span class="var">other</span>.<span class="var">y</span>
+        <span class="kw">return</span> <span class="var">dx</span> <span class="op">*</span> <span class="var">dx</span> <span class="op">+</span> <span class="var">dy</span> <span class="op">*</span> <span class="var">dy</span>
+    <span class="kw">ECB</span>
+
+    <span class="kw">bladeFN</span> <span class="fn">to_str</span>(<span class="var">blade</span>) <span class="op">+/</span>
+        <span class="kw">return</span> <span class="str">"(&amp;{blade.x}, &amp;{blade.y})"</span>
+    <span class="kw">ECB</span>
+<span class="kw">ECB</span>
+
+<span class="cmt"># -- Animals --</span>
+<span class="fn">write</span>(<span class="col">-*cyan*-</span> <span class="op">+</span> <span class="str">"=== Animals ==="</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="kw">&gt;&gt;</span> <span class="var">dog</span> <span class="op">=</span> <span class="fn">Animal</span>(<span class="str">"Rex"</span>, <span class="str">"woof"</span>, <span class="num">30</span>)
+<span class="kw">&gt;&gt;</span> <span class="var">cat</span> <span class="op">=</span> <span class="fn">Animal</span>(<span class="str">"Luna"</span>, <span class="str">"meow"</span>, <span class="num">20</span>)
+
+<span class="var">dog</span>.<span class="fn">speak</span>()
+<span class="var">cat</span>.<span class="fn">speak</span>()
+<span class="fn">write</span>(<span class="var">dog</span>.<span class="fn">describe</span>())
+<span class="fn">write</span>(<span class="var">cat</span>.<span class="fn">describe</span>())
+
 <span class="fn">write</span>(<span class="str">""</span>)
+<span class="var">dog</span>.<span class="fn">take_damage</span>(<span class="num">10</span>)
+<span class="var">dog</span>.<span class="fn">take_damage</span>(<span class="num">15</span>)
+<span class="var">dog</span>.<span class="fn">take_damage</span>(<span class="num">10</span>)
+<span class="var">dog</span>.<span class="fn">speak</span>()
+<span class="fn">write</span>(<span class="var">dog</span>.<span class="fn">describe</span>())
+
+<span class="fn">write</span>(<span class="str">""</span>)
+
+<span class="cmt"># -- Points --</span>
+<span class="fn">write</span>(<span class="col">-*cyan*-</span> <span class="op">+</span> <span class="str">"=== Points ==="</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="kw">&gt;&gt;</span> <span class="var">p1</span> <span class="op">=</span> <span class="fn">Point</span>(<span class="num">0</span>, <span class="num">0</span>)
+<span class="kw">&gt;&gt;</span> <span class="var">p2</span> <span class="op">=</span> <span class="fn">Point</span>(<span class="num">3</span>, <span class="num">4</span>)
+<span class="fn">write</span>(<span class="str">"p1 = &amp;{p1.to_str()}"</span>)
+<span class="fn">write</span>(<span class="str">"p2 = &amp;{p2.to_str()}"</span>)
+<span class="fn">write</span>(<span class="str">"squared distance = &amp;{p1.distance(p2)}"</span>)
+
+<span class="fn">write</span>(<span class="str">""</span>)
+
+<span class="cmt"># -- Error handling --</span>
+<span class="fn">write</span>(<span class="col">-*cyan*-</span> <span class="op">+</span> <span class="str">"=== Error Handling ==="</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="kw">bladeFN</span> <span class="fn">safe_divide</span>(<span class="var">a</span><span class="op">#</span><span class="kw">int</span>, <span class="var">b</span><span class="op">#</span><span class="kw">int</span>) <span class="op">+/</span>
+    <span class="kw">if</span> <span class="var">b</span> <span class="op">==</span> <span class="num">0</span> <span class="op">+/</span>
+        <span class="kw">raise</span> <span class="str">"Division by zero"</span>
+    <span class="kw">ECB</span>
+    <span class="kw">return</span> <span class="var">a</span> <span class="op">/</span> <span class="var">b</span>
+<span class="kw">ECB</span>
+
 <span class="kw">try</span> <span class="op">+/</span>
-    <span class="kw">&gt;&gt;</span> <span class="var">bad</span> <span class="op">=</span> <span class="num">10</span> <span class="op">/</span> <span class="num">0</span>
-<span class="kw">ECB</span> <span class="kw">catch</span> <span class="var">e</span> <span class="op">+/</span>
-    <span class="fn">write</span>(<span class="col">-*yellow*-</span> <span class="op">+</span> <span class="str">"Caught: &amp;{e~&quot;message&quot;~}"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+    <span class="fn">write</span>(<span class="str">"10 / 2 = &amp;{safe_divide(10, 2)}"</span>)
+    <span class="fn">write</span>(<span class="str">"5 / 0 = &amp;{safe_divide(5, 0)}"</span>)
+<span class="kw">ECB</span>
+<span class="kw">catch</span> <span class="var">e</span> <span class="op">+/</span>
+    <span class="fn">write</span>(<span class="col">-*red*-</span> <span class="op">+</span> <span class="str">"Caught: &amp;{e}"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
 <span class="kw">ECB</span></div>
         <div class="ex-meta">
           <div class="ex-meta-item"><strong>Concepts:</strong> bladeGRP classes, blade keyword, type annotations, if/else, try/catch</div>
