@@ -27,7 +27,7 @@
       --code-bg:   #0a0a1a;
       --radius:    8px;
     }
-    html { scroll-behavior: smooth; overflow-y: scroll; scrollbar-gutter: stable; }
+    html { scroll-behavior: smooth; overflow-y: scroll; scrollbar-gutter: stable; scroll-padding-top: 58px; }
     body {
       background: var(--bg);
       color: var(--text);
@@ -36,6 +36,9 @@
     }
     a { color: var(--cyan); text-decoration: none; }
     a:hover { text-decoration: underline; }
+    :focus-visible {
+      outline: 2px solid var(--cyan); outline-offset: 3px; border-radius: 3px;
+    }
 
     /* ── Navbar ───────────────────────────────────────────────── */
     nav {
@@ -186,10 +189,10 @@
     /* ── Cursor glow that follows mouse ──────────────────────────── */
     #cursor-glow {
       position: fixed; width: 400px; height: 400px;
-      border-radius: 50%; pointer-events: none; z-index: 0;
+      border-radius: 50%; pointer-events: none; z-index: 9999;
       background: radial-gradient(circle, rgba(0,212,255,.07) 0%, transparent 70%);
       transform: translate(-50%, -50%);
-      transition: left .12s ease, top .12s ease;
+      transition: left .04s linear, top .04s linear;
     }
 
     /* ── Nav entrance ────────────────────────────────────────────── */
@@ -367,6 +370,13 @@
       display: inline-flex; align-items: center; gap: .3rem;
     }
 
+    /* ── Back to top ─────────────────────────────────────────── */
+    .back-to-top {
+      display: block; text-align: center; color: var(--muted); font-size: .85rem;
+      padding: 1.2rem; transition: color .2s;
+    }
+    .back-to-top:hover { color: var(--cyan); text-decoration: none; }
+
     /* ── Footer ──────────────────────────────────────────────── */
     footer {
       background: var(--bg2);
@@ -383,6 +393,8 @@
     .footer-links { display: flex; gap: 1.5rem; }
     .footer-links a { color: var(--muted); font-size: .85rem; transition: color .2s; }
     .footer-links a:hover { color: var(--cyan); text-decoration: none; }
+
+    @media(max-width:480px){ .copy-btn { display: none; } }
 
     /* ── Responsive nav ──────────────────────────────────────── */
     .nav-hamburger {
@@ -408,7 +420,7 @@
 <nav>
   <div class="nav-inner">
     <a href="index.html" class="nav-logo">Axon<span>Blade</span></a>
-    <button class="nav-hamburger" onclick="this.nextElementSibling.classList.toggle('open')" aria-label="Menu">☰</button>
+    <button class="nav-hamburger" onclick="this.nextElementSibling.classList.toggle('open');this.setAttribute('aria-expanded',this.nextElementSibling.classList.contains('open'))" aria-label="Menu" aria-expanded="false">☰</button>
     <ul class="nav-links">
       <li><a href="index.html" class="active">Home</a></li>
       <li><a href="docs/index.html">Docs</a></li>
@@ -432,7 +444,7 @@
     <div class="hero-buttons">
       <a class="btn-primary" href="#get-started">Get Started</a>
     </div>
-    <div class="color-strip">
+    <div class="color-strip" aria-hidden="true">
       <div class="cs-tile"></div><div class="cs-tile"></div>
       <div class="cs-tile"></div><div class="cs-tile"></div>
       <div class="cs-tile"></div><div class="cs-tile"></div>
@@ -804,6 +816,9 @@
   </div>
 </section>
 
+<!-- ═══════════════════════  BACK TO TOP  ════════════════════════ -->
+<a href="#" class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">↑ Back to top</a>
+
 <!-- ═══════════════════════  FOOTER  ════════════════════════════ -->
 <footer>
   <div class="footer-inner">
@@ -812,9 +827,10 @@
       &copy; 2026 AI-Alon
     </div>
     <div class="footer-links">
+      <a href="index.html">Home</a>
       <a href="docs/index.html">Docs</a>
       <a href="examples.html">Examples</a>
-      <a href="https://github.com/AI-Alon/axonblade" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a href="https://github.com/AI-Alon/axonblade" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
     </div>
   </div>
 </footer>
@@ -887,13 +903,18 @@
     glow.style.top  = e.clientY + 'px';
   });
 
-  // ── Feature card spotlight (mouse-relative radial) ────────────
+  // ── Feature card spotlight (mouse + touch) ───────────────────
   document.querySelectorAll('.feat-card').forEach(card => {
-    card.addEventListener('mousemove', e => {
+    function applySpotlight(clientX, clientY) {
       const r = card.getBoundingClientRect();
-      card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
-      card.style.setProperty('--my', (e.clientY - r.top)  + 'px');
-    });
+      card.style.setProperty('--mx', (clientX - r.left) + 'px');
+      card.style.setProperty('--my', (clientY - r.top)  + 'px');
+    }
+    card.addEventListener('mousemove', e => applySpotlight(e.clientX, e.clientY));
+    card.addEventListener('touchmove', e => {
+      const t = e.touches[0];
+      applySpotlight(t.clientX, t.clientY);
+    }, {passive: true});
   });
 
   // ── Staggered scroll reveal ───────────────────────────────────

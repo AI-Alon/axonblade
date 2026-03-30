@@ -12,10 +12,13 @@
       --cyan:#00d4ff; --green:#39ff14; --purple:#a855f7;
       --text:#e2e8f0; --muted:#94a3b8; --code-bg:#0a0a1a; --radius:8px;
     }
-    html { scroll-behavior: smooth; overflow-y: scroll; scrollbar-gutter: stable; }
+    html { scroll-behavior: smooth; scroll-padding-top: 58px; overflow-y: scroll; scrollbar-gutter: stable; }
     body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; line-height: 1.6; }
     a { color: var(--cyan); text-decoration: none; }
     a:hover { text-decoration: underline; }
+    :focus-visible {
+      outline: 2px solid var(--cyan); outline-offset: 3px; border-radius: 3px;
+    }
     nav {
       position: sticky; top: 0; z-index: 100;
       background: rgba(13,13,26,.92); backdrop-filter: blur(12px);
@@ -35,6 +38,12 @@
     .page-header { padding: 4rem 2rem 2rem; max-width: 1100px; margin: 0 auto; }
     .page-header h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: .5rem; }
     .page-header p { color: var(--muted); font-size: 1.05rem; }
+    @keyframes header-up {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: none; }
+    }
+    .page-header h1 { opacity: 0; animation: header-up .5s .05s cubic-bezier(.22,1,.36,1) forwards; }
+    .page-header p  { opacity: 0; animation: header-up .5s .18s cubic-bezier(.22,1,.36,1) forwards; }
 
     .examples-layout { max-width: 1100px; margin: 0 auto; padding: 2rem; display: grid; grid-template-columns: 220px 1fr; gap: 2rem; }
     @media(max-width:768px){ .examples-layout { grid-template-columns: 1fr; } .ex-sidebar { display: none; } }
@@ -79,14 +88,14 @@
     .copy-btn { transition: color .2s, background .2s, transform .15s; }
     .copy-btn.copied { transform: scale(1.15); }
 
-    .ex-sidebar { display: flex; flex-direction: column; gap: .3rem; }
+    .ex-sidebar { display: flex; flex-direction: column; gap: .2rem; }
     .ex-nav-btn {
-      background: none; border: 1px solid transparent; color: var(--muted);
-      padding: .5rem .9rem; border-radius: var(--radius); text-align: left;
-      font-size: .88rem; cursor: pointer; transition: all .2s; width: 100%;
+      background: none; border: none; color: var(--muted);
+      padding: .25rem .5rem; border-radius: 5px; text-align: left;
+      font-size: .88rem; cursor: pointer; transition: color .2s, background .2s; width: 100%;
     }
     .ex-nav-btn:hover, .ex-nav-btn.active {
-      border-color: var(--cyan); color: var(--cyan); background: rgba(0,212,255,.08);
+      color: var(--cyan); background: rgba(0,212,255,.08);
     }
     .ex-nav-btn .badge {
       font-size: .72rem; padding: .1rem .45rem; border-radius: 4px; margin-left: .4rem;
@@ -135,10 +144,11 @@
 
     .ex-meta {
       padding: 1rem 1.5rem; border-top: 1px solid var(--border);
-      display: flex; gap: 1.5rem; flex-wrap: wrap;
+      display: flex; gap: .75rem 1.5rem; flex-wrap: wrap;
     }
-    .ex-meta-item { font-size: .82rem; color: var(--muted); }
+    .ex-meta-item { font-size: .82rem; color: var(--muted); flex-shrink: 0; }
     .ex-meta-item strong { color: var(--text); }
+    @media(max-width:480px) { .ex-meta { flex-direction: column; gap: .5rem; } }
 
     footer { border-top: 1px solid var(--border); padding: 2rem; color: var(--muted); font-size: .85rem; margin-top: 3rem; }
     .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
@@ -147,17 +157,58 @@
     .footer-links { display: flex; gap: 1.5rem; }
     .footer-links a { color: var(--muted); font-size: .85rem; transition: color .2s; }
     .footer-links a:hover { color: var(--cyan); text-decoration: none; }
+
+    @media(max-width:480px){ .copy-btn { display: none; } }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+
+    /* ── Hamburger nav ───────────────────────────────────────── */
+    .nav-hamburger {
+      display: none; background: none; border: none; cursor: pointer;
+      color: var(--muted); font-size: 1.4rem; margin-left: auto; padding: .2rem .4rem;
+    }
+    @media(max-width:600px){
+      .nav-hamburger { display: block; }
+      .nav-links { display: none; flex-direction: column; position: absolute; top: 58px; left: 0; right: 0;
+        background: rgba(13,13,26,.97); border-bottom: 1px solid var(--border);
+        padding: 1rem 2rem; gap: 1rem; z-index: 99;
+      }
+      .nav-links.open { display: flex; }
+      .nav-cta { margin-left: 0; }
+    }
+
+    /* ── Cursor glow ─────────────────────────────────────────── */
+    #cursor-glow {
+      position: fixed; width: 400px; height: 400px;
+      border-radius: 50%; pointer-events: none; z-index: 9999;
+      background: radial-gradient(circle, rgba(0,212,255,.07) 0%, transparent 70%);
+      transform: translate(-50%, -50%);
+      transition: left .04s linear, top .04s linear;
+    }
+
+    /* ── Back to top ─────────────────────────────────────────── */
+    .back-to-top {
+      display: block; text-align: center; color: var(--muted); font-size: .85rem;
+      padding: 1.2rem; transition: color .2s;
+    }
+    .back-to-top:hover { color: var(--cyan); text-decoration: none; }
   </style>
 </head>
 <body>
+
+<div id="cursor-glow"></div>
+
 <nav>
   <div class="nav-inner">
     <a href="index.html" class="nav-logo">Axon<span>Blade</span></a>
+    <button class="nav-hamburger" onclick="this.nextElementSibling.classList.toggle('open');this.setAttribute('aria-expanded',this.nextElementSibling.classList.contains('open'))" aria-label="Menu" aria-expanded="false">☰</button>
     <ul class="nav-links">
       <li><a href="index.html">Home</a></li>
       <li><a href="docs/index.html">Docs</a></li>
       <li><a href="examples.html" class="active">Examples</a></li>
-      <li><a href="https://github.com/AI-Alon/axonblade" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+      <li><a href="https://github.com/AI-Alon/axonblade" target="_blank" rel="noopener noreferrer">GitHub ↗</a></li>
     </ul>
   </div>
 </nav>
@@ -182,12 +233,12 @@
 <div class="examples-layout">
   <!-- Sidebar nav -->
   <aside class="ex-sidebar">
-    <button class="ex-nav-btn active" onclick="showEx('hello', this)">Hello World</button>
-    <button class="ex-nav-btn" onclick="showEx('fibonacci', this)">Fibonacci <span class="badge">math</span></button>
-    <button class="ex-nav-btn" onclick="showEx('closures', this)">Closures <span class="badge">advanced</span></button>
-    <button class="ex-nav-btn" onclick="showEx('classes', this)">Classes <span class="badge">OOP</span></button>
-    <button class="ex-nav-btn" onclick="showEx('snake', this)">Snake <span class="badge game">game</span></button>
-    <button class="ex-nav-btn" onclick="showEx('life', this)">Game of Life <span class="badge game">game</span></button>
+    <button type="button" class="ex-nav-btn active" onclick="showEx('hello', this)">Hello World</button>
+    <button type="button" class="ex-nav-btn" onclick="showEx('fibonacci', this)">Fibonacci <span class="badge">math</span></button>
+    <button type="button" class="ex-nav-btn" onclick="showEx('closures', this)">Closures <span class="badge">advanced</span></button>
+    <button type="button" class="ex-nav-btn" onclick="showEx('classes', this)">Classes <span class="badge">OOP</span></button>
+    <button type="button" class="ex-nav-btn" onclick="showEx('snake', this)">Snake <span class="badge game">game</span></button>
+    <button type="button" class="ex-nav-btn" onclick="showEx('life', this)">Game of Life <span class="badge game">game</span></button>
   </aside>
 
   <!-- Example panes -->
@@ -904,6 +955,8 @@
   </main>
 </div>
 
+<a href="#" class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">↑ Back to top</a>
+
 <footer>
   <div class="footer-inner">
     <div class="footer-left">
@@ -913,12 +966,20 @@
     <div class="footer-links">
       <a href="index.html">Home</a>
       <a href="docs/index.html">Docs</a>
-      <a href="https://github.com/AI-Alon/axonblade" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a href="examples.html">Examples</a>
+      <a href="https://github.com/AI-Alon/axonblade" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
     </div>
   </div>
 </footer>
 
 <script>
+  // ── Cursor glow ─────────────────────────────────────────────
+  const glow = document.getElementById('cursor-glow');
+  document.addEventListener('mousemove', e => {
+    glow.style.left = e.clientX + 'px';
+    glow.style.top  = e.clientY + 'px';
+  });
+
   function showEx(name, btn) {
     document.querySelectorAll('.ex-pane').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.ex-nav-btn').forEach(b => b.classList.remove('active'));
@@ -942,7 +1003,9 @@
     btn.className = 'copy-btn';
     btn.textContent = 'Copy';
     btn.addEventListener('click', () => {
-      const text = Array.from(block.childNodes).filter(n => n !== btn).map(n => n.textContent).join('').trim();
+      const clone = block.cloneNode(true);
+      clone.querySelectorAll('.copy-btn').forEach(b => b.remove());
+      const text = clone.innerText.trim();
       navigator.clipboard.writeText(text).then(() => {
         btn.textContent = 'Copied!';
         btn.classList.add('copied');

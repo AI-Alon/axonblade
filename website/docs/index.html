@@ -17,6 +17,9 @@
     body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; line-height: 1.6; }
     a { color: var(--cyan); text-decoration: none; }
     a:hover { text-decoration: underline; }
+    :focus-visible {
+      outline: 2px solid var(--cyan); outline-offset: 3px; border-radius: 3px;
+    }
     nav {
       position: sticky; top: 0; z-index: 100;
       background: rgba(13,13,26,.92); backdrop-filter: blur(12px);
@@ -118,7 +121,7 @@
 
     /* copy btn: scale on copied */
     .copy-btn { transition: color .2s, background .2s, transform .15s; }
-    .copy-btn.copied { transform: scale(1.2); }
+    .copy-btn.copied { transform: scale(1.15); }
 
     /* sidebar: active left bar */
     .sidebar-section a { position: relative; }
@@ -147,21 +150,90 @@
     }
     .back-to-top:hover { color: var(--cyan); text-decoration: none; }
 
-    @media(max-width:768px) { .docs-layout { grid-template-columns: 1fr; } .docs-sidebar { display: none; } .docs-content { padding: 2rem 1.5rem; } }
+    @media(max-width:480px){ .copy-btn { display: none; } }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+
+    /* mobile section select */
+    .docs-mobile-select {
+      display: none; width: 100%; padding: .6rem 1rem;
+      background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius);
+      color: var(--text); font-size: .95rem; cursor: pointer;
+      margin: 1rem 2rem; width: calc(100% - 4rem);
+    }
+    @media(max-width:768px) {
+      .docs-layout { grid-template-columns: 1fr; }
+      .docs-sidebar { display: none; }
+      .docs-content { padding: 2rem; }
+      .docs-mobile-select { display: block; }
+    }
+
+    /* ── Hamburger nav ───────────────────────────────────────── */
+    .nav-hamburger {
+      display: none; background: none; border: none; cursor: pointer;
+      color: var(--muted); font-size: 1.4rem; margin-left: auto; padding: .2rem .4rem;
+    }
+    @media(max-width:600px){
+      .nav-hamburger { display: block; }
+      .nav-links { display: none; flex-direction: column; position: absolute; top: 58px; left: 0; right: 0;
+        background: rgba(13,13,26,.97); border-bottom: 1px solid var(--border);
+        padding: 1rem 2rem; gap: 1rem; z-index: 99;
+      }
+      .nav-links.open { display: flex; }
+      .nav-cta { margin-left: 0; }
+    }
+
+    /* ── Cursor glow ─────────────────────────────────────────── */
+    #cursor-glow {
+      position: fixed; width: 400px; height: 400px;
+      border-radius: 50%; pointer-events: none; z-index: 9999;
+      background: radial-gradient(circle, rgba(0,212,255,.07) 0%, transparent 70%);
+      transform: translate(-50%, -50%);
+      transition: left .04s linear, top .04s linear;
+    }
   </style>
 </head>
 <body>
+
+<div id="cursor-glow"></div>
+
 <nav>
   <div class="nav-inner">
     <a href="../index.html" class="nav-logo">Axon<span>Blade</span></a>
+    <button class="nav-hamburger" onclick="this.nextElementSibling.classList.toggle('open');this.setAttribute('aria-expanded',this.nextElementSibling.classList.contains('open'))" aria-label="Menu" aria-expanded="false">☰</button>
     <ul class="nav-links">
       <li><a href="../index.html">Home</a></li>
       <li><a href="index.html" class="active">Docs</a></li>
       <li><a href="../examples.html">Examples</a></li>
-      <li><a href="https://github.com/AI-Alon/axonblade" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+      <li><a href="https://github.com/AI-Alon/axonblade" target="_blank" rel="noopener noreferrer">GitHub ↗</a></li>
     </ul>
   </div>
 </nav>
+
+<select class="docs-mobile-select" onchange="document.querySelector(this.value).scrollIntoView({behavior:'smooth'}); this.blur();">
+  <option value="#install">Installation</option>
+  <option value="#first-program">First Program</option>
+  <option value="#running">Running Files</option>
+  <option value="#repl">REPL</option>
+  <option value="#variables">Variables</option>
+  <option value="#strings">Strings</option>
+  <option value="#operators">Operators</option>
+  <option value="#pipeline">Pipeline</option>
+  <option value="#control-flow">Control Flow</option>
+  <option value="#lists">Lists</option>
+  <option value="#dicts">Dictionaries</option>
+  <option value="#functions">Functions</option>
+  <option value="#classes">Classes</option>
+  <option value="#types">Type Annotations</option>
+  <option value="#colors">Color Literals</option>
+  <option value="#errors">Error Handling</option>
+  <option value="#modules">Modules</option>
+  <option value="#builtins">Built-in Functions</option>
+  <option value="#grid">Grid System</option>
+  <option value="#stdlib">Standard Library</option>
+</select>
 
 <div class="docs-layout">
   <!-- Sidebar -->
@@ -606,12 +678,20 @@ axb&gt; EXIT</code></pre>
     </div>
     <div class="footer-links">
       <a href="../index.html">Home</a>
+      <a href="index.html">Docs</a>
       <a href="../examples.html">Examples</a>
-      <a href="https://github.com/AI-Alon/axonblade" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a href="https://github.com/AI-Alon/axonblade" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
     </div>
   </div>
 </footer>
 <script>
+  // ── Cursor glow ─────────────────────────────────────────────
+  const glow = document.getElementById('cursor-glow');
+  document.addEventListener('mousemove', e => {
+    glow.style.left = e.clientX + 'px';
+    glow.style.top  = e.clientY + 'px';
+  });
+
   const sidebarLinks = document.querySelectorAll(".sidebar-section a[href^='#']");
   const headings = Array.from(sidebarLinks).map(a => document.querySelector(a.getAttribute("href")));
 
