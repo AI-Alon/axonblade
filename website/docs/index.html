@@ -106,34 +106,36 @@
 
     /* ── Animations ─────────────────────────────────────────────── */
 
-    /* smooth section reveal */
-    .docs-content h2 {
-      transition: color .2s;
-    }
-    .docs-content h2:target {
-      color: var(--cyan);
-    }
+    /* h2 section highlight when jumped to */
+    .docs-content h2:target { color: var(--cyan); }
 
-    /* pre blocks slide in when they enter view */
+    /* pre blocks: fade + rise in */
     pre {
-      opacity: 0; transform: translateX(-8px);
-      transition: opacity .4s ease, transform .4s ease;
+      opacity: 0; transform: translateY(12px);
+      transition: opacity .45s cubic-bezier(.22,1,.36,1), transform .45s cubic-bezier(.22,1,.36,1);
     }
     pre.visible { opacity: 1; transform: none; }
 
-    /* copy button pop */
-    @keyframes copy-pop { 0%{transform:scale(1)} 40%{transform:scale(1.25)} 100%{transform:scale(1)} }
-    .copy-btn.copied { animation: copy-pop .25s ease; }
+    /* copy btn: scale on copied */
+    .copy-btn { transition: color .2s, background .2s, transform .15s; }
+    .copy-btn.copied { transform: scale(1.2); }
 
-    /* sidebar active indicator slide */
-    .sidebar-section a {
-      position: relative;
-    }
+    /* sidebar: active left bar */
+    .sidebar-section a { position: relative; }
     .sidebar-section a.active::before {
       content: "";
       position: absolute; left: 0; top: 20%; bottom: 20%;
       width: 2px; background: var(--cyan); border-radius: 2px;
+      animation: bar-in .2s cubic-bezier(.22,1,.36,1);
     }
+    @keyframes bar-in { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+
+    /* callout entrance */
+    .callout {
+      opacity: 0; transform: translateX(-6px);
+      transition: opacity .4s .1s ease, transform .4s .1s ease;
+    }
+    .callout.visible { opacity: 1; transform: none; }
 
     /* table rows smooth */
     tr td { transition: background .15s; }
@@ -627,11 +629,11 @@ axb&gt; EXIT</code></pre>
   window.addEventListener("scroll", setActive);
   setActive();
 
-  // pre reveal on scroll
-  const preObs = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); preObs.unobserve(e.target); } });
+  // reveal pre + callout blocks on scroll
+  const revealObs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); } });
   }, { threshold: 0.08 });
-  document.querySelectorAll("pre").forEach(el => preObs.observe(el));
+  document.querySelectorAll("pre, .callout").forEach(el => revealObs.observe(el));
 
   // copy buttons
   document.querySelectorAll("pre").forEach(pre => {
