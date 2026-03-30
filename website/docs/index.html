@@ -77,13 +77,13 @@
       padding: .9rem 1.2rem; border-radius: 0 var(--radius) var(--radius) 0;
       margin: 1rem 0 1.5rem; color: var(--text); font-size: .92rem;
     }
-    .callout.warn { border-color: #ffcc00; background: rgba(255,204,0,.06); }
+    .callout.warn { border-color: #ffcc00; background: rgba(255,204,0,.12); }
 
     table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.5rem; font-size: .9rem; }
     th { background: var(--bg3); color: var(--cyan); text-align: left; padding: .6rem .9rem; border: 1px solid var(--border); }
     td { padding: .55rem .9rem; border: 1px solid var(--border); color: var(--muted); }
     td code { color: var(--text); }
-    tr:hover td { background: rgba(255,255,255,.02); }
+    tr:hover td { background: rgba(255,255,255,.06); }
 
     footer { border-top: 1px solid var(--border); padding: 2rem; color: var(--muted); font-size: .85rem; }
     .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
@@ -104,6 +104,40 @@
     .copy-btn:hover { color: var(--cyan); background: rgba(0,212,255,.1); }
     .copy-btn.copied { color: var(--green); }
 
+    /* ── Animations ─────────────────────────────────────────────── */
+
+    /* smooth section reveal */
+    .docs-content h2 {
+      transition: color .2s;
+    }
+    .docs-content h2:target {
+      color: var(--cyan);
+    }
+
+    /* pre blocks slide in when they enter view */
+    pre {
+      opacity: 0; transform: translateX(-8px);
+      transition: opacity .4s ease, transform .4s ease;
+    }
+    pre.visible { opacity: 1; transform: none; }
+
+    /* copy button pop */
+    @keyframes copy-pop { 0%{transform:scale(1)} 40%{transform:scale(1.25)} 100%{transform:scale(1)} }
+    .copy-btn.copied { animation: copy-pop .25s ease; }
+
+    /* sidebar active indicator slide */
+    .sidebar-section a {
+      position: relative;
+    }
+    .sidebar-section a.active::before {
+      content: "";
+      position: absolute; left: 0; top: 20%; bottom: 20%;
+      width: 2px; background: var(--cyan); border-radius: 2px;
+    }
+
+    /* table rows smooth */
+    tr td { transition: background .15s; }
+
     /* back to top */
     .back-to-top {
       display: block; text-align: right; color: var(--muted); font-size: .85rem;
@@ -122,7 +156,7 @@
       <li><a href="../index.html">Home</a></li>
       <li><a href="index.html" class="active">Docs</a></li>
       <li><a href="../examples.html">Examples</a></li>
-      <li><a href="https://github.com/AI-Alon/axonblade" target="_blank">GitHub</a></li>
+      <li><a href="https://github.com/AI-Alon/axonblade" target="_blank" rel="noopener noreferrer">GitHub</a></li>
     </ul>
   </div>
 </nav>
@@ -558,7 +592,7 @@ axb&gt; EXIT</code></pre>
       <tr><td><code>string.replace(s, old, new)</code></td><td>Replace occurrences</td></tr>
     </table>
 
-    <a href="javascript:void(0)" onclick="window.scrollTo({top:0,behavior:'smooth'})" class="back-to-top">↑ Back to top</a>
+    <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" class="back-to-top">↑ Back to top</a>
   </main>
 </div>
 
@@ -571,7 +605,7 @@ axb&gt; EXIT</code></pre>
     <div class="footer-links">
       <a href="../index.html">Home</a>
       <a href="../examples.html">Examples</a>
-      <a href="https://github.com/AI-Alon/axonblade" target="_blank">GitHub</a>
+      <a href="https://github.com/AI-Alon/axonblade" target="_blank" rel="noopener noreferrer">GitHub</a>
     </div>
   </div>
 </footer>
@@ -593,6 +627,12 @@ axb&gt; EXIT</code></pre>
   window.addEventListener("scroll", setActive);
   setActive();
 
+  // pre reveal on scroll
+  const preObs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); preObs.unobserve(e.target); } });
+  }, { threshold: 0.08 });
+  document.querySelectorAll("pre").forEach(el => preObs.observe(el));
+
   // copy buttons
   document.querySelectorAll("pre").forEach(pre => {
     const btn = document.createElement("button");
@@ -603,7 +643,7 @@ axb&gt; EXIT</code></pre>
         btn.textContent = "Copied!";
         btn.classList.add("copied");
         setTimeout(() => { btn.textContent = "Copy"; btn.classList.remove("copied"); }, 1500);
-      });
+      }).catch(() => {});
     });
     pre.appendChild(btn);
   });

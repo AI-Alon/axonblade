@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AxonBlade — A scripting language with a native grid primitive</title>
   <meta name="description" content="AxonBlade is a scripting language with a native grid primitive for building terminal games and visualizations." />
+  <meta property="og:title" content="AxonBlade — A scripting language with a native grid primitive" />
+  <meta property="og:description" content="AxonBlade is an expressive scripting language with built-in color literals, a native grid primitive, and clean syntax." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="AxonBlade — A scripting language with a native grid primitive" />
+  <meta name="twitter:description" content="AxonBlade is an expressive scripting language with built-in color literals, a native grid primitive, and clean syntax." />
   <style>
     /* ── Reset & base ─────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -135,6 +141,67 @@
     @keyframes pulse {
       0%,100% { transform: scale(1); opacity:.8; }
       50%      { transform: scale(1.3); opacity:1; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .cs-tile { animation: none !important; }
+    }
+
+    /* ── Scroll-in fade ──────────────────────────────────────────── */
+    .reveal {
+      opacity: 0; transform: translateY(24px);
+      transition: opacity .55s ease, transform .55s ease;
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* ── Animated gradient border on feat-cards ─────────────────── */
+    .feat-card {
+      position: relative;
+    }
+    .feat-card::after {
+      content: "";
+      position: absolute; inset: 0; border-radius: 12px;
+      background: conic-gradient(from var(--angle), var(--cyan), var(--purple), var(--green), var(--cyan));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude;
+      padding: 1px; opacity: 0; transition: opacity .3s;
+    }
+    @property --angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+    @keyframes spin-border { to { --angle: 360deg; } }
+    .feat-card:hover::after { opacity: 1; animation: spin-border 2.5s linear infinite; }
+
+    /* ── Typewriter cursor on hero badge ────────────────────────── */
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+    .hero-badge::after {
+      content: "|"; margin-left: 3px; color: var(--cyan);
+      animation: blink 1s step-end infinite;
+    }
+
+    /* ── Shimmer on primary buttons ─────────────────────────────── */
+    .btn-primary {
+      position: relative; overflow: hidden;
+    }
+    .btn-primary::after {
+      content: ""; position: absolute; top: 0; left: -100%;
+      width: 60%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.25), transparent);
+      transform: skewX(-20deg);
+      animation: btn-shimmer 3s ease-in-out infinite;
+    }
+    @keyframes btn-shimmer { 0%,100%{left:-100%} 40%,60%{left:150%} }
+
+    /* ── Floating glow orbs behind hero ─────────────────────────── */
+    .hero-orbs { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+    .orb {
+      position: absolute; border-radius: 50%; filter: blur(80px); opacity: .18;
+    }
+    .orb-1 { width: 400px; height: 400px; background: var(--cyan);  top: -120px; left: -80px; animation: drift1 12s ease-in-out infinite; }
+    .orb-2 { width: 300px; height: 300px; background: var(--purple); bottom: -80px; right: -60px; animation: drift2 15s ease-in-out infinite; }
+    .orb-3 { width: 200px; height: 200px; background: var(--green);  top: 40%; left: 60%; animation: drift3 10s ease-in-out infinite; }
+    @keyframes drift1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(40px,30px)} }
+    @keyframes drift2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-30px,-40px)} }
+    @keyframes drift3 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-20px,20px)} }
+    @media (prefers-reduced-motion: reduce) {
+      .orb, .btn-primary::after, .hero-badge::after { animation: none !important; }
     }
 
     /* ── Sections shared ─────────────────────────────────────── */
@@ -335,13 +402,18 @@
       <li><a href="index.html" class="active">Home</a></li>
       <li><a href="docs/index.html">Docs</a></li>
       <li><a href="examples.html">Examples</a></li>
-      <li><a href="https://github.com/AI-Alon/axonblade" target="_blank">GitHub</a></li>
+      <li><a href="https://github.com/AI-Alon/axonblade" target="_blank" rel="noopener noreferrer">GitHub</a></li>
     </ul>
   </div>
 </nav>
 
 <!-- ═══════════════════════  HERO  ══════════════════════════════ -->
 <section class="hero">
+  <div class="hero-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
   <div class="hero-inner">
     <div class="hero-badge">v1.0 · Open Source</div>
     <h1>Code with Color.<br>Build with Grids.</h1>
@@ -525,11 +597,11 @@
     <div class="preview-grid">
       <div>
         <div class="preview-tabs">
-          <button class="tab-btn active" onclick="showTab('variables')">Variables</button>
-          <button class="tab-btn" onclick="showTab('functions')">Functions</button>
-          <button class="tab-btn" onclick="showTab('classes')">Classes</button>
-          <button class="tab-btn" onclick="showTab('grid')">Grid</button>
-          <button class="tab-btn" onclick="showTab('pipeline')">Pipeline</button>
+          <button type="button" class="tab-btn active" onclick="showTab('variables')">Variables</button>
+          <button type="button" class="tab-btn" onclick="showTab('functions')">Functions</button>
+          <button type="button" class="tab-btn" onclick="showTab('classes')">Classes</button>
+          <button type="button" class="tab-btn" onclick="showTab('grid')">Grid</button>
+          <button type="button" class="tab-btn" onclick="showTab('pipeline')">Pipeline</button>
         </div>
 
         <!-- Variables -->
@@ -735,12 +807,21 @@
     <div class="footer-links">
       <a href="docs/index.html">Docs</a>
       <a href="examples.html">Examples</a>
-      <a href="https://github.com/AI-Alon/axonblade" target="_blank">GitHub</a>
+      <a href="https://github.com/AI-Alon/axonblade" target="_blank" rel="noopener noreferrer">GitHub</a>
     </div>
   </div>
 </footer>
 
 <script>
+  // ── Scroll reveal ─────────────────────────────────────────────
+  const revealObs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.feat-card, .gs-steps li, .ex-card').forEach(el => {
+    el.classList.add('reveal');
+    revealObs.observe(el);
+  });
+
   // ── Tab switcher ──────────────────────────────────────────────
   function showTab(name) {
     document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
