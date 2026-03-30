@@ -69,7 +69,7 @@
     }
     pre code { background: none; border: none; padding: 0; color: var(--text); }
     .kw { color: #c792ea; } .fn { color: #82aaff; } .str { color: #c3e88d; }
-    .num { color: #f78c6c; } .col { color: #ffcb6b; } .cmt { color: #546e7a; font-style: italic; }
+    .num { color: #f78c6c; } .col { color: #ffcb6b; } .cmt { color: #697e8a; font-style: italic; }
     .op  { color: #89ddff; } .var { color: #eeffff; }
 
     .callout {
@@ -236,6 +236,14 @@ axb&gt; EXIT</code></pre>
 <span class="fn">write</span>(<span class="str">"&amp;{a} * &amp;{b} = &amp;{a * b}"</span>)   <span class="cmt"># 3 * 4 = 12</span></code></pre>
     <p>Concatenate with <code>+</code>:</p>
     <pre><code><span class="kw">&gt;&gt;</span> <span class="var">s</span> <span class="op">=</span> <span class="str">"Hello"</span> <span class="op">+</span> <span class="str">", "</span> <span class="op">+</span> <span class="str">"World"</span>   <span class="cmt"># Hello, World</span></code></pre>
+    <p>Escape sequences inside strings:</p>
+    <table>
+      <tr><th>Sequence</th><th>Meaning</th></tr>
+      <tr><td><code>\n</code></td><td>Newline</td></tr>
+      <tr><td><code>\t</code></td><td>Tab</td></tr>
+      <tr><td><code>\"</code></td><td>Double quote</td></tr>
+      <tr><td><code>\\</code></td><td>Backslash</td></tr>
+    </table>
     <p>Comments use <code>#</code> for single-line and <code>#/ ... /#</code> for multi-line:</p>
     <pre><code><span class="cmt"># this is a single-line comment</span>
 
@@ -307,9 +315,11 @@ axb&gt; EXIT</code></pre>
     <p>Lists are ordered collections. Create them with square brackets.</p>
     <pre><code><span class="kw">&gt;&gt;</span> <span class="var">nums</span> <span class="op">=</span> [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>]
 <span class="fn">write</span>(<span class="fn">len</span>(<span class="var">nums</span>))   <span class="cmt"># 4</span></code></pre>
-    <p>Index with <code>~i~</code> (tilde syntax):</p>
-    <pre><code><span class="fn">write</span>(<span class="var">nums</span><span class="op">~</span><span class="num">0</span><span class="op">~</span>)   <span class="cmt"># 1</span>
-<span class="fn">write</span>(<span class="var">nums</span><span class="op">~</span><span class="num">3</span><span class="op">~</span>)   <span class="cmt"># 4</span></code></pre>
+    <p>Index with <code>~i~</code> (tilde syntax). Negative indices count from the end:</p>
+    <pre><code><span class="fn">write</span>(<span class="var">nums</span><span class="op">~</span><span class="num">0</span><span class="op">~</span>)    <span class="cmt"># 1  (first)</span>
+<span class="fn">write</span>(<span class="var">nums</span><span class="op">~</span><span class="num">3</span><span class="op">~</span>)    <span class="cmt"># 4  (last)</span>
+<span class="fn">write</span>(<span class="var">nums</span><span class="op">~-</span><span class="num">1</span><span class="op">~</span>)   <span class="cmt"># 4  (last, negative index)</span>
+<span class="fn">write</span>(<span class="var">nums</span><span class="op">~-</span><span class="num">2</span><span class="op">~</span>)   <span class="cmt"># 3</span></code></pre>
     <p>Slice with <code>~start:end~</code> — either bound can be omitted:</p>
     <pre><code><span class="kw">&gt;&gt;</span> <span class="var">letters</span> <span class="op">=</span> [<span class="str">"a"</span>, <span class="str">"b"</span>, <span class="str">"c"</span>, <span class="str">"d"</span>, <span class="str">"e"</span>]
 <span class="fn">write</span>(<span class="var">letters</span><span class="op">~</span><span class="num">1</span><span class="op">:</span><span class="num">3</span><span class="op">~</span>)   <span class="cmt"># [b, c]</span>
@@ -352,6 +362,12 @@ axb&gt; EXIT</code></pre>
       <tr><td><code>dict.items()</code></td><td>List of <code>[key, value]</code> pairs</td><td><code>person.items()</code> → <code>[["name","Alon"],...]</code></td></tr>
       <tr><td><code>dict.get(key, default)</code></td><td>Get value or default if key missing</td><td><code>person.get("phone", "N/A")</code> → <code>N/A</code></td></tr>
     </table>
+    <p>Iterate over a dict using <code>keys()</code>:</p>
+    <pre><code><span class="kw">for</span> <span class="var">k</span> <span class="kw">in</span> <span class="var">person</span>.<span class="fn">keys</span>() <span class="op">+/</span>
+    <span class="fn">write</span>(<span class="str">"&amp;{k}: &amp;{person~k~}"</span>)
+<span class="kw">ECB</span>
+<span class="cmt"># name: Alon</span>
+<span class="cmt"># age: 17</span></code></pre>
 
     <!-- ── Functions ── -->
     <h2 id="functions">Functions</h2>
@@ -399,6 +415,9 @@ axb&gt; EXIT</code></pre>
       <tr><td><code>flag#bool</code></td><td>boolean</td></tr>
       <tr><td><code>fn#fn</code></td><td>function / callable</td></tr>
       <tr><td><code>items#list</code></td><td>list</td></tr>
+      <tr><td><code>data#dict</code></td><td>dictionary</td></tr>
+      <tr><td><code>g#grid</code></td><td>grid object</td></tr>
+      <tr><td><code>x#any</code></td><td>any type (skips check)</td></tr>
     </table>
     <pre><code><span class="kw">bladeFN</span> <span class="fn">greet</span>(<span class="var">name</span><span class="op">#</span><span class="kw">str</span>, <span class="var">times</span><span class="op">#</span><span class="kw">int</span>) <span class="op">+/</span>
     <span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="var">times</span>) <span class="op">+/</span>
@@ -539,7 +558,7 @@ axb&gt; EXIT</code></pre>
       <tr><td><code>string.replace(s, old, new)</code></td><td>Replace occurrences</td></tr>
     </table>
 
-    <a href="#" class="back-to-top">↑ Back to top</a>
+    <a href="javascript:void(0)" onclick="window.scrollTo({top:0,behavior:'smooth'})" class="back-to-top">↑ Back to top</a>
   </main>
 </div>
 
