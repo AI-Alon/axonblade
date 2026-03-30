@@ -97,12 +97,12 @@
     pre { position: relative; }
     .copy-btn {
       position: absolute; top: .6rem; right: .6rem;
-      background: var(--bg3); border: 1px solid var(--border); color: var(--muted);
-      font-size: .75rem; padding: .2rem .55rem; border-radius: 5px; cursor: pointer;
-      font-family: inherit; transition: color .2s, border-color .2s;
+      background: none; border: none; color: var(--muted);
+      font-size: .8rem; padding: .2rem .5rem; border-radius: 4px; cursor: pointer;
+      font-family: inherit; transition: color .2s, background .2s;
     }
-    .copy-btn:hover { color: var(--cyan); border-color: var(--cyan); }
-    .copy-btn.copied { color: var(--green); border-color: var(--green); }
+    .copy-btn:hover { color: var(--cyan); background: rgba(0,212,255,.1); }
+    .copy-btn.copied { color: var(--green); }
 
     /* back to top */
     .back-to-top {
