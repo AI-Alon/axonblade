@@ -1,20 +1,25 @@
-# AxonBlade
+# AxonBlade ⚡
 
-> An expressive scripting language with built-in color literals, a native grid primitive, and clean syntax.
+**A scripting language that makes the terminal come alive.**
 
-Write terminal games, visualizations, and scripts with a language designed to be readable, colorful, and fun.
+AxonBlade is a fully interpreted scripting language built in Python, with first-class color literals, a native grid primitive for terminal rendering, closures, classes, modules, and a clean — opinionated — syntax that's unlike anything you've used before.
+
+Write terminal games. Build visualizations. Script with color.
 
 ---
 
-## Features
+## Why AxonBlade?
 
-- **Unique syntax** — `bladeFN`, `+/...ECB`, `>>`, `&{}` string interpolation
-- **Color literals** — `-*red*-`, `-*cyan*-` resolve to ANSI escape codes
-- **Native grid** — `grid(cols, rows)` renders colored tiles directly in the terminal
-- **Full language** — closures, classes, modules, error handling, type annotations
-- **Pipeline operator** — `value |> fn` chains transformations cleanly
-- **Standard library** — `math` and `string` modules included
-- **Interactive REPL** — live evaluation with `ablade repl`
+Most scripting languages treat the terminal as an afterthought. AxonBlade was built for it.
+
+- 🎨 **Color is a value** — `-*cyan*-` is not a string, it's a first-class color literal
+- 🟩 **Grid is built in** — `grid(cols, rows)` gives you a tile canvas in the terminal, no library needed
+- ⚡ **Clean syntax** — `bladeFN`, `+/...ECB`, `>>` — unconventional, consistent, and readable
+- 🔗 **Pipeline operator** — chain transformations with `|>`
+- 🧱 **Full OOP** — classes via `bladeGRP`, with `blade` as self
+- 🛡️ **Type annotations** — optional `#type` parameter hints with runtime checking
+- 📦 **Module system** — `uselib -math-`, `uselib -string-`, or your own `.axb` files
+- 🎮 **Interactive examples** — playable Snake and Conway's Game of Life included out of the box
 
 ---
 
@@ -26,114 +31,96 @@ cd axonblade
 pip install -e .
 ```
 
-Requires Python 3.11+.
+> Requires Python 3.11+
 
 ---
 
-## Usage
+## Quick Start
 
 ```bash
-ablade run <file.axb>   # run a script
-ablade repl             # start the interactive REPL
-ablade version          # print version
+ablade run examples/hello.axb
+ablade repl
+ablade version
 ```
 
 ---
 
-## Examples
+## The Language
 
-Run any of the included examples:
-
-```bash
-ablade run examples/hello.axb       # colors, strings, math
-ablade run examples/fibonacci.axb   # recursion, closures, pipeline
-ablade run examples/closures.axb    # counter factory, adder, map
-ablade run examples/classes.axb     # bladeGRP, error handling
-ablade run examples/snake.axb       # playable Snake game
-ablade run examples/life.axb        # Conway's Game of Life
-```
-
----
-
-## Language Overview
-
-### Variables
+### Variables & strings
 
 ```axb
 >> name = "AxonBlade"
 >> version = 1
->> active = true
+>> ready = true
+
+write("Hello from &{name} v&{version}!")
 ```
 
-### String interpolation
+### Functions & closures
 
 ```axb
-write("Hello, &{name}! Version &{version}")
-```
-
-### Functions
-
-```axb
-bladeFN greet(who#str) +/
-    write(-*cyan*- + "Hello, &{who}!" + -*reset*-)
+bladeFN make_adder(n) +/
+    return bladeFN(x) +/
+        return x + n
+    ECB
 ECB
 
-greet("world")
+>> add10 = make_adder(10)
+write(add10(5))    # 15
+write(add10(32))   # 42
 ```
 
 ### Classes
 
 ```axb
-bladeGRP Point +/
-    bladeFN init(blade, x#int, y#int) +/
-        blade.x = x
-        blade.y = y
+bladeGRP Animal +/
+    bladeFN init(blade, name#str, sound#str) +/
+        blade.name = name
+        blade.sound = sound
     ECB
-    bladeFN to_str(blade) +/
-        return "(&{blade.x}, &{blade.y})"
+    bladeFN speak(blade) +/
+        write(-*cyan*- + "&{blade.name} says: &{blade.sound}" + -*reset*-)
     ECB
 ECB
 
->> p = Point(3, 4)
-write(p.to_str())
+>> dog = Animal("Rex", "woof!")
+dog.speak()
 ```
 
-### Closures
+### Pipeline operator
 
 ```axb
-bladeFN make_counter() +/
-    >> count = 0
-    return bladeFN() +/
-        count = count + 1
-        return count
-    ECB
-ECB
+bladeFN double(n) +/ return n * 2 ECB
+bladeFN inc(n)    +/ return n + 1 ECB
+bladeFN square(n) +/ return n * n ECB
 
->> counter = make_counter()
-write(counter())   # 1
-write(counter())   # 2
+>> result = 3 |> double |> inc |> square
+write(result)   # 49
 ```
 
-### Control flow
+### Color literals
 
 ```axb
-if x > 0 +/
-    write("positive")
-ECB
-elif x < 0 +/
-    write("negative")
-ECB
-else +/
-    write("zero")
-ECB
+write(-*red*-     + " red     " + -*reset*-)
+write(-*yellow*-  + " yellow  " + -*reset*-)
+write(-*green*-   + " green   " + -*reset*-)
+write(-*cyan*-    + " cyan    " + -*reset*-)
+write(-*blue*-    + " blue    " + -*reset*-)
+write(-*magenta*- + " magenta " + -*reset*-)
+```
 
-while x < 10 +/
-    x = x + 1
-ECB
+### Grid system
 
-for item in list +/
-    write(item)
-ECB
+```axb
+>> g = grid(24, 16)
+
+g.fill(-*black*-)
+g.set(12, 8, -*cyan*-)
+g.set_char(12, 8, "@")
+
+g.on_key("q", bladeFN() +/ g.stop() ECB)
+g.loop(bladeFN() +/ null ECB, 10)
 ```
 
 ### Error handling
@@ -143,41 +130,8 @@ try +/
     >> result = 10 / 0
 ECB
 catch err +/
-    write("Caught: &{err~\"message\"~}")
+    write(-*red*- + "Caught: &{err~\"message\"~}" + -*reset*-)
 ECB
-```
-
-### Pipeline operator
-
-```axb
-bladeFN double(n) +/ return n * 2 ECB
-bladeFN inc(n)    +/ return n + 1 ECB
-
->> result = 3 |> double |> inc
-write(result)   # 7
-```
-
-### Color literals
-
-```axb
-write(-*red*-     + "  red    " + -*reset*-)
-write(-*green*-   + "  green  " + -*reset*-)
-write(-*cyan*-    + "  cyan   " + -*reset*-)
-write(-*yellow*-  + "  yellow " + -*reset*-)
-write(-*blue*-    + "  blue   " + -*reset*-)
-write(-*magenta*- + "  magenta" + -*reset*-)
-write(-*white*-   + "  white  " + -*reset*-)
-```
-
-### Grid system
-
-```axb
->> g = grid(24, 16)
-g.fill(-*black*-)
-g.set(12, 8, -*cyan*-)
-g.set_char(12, 8, "@")
-g.on_key("q", bladeFN() +/ g.stop() ECB)
-g.loop(bladeFN() +/ null ECB, 10)
 ```
 
 ### Modules
@@ -186,24 +140,35 @@ g.loop(bladeFN() +/ null ECB, 10)
 uselib -math-
 uselib -string-
 
-write(math.sqrt(16))          # 4.0
-write(string.upper("hello"))  # HELLO
+write(math.sqrt(144))            # 12.0
+write(string.upper("axonblade")) # AXONBLADE
 ```
 
 ### Logical operators
 
 | Operator | Meaning |
 |----------|---------|
-| `-a`     | and     |
-| `-o`     | or      |
-| `-n`     | not     |
+| `-a` | and |
+| `-o` | or |
+| `-n` | not |
 
-### Type annotations
+---
 
-```axb
-bladeFN add(a#int, b#int) +/
-    return a + b
-ECB
+## Included Examples
+
+| File | Description |
+|------|-------------|
+| `examples/hello.axb` | Colors, strings, math — the classic intro |
+| `examples/fibonacci.axb` | Recursive + iterative fib, squared sequence |
+| `examples/closures.axb` | Counter factory, adder generator, map via pipeline |
+| `examples/classes.axb` | Animal health system, Point geometry, error handling |
+| `examples/snake.axb` | Fully playable Snake — grid, game loop, keyboard input |
+| `examples/life.axb` | Conway's Game of Life — edit mode + live simulation |
+
+Run any of them:
+
+```bash
+ablade run examples/snake.axb
 ```
 
 ---
@@ -213,24 +178,24 @@ ECB
 ```
 axonblade/
 ├── core/
-│   ├── lexer.py          # tokenizer
-│   ├── parser.py         # Pratt parser → AST
-│   ├── ast_nodes.py      # AST node definitions
-│   ├── evaluator.py      # tree-walk interpreter
-│   ├── environment.py    # scoped variable store
-│   ├── errors.py         # error hierarchy
-│   └── module_loader.py  # uselib module system
+│   ├── lexer.py           # tokenizer
+│   ├── parser.py          # Pratt parser → AST
+│   ├── ast_nodes.py       # AST node definitions
+│   ├── evaluator.py       # tree-walk interpreter
+│   ├── environment.py     # scoped variable store
+│   ├── errors.py          # error hierarchy
+│   └── module_loader.py   # uselib module system
 ├── grid/
-│   ├── grid_object.py    # AxonGrid state
-│   └── renderer_term.py  # ANSI terminal renderer
+│   ├── grid_object.py     # AxonGrid state & API
+│   └── renderer_term.py   # ANSI terminal renderer
 ├── stdlib/
-│   ├── builtins.py       # built-in functions
-│   ├── math.axb          # math standard library
-│   └── string.axb        # string standard library
-├── examples/             # runnable .axb programs
-├── website/              # project website
-├── main.py               # CLI entry point
-└── repl.py               # interactive REPL
+│   ├── builtins.py        # built-in functions
+│   ├── math.axb           # math standard library
+│   └── string.axb         # string standard library
+├── examples/              # runnable .axb programs
+├── website/               # project website source
+├── main.py                # CLI entry point
+└── repl.py                # interactive REPL
 ```
 
 ---
