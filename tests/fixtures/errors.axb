@@ -1,7 +1,0 @@
-try +/
-    >> x = 1 / 0
-ECB
-catch e +/
-    write(e~"type"~)
-    write(e~"message"~)
-ECB

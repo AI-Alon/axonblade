@@ -1,46 +1,56 @@
 # AxonBlade
 
-A custom interpreted scripting language implemented in Python, with a native ANSI grid primitive for building terminal games and simulations.
-
-## Features
-
-- **Unique syntax** — `bladeFN`, `+/`, `ECB`, `>>`, `&{}`, `#type`
-- **Color literals** — `-*red*-`, `-*cyan*-` are first-class values resolving to ANSI codes
-- **Built-in grid** — `grid(cols, rows)` renders colored tiles directly in the terminal
-- **Full language** — closures, classes (`bladeGRP`), modules, error handling, type annotations
-- **Interactive examples** — playable Snake and Conway's Game of Life included
+An expressive scripting language with built-in color literals, a native grid primitive, and clean syntax — write terminal art, games, and scripts with ease.
 
 ## Install
 
 ```bash
+git clone https://github.com/AI-Alon/axonblade.git
+cd axonblade
 pip install -e .
 ```
 
 ## Usage
 
 ```bash
-ablade run examples/hello.axb
-ablade run examples/snake.axb
-ablade run examples/life.axb
-ablade repl
-ablade version
+ablade run <file.axb>   # run a script
+ablade repl             # interactive REPL
+ablade version          # print version
 ```
 
-## Syntax at a glance
+## Examples
+
+```bash
+ablade run examples/hello.axb
+ablade run examples/fibonacci.axb
+ablade run examples/closures.axb
+ablade run examples/classes.axb
+ablade run examples/snake.axb
+ablade run examples/life.axb
+```
+
+## Syntax
+
+### Variables
 
 ```axb
-# Variables
 >> name = "AxonBlade"
 >> version = 1
+```
 
-# Functions
+### Functions
+
+```axb
 bladeFN greet(who#str) +/
     write(-*cyan*- + "Hello, &{who}!" + -*reset*-)
 ECB
 
-greet(name)
+greet("world")
+```
 
-# Classes
+### Classes
+
+```axb
 bladeGRP Point +/
     bladeFN init(blade, x#int, y#int) +/
         blade.x = x
@@ -53,8 +63,42 @@ ECB
 
 >> p = Point(3, 4)
 write(p.to_str())
+```
 
-# Grid
+### Control flow
+
+```axb
+if x > 0 +/
+    write("positive")
+ECB
+elif x < 0 +/
+    write("negative")
+ECB
+else +/
+    write("zero")
+ECB
+
+while x < 10 +/
+    x = x + 1
+ECB
+
+for item in list +/
+    write(item)
+ECB
+```
+
+### Color literals
+
+```axb
+write(-*red*-    + "red text"    + -*reset*-)
+write(-*cyan*-   + "cyan text"   + -*reset*-)
+write(-*green*-  + "green text"  + -*reset*-)
+write(-*yellow*- + "yellow text" + -*reset*-)
+```
+
+### Grid
+
+```axb
 >> g = grid(20, 10)
 g.fill(-*black*-)
 g.set(10, 5, -*red*-)
@@ -62,18 +106,24 @@ g.on_key("q", bladeFN() +/ g.stop() ECB)
 g.loop(bladeFN() +/ null ECB, 10)
 ```
 
-## Comments
+### Error handling
 
 ```axb
-# single-line comment
-
-#/
-  multi-line
-  comment
-/#
+try +/
+    >> result = 10 / 0
+ECB
+catch err +/
+    write("Caught: &{err~\"message\"~}")
+ECB
 ```
 
-## Logical operators
+### Pipeline
+
+```axb
+>> result = 3 |> double |> inc |> square
+```
+
+### Logical operators
 
 | Operator | Meaning |
 |----------|---------|
@@ -81,8 +131,6 @@ g.loop(bladeFN() +/ null ECB, 10)
 | `-o` | or |
 | `-n` | not |
 
-## Running tests
+## License
 
-```bash
-python -m pytest tests/ -v
-```
+MIT
