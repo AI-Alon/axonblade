@@ -232,6 +232,7 @@
   <option value="#modules">Modules</option>
   <option value="#builtins">Built-in Functions</option>
   <option value="#grid">Grid System</option>
+  <option value="#string-dot-methods">String Dot-Methods</option>
   <option value="#stdlib">Standard Library</option>
 </select>
 
@@ -270,6 +271,7 @@
       <ul>
         <li><a href="#builtins">Built-in Functions</a></li>
         <li><a href="#grid">Grid System</a></li>
+        <li><a href="#string-dot-methods">String Dot-Methods</a></li>
         <li><a href="#stdlib">Standard Library</a></li>
       </ul>
     </div>
@@ -641,8 +643,35 @@ axb&gt; EXIT</code></pre>
 <span class="var">g</span>.<span class="fn">on_key</span>(<span class="str">"q"</span>, <span class="kw">bladeFN</span>() <span class="op">+/</span> <span class="var">g</span>.<span class="fn">stop</span>() <span class="kw">ECB</span>)
 <span class="var">g</span>.<span class="fn">loop</span>(<span class="var">update</span>, <span class="num">10</span>)   <span class="cmt"># 10 fps, press q to quit</span></code></pre>
 
+    <!-- ── String Dot-Methods ── -->
+    <h2 id="string-dot-methods">String Dot-Methods</h2>
+    <p>Call methods directly on any string value or variable using dot notation. These work on string literals, variables, and intermediate expressions.</p>
+    <table>
+      <tr><th>Method</th><th>Description</th><th>Example</th></tr>
+      <tr><td><code>s.upper()</code></td><td>Uppercase</td><td><code>"hello".upper()</code> → <code>HELLO</code></td></tr>
+      <tr><td><code>s.lower()</code></td><td>Lowercase</td><td><code>"HELLO".lower()</code> → <code>hello</code></td></tr>
+      <tr><td><code>s.strip()</code></td><td>Remove leading/trailing whitespace</td><td><code>"  hi  ".strip()</code> → <code>hi</code></td></tr>
+      <tr><td><code>s.trim()</code></td><td>Alias for <code>strip()</code></td><td><code>"  hi  ".trim()</code> → <code>hi</code></td></tr>
+      <tr><td><code>s.split(sep)</code></td><td>Split into list on separator</td><td><code>"a,b,c".split(",")</code> → <code>[a, b, c]</code></td></tr>
+      <tr><td><code>s.replace(old, new)</code></td><td>Replace all occurrences</td><td><code>"hi world".replace("world","Axon")</code></td></tr>
+      <tr><td><code>s.contains(sub)</code></td><td>Check for substring</td><td><code>"hello".contains("ell")</code> → <code>true</code></td></tr>
+      <tr><td><code>s.starts_with(prefix)</code></td><td>Check prefix</td><td><code>"hello".starts_with("he")</code> → <code>true</code></td></tr>
+      <tr><td><code>s.ends_with(suffix)</code></td><td>Check suffix</td><td><code>"hello".ends_with("lo")</code> → <code>true</code></td></tr>
+    </table>
+    <p>Methods can be chained — each call returns a new string:</p>
+    <pre><code><span class="kw">&gt;&gt;</span> <span class="var">result</span> <span class="op">=</span> <span class="str">"  axonblade  "</span>.<span class="fn">strip</span>().<span class="fn">upper</span>()
+<span class="fn">write</span>(<span class="var">result</span>)   <span class="cmt"># AXONBLADE</span>
+
+<span class="kw">&gt;&gt;</span> <span class="var">parts</span> <span class="op">=</span> <span class="str">"one,two,three"</span>.<span class="fn">split</span>(<span class="str">","</span>)
+<span class="fn">write</span>(<span class="var">parts</span>)   <span class="cmt"># [one, two, three]</span>
+
+<span class="fn">write</span>(<span class="str">"Hello"</span>.<span class="fn">starts_with</span>(<span class="str">"He"</span>))   <span class="cmt"># true</span>
+<span class="fn">write</span>(<span class="str">"Hello"</span>.<span class="fn">ends_with</span>(<span class="str">"lo"</span>))     <span class="cmt"># true</span>
+<span class="fn">write</span>(<span class="str">"Hello"</span>.<span class="fn">contains</span>(<span class="str">"ell"</span>))     <span class="cmt"># true</span></code></pre>
+
     <!-- ── Stdlib ── -->
     <h2 id="stdlib">Standard Library</h2>
+    <p>Import any module with <code>uselib -name-</code> and access its functions via <code>name.fn()</code>.</p>
     <h3>math</h3>
     <table>
       <tr><th>Function</th><th>Description</th></tr>
@@ -665,6 +694,122 @@ axb&gt; EXIT</code></pre>
       <tr><td><code>string.contains(s, sub)</code></td><td>Check substring</td></tr>
       <tr><td><code>string.replace(s, old, new)</code></td><td>Replace occurrences</td></tr>
     </table>
+    <h3 id="stdlib-io">io</h3>
+    <p>File system I/O. All paths are strings relative to the working directory or absolute.</p>
+    <table>
+      <tr><th>Function</th><th>Description</th></tr>
+      <tr><td><code>io.read(path)</code></td><td>Read file contents as a string (UTF-8)</td></tr>
+      <tr><td><code>io.write(path, content)</code></td><td>Write string to file (overwrites)</td></tr>
+      <tr><td><code>io.append(path, content)</code></td><td>Append string to file</td></tr>
+      <tr><td><code>io.exists(path)</code></td><td>Returns <code>true</code> if path exists</td></tr>
+      <tr><td><code>io.delete(path)</code></td><td>Delete a file</td></tr>
+      <tr><td><code>io.list(path)</code></td><td>List directory entries as a list of strings</td></tr>
+    </table>
+    <pre><code><span class="kw">uselib</span> <span class="op">-</span><span class="var">io</span><span class="op">-</span>
+
+<span class="var">io</span>.<span class="fn">write</span>(<span class="str">"notes.txt"</span>, <span class="str">"Hello!\n"</span>)
+<span class="var">io</span>.<span class="fn">append</span>(<span class="str">"notes.txt"</span>, <span class="str">"Line 2\n"</span>)
+<span class="kw">&gt;&gt;</span> <span class="var">text</span> <span class="op">=</span> <span class="var">io</span>.<span class="fn">read</span>(<span class="str">"notes.txt"</span>)
+<span class="fn">write</span>(<span class="var">text</span>)
+<span class="fn">write</span>(<span class="var">io</span>.<span class="fn">exists</span>(<span class="str">"notes.txt"</span>))   <span class="cmt"># true</span>
+<span class="var">io</span>.<span class="fn">delete</span>(<span class="str">"notes.txt"</span>)
+<span class="kw">&gt;&gt;</span> <span class="var">files</span> <span class="op">=</span> <span class="var">io</span>.<span class="fn">list</span>(<span class="str">"."</span>)
+<span class="fn">write</span>(<span class="var">files</span>)</code></pre>
+
+    <h3 id="stdlib-json">json</h3>
+    <p>Parse and stringify JSON. AxonBlade dicts and lists map directly to JSON objects and arrays.</p>
+    <table>
+      <tr><th>Function</th><th>Description</th></tr>
+      <tr><td><code>json.parse(s)</code></td><td>Parse a JSON string → dict / list / value</td></tr>
+      <tr><td><code>json.stringify(value)</code></td><td>Convert dict / list / value → JSON string</td></tr>
+    </table>
+    <pre><code><span class="kw">uselib</span> <span class="op">-</span><span class="var">json</span><span class="op">-</span>
+
+<span class="kw">&gt;&gt;</span> <span class="var">obj</span> <span class="op">=</span> {<span class="str">name</span>: <span class="str">"Alon"</span>, <span class="str">score</span>: <span class="num">42</span>}
+<span class="kw">&gt;&gt;</span> <span class="var">s</span> <span class="op">=</span> <span class="var">json</span>.<span class="fn">stringify</span>(<span class="var">obj</span>)
+<span class="fn">write</span>(<span class="var">s</span>)   <span class="cmt"># {"name": "Alon", "score": 42}</span>
+
+<span class="kw">&gt;&gt;</span> <span class="var">back</span> <span class="op">=</span> <span class="var">json</span>.<span class="fn">parse</span>(<span class="var">s</span>)
+<span class="fn">write</span>(<span class="var">back</span><span class="op">~</span><span class="str">"name"</span><span class="op">~</span>)   <span class="cmt"># Alon</span></code></pre>
+
+    <h3 id="stdlib-http">http</h3>
+    <p>HTTP client. All functions return a dict <code>{status, body, headers}</code>. Network failures raise <code>AxonRuntimeError</code>; HTTP error status codes (4xx, 5xx) are returned normally.</p>
+    <table>
+      <tr><th>Function</th><th>Description</th></tr>
+      <tr><td><code>http.get(url)</code></td><td>HTTP GET</td></tr>
+      <tr><td><code>http.post(url, data)</code></td><td>HTTP POST — sends <code>data</code> as JSON body</td></tr>
+      <tr><td><code>http.put(url, data)</code></td><td>HTTP PUT — sends <code>data</code> as JSON body</td></tr>
+      <tr><td><code>http.delete(url)</code></td><td>HTTP DELETE</td></tr>
+    </table>
+    <pre><code><span class="kw">uselib</span> <span class="op">-</span><span class="var">http</span><span class="op">-</span>
+<span class="kw">uselib</span> <span class="op">-</span><span class="var">json</span><span class="op">-</span>
+
+<span class="kw">&gt;&gt;</span> <span class="var">res</span> <span class="op">=</span> <span class="var">http</span>.<span class="fn">get</span>(<span class="str">"https://httpbin.org/get"</span>)
+<span class="fn">write</span>(<span class="var">res</span><span class="op">~</span><span class="str">"status"</span><span class="op">~</span>)   <span class="cmt"># 200</span>
+<span class="kw">&gt;&gt;</span> <span class="var">body</span> <span class="op">=</span> <span class="var">json</span>.<span class="fn">parse</span>(<span class="var">res</span><span class="op">~</span><span class="str">"body"</span><span class="op">~</span>)
+<span class="fn">write</span>(<span class="var">body</span><span class="op">~</span><span class="str">"url"</span><span class="op">~</span>)   <span class="cmt"># https://httpbin.org/get</span>
+
+<span class="kw">&gt;&gt;</span> <span class="var">post_res</span> <span class="op">=</span> <span class="var">http</span>.<span class="fn">post</span>(<span class="str">"https://httpbin.org/post"</span>, {<span class="str">x</span>: <span class="num">1</span>})
+<span class="fn">write</span>(<span class="var">post_res</span><span class="op">~</span><span class="str">"status"</span><span class="op">~</span>)   <span class="cmt"># 200</span></code></pre>
+
+    <h3 id="stdlib-regex">regex</h3>
+    <p>Regular expressions. Patterns follow Python's <code>re</code> syntax.</p>
+    <table>
+      <tr><th>Function</th><th>Description</th></tr>
+      <tr><td><code>regex.match(pattern, s)</code></td><td>Returns <code>true</code> if pattern matches anywhere in <code>s</code></td></tr>
+      <tr><td><code>regex.find(pattern, s)</code></td><td>Returns first match string, or <code>null</code></td></tr>
+      <tr><td><code>regex.find_all(pattern, s)</code></td><td>Returns list of all match strings</td></tr>
+      <tr><td><code>regex.replace(pattern, s, repl)</code></td><td>Replace all matches with <code>repl</code></td></tr>
+    </table>
+    <pre><code><span class="kw">uselib</span> <span class="op">-</span><span class="var">regex</span><span class="op">-</span>
+
+<span class="fn">write</span>(<span class="var">regex</span>.<span class="fn">match</span>(<span class="str">"[0-9]+"</span>, <span class="str">"abc123"</span>))        <span class="cmt"># true</span>
+<span class="fn">write</span>(<span class="var">regex</span>.<span class="fn">find</span>(<span class="str">"[0-9]+"</span>, <span class="str">"abc123def"</span>))      <span class="cmt"># 123</span>
+<span class="fn">write</span>(<span class="var">regex</span>.<span class="fn">find_all</span>(<span class="str">"[a-z]+"</span>, <span class="str">"hello world"</span>)) <span class="cmt"># [hello, world]</span>
+<span class="fn">write</span>(<span class="var">regex</span>.<span class="fn">replace</span>(<span class="str">"[aeiou]"</span>, <span class="str">"hello"</span>, <span class="str">"*"</span>))  <span class="cmt"># h*ll*</span></code></pre>
+
+    <h3 id="stdlib-datetime">datetime</h3>
+    <p>Date and time utilities. Datetimes are represented as ISO 8601 strings (e.g. <code>"2026-05-03T12:00:00"</code>).</p>
+    <table>
+      <tr><th>Function</th><th>Description</th></tr>
+      <tr><td><code>datetime.now()</code></td><td>Current local datetime as ISO string</td></tr>
+      <tr><td><code>datetime.timestamp()</code></td><td>Unix timestamp as float (seconds since epoch)</td></tr>
+      <tr><td><code>datetime.format(iso, fmt)</code></td><td>Format ISO string using <code>strftime</code> pattern</td></tr>
+      <tr><td><code>datetime.parse(s, fmt)</code></td><td>Parse string using <code>strptime</code> pattern → ISO string</td></tr>
+      <tr><td><code>datetime.diff_seconds(iso_a, iso_b)</code></td><td>Seconds between two ISO datetimes (<code>b - a</code>)</td></tr>
+    </table>
+    <pre><code><span class="kw">uselib</span> <span class="op">-</span><span class="var">datetime</span><span class="op">-</span>
+
+<span class="kw">&gt;&gt;</span> <span class="var">now</span> <span class="op">=</span> <span class="var">datetime</span>.<span class="fn">now</span>()
+<span class="fn">write</span>(<span class="var">now</span>)   <span class="cmt"># 2026-05-03T14:32:01.123456</span>
+
+<span class="fn">write</span>(<span class="var">datetime</span>.<span class="fn">format</span>(<span class="var">now</span>, <span class="str">"%Y-%m-%d"</span>))   <span class="cmt"># 2026-05-03</span>
+
+<span class="kw">&gt;&gt;</span> <span class="var">d</span> <span class="op">=</span> <span class="var">datetime</span>.<span class="fn">parse</span>(<span class="str">"03/05/2026"</span>, <span class="str">"%d/%m/%Y"</span>)
+<span class="fn">write</span>(<span class="var">d</span>)   <span class="cmt"># 2026-05-03T00:00:00</span>
+
+<span class="kw">&gt;&gt;</span> <span class="var">diff</span> <span class="op">=</span> <span class="var">datetime</span>.<span class="fn">diff_seconds</span>(<span class="str">"2026-01-01T00:00:00"</span>, <span class="str">"2026-01-02T00:00:00"</span>)
+<span class="fn">write</span>(<span class="var">diff</span>)   <span class="cmt"># 86400.0</span></code></pre>
+
+    <h3 id="stdlib-random">random</h3>
+    <p>Pseudo-random number generation. Use <code>random.seed(n)</code> for reproducible results.</p>
+    <table>
+      <tr><th>Function</th><th>Description</th></tr>
+      <tr><td><code>random.int(min, max)</code></td><td>Random integer, inclusive on both ends</td></tr>
+      <tr><td><code>random.float()</code></td><td>Random float in <code>[0.0, 1.0)</code></td></tr>
+      <tr><td><code>random.choice(list)</code></td><td>Random element from a list</td></tr>
+      <tr><td><code>random.shuffle(list)</code></td><td>Returns a new shuffled copy of the list</td></tr>
+      <tr><td><code>random.seed(n)</code></td><td>Seed the RNG for reproducible output</td></tr>
+    </table>
+    <pre><code><span class="kw">uselib</span> <span class="op">-</span><span class="var">random</span><span class="op">-</span>
+
+<span class="var">random</span>.<span class="fn">seed</span>(<span class="num">42</span>)
+<span class="fn">write</span>(<span class="var">random</span>.<span class="fn">int</span>(<span class="num">1</span>, <span class="num">6</span>))    <span class="cmt"># roll a d6</span>
+<span class="fn">write</span>(<span class="var">random</span>.<span class="fn">float</span>())      <span class="cmt"># e.g. 0.6394267984578837</span>
+
+<span class="kw">&gt;&gt;</span> <span class="var">items</span> <span class="op">=</span> [<span class="str">"a"</span>, <span class="str">"b"</span>, <span class="str">"c"</span>, <span class="str">"d"</span>]
+<span class="fn">write</span>(<span class="var">random</span>.<span class="fn">choice</span>(<span class="var">items</span>))     <span class="cmt"># e.g. c</span>
+<span class="fn">write</span>(<span class="var">random</span>.<span class="fn">shuffle</span>(<span class="var">items</span>))    <span class="cmt"># e.g. [d, b, a, c]</span></code></pre>
 
     <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" class="back-to-top">↑ Back to top</a>
   </main>

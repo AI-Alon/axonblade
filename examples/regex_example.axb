@@ -1,0 +1,35 @@
+# regex_example.axb — pattern matching with the regex module
+uselib -regex-
+
+>> text = "AxonBlade v2.0 released on 2026-05-03"
+>> email = "hello@example.com"
+>> csv = "apple,banana,cherry,date"
+
+write(-*cyan*- + "── match (true/false) ───────────────────" + -*reset*-)
+write("has version?   &{regex.match("v[0-9]+\\.[0-9]+", text)}")
+write("has email?     &{regex.match("[a-z]+@[a-z]+\\.[a-z]+", email)}")
+write("all digits?    &{regex.match("^[0-9]+$", text)}")
+
+write("")
+write(-*cyan*- + "── find (first match) ───────────────────" + -*reset*-)
+>> version = regex.find("v[0-9]+\\.[0-9]+", text)
+write("version found: &{version}")
+
+>> date = regex.find("[0-9]{4}-[0-9]{2}-[0-9]{2}", text)
+write("date found:    &{date}")
+
+write("")
+write(-*cyan*- + "── find_all (all matches) ───────────────" + -*reset*-)
+>> words = regex.find_all("[A-Za-z]+", text)
+write("words: &{words}")
+
+>> items = regex.find_all("[a-z]+", csv)
+write("csv items: &{items}")
+
+write("")
+write(-*cyan*- + "── replace ──────────────────────────────" + -*reset*-)
+>> censored = regex.replace("[0-9]", text, "*")
+write("digits replaced: &{censored}")
+
+>> snake_case = regex.replace(" ", "AxonBlade is cool", "_")
+write("snake case: &{snake_case}")

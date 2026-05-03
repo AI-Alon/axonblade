@@ -18,10 +18,22 @@ bladeFN strip(s#str) +/
     return __builtin_strip(s)
 ECB
 
+bladeFN trim(s#str) +/
+    return __builtin_trim(s)
+ECB
+
 bladeFN contains(s#str, sub#str) +/
     return __builtin_contains(s, sub)
 ECB
 
 bladeFN replace(s#str, old#str, new#str) +/
     return __builtin_replace(s, old, new)
+ECB
+
+bladeFN starts_with(s#str, prefix#str) +/
+    return __builtin_starts_with(s, prefix)
+ECB
+
+bladeFN ends_with(s#str, suffix#str) +/
+    return __builtin_ends_with(s, suffix)
 ECB

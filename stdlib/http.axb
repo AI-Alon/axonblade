@@ -1,0 +1,15 @@
+bladeFN get(url#str) +/
+    return __builtin_http_get(url)
+ECB
+
+bladeFN post(url#str, data) +/
+    return __builtin_http_post(url, data)
+ECB
+
+bladeFN put(url#str, data) +/
+    return __builtin_http_put(url, data)
+ECB
+
+bladeFN delete(url#str) +/
+    return __builtin_http_delete(url)
+ECB

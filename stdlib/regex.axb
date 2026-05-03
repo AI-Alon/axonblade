@@ -1,0 +1,15 @@
+bladeFN match(pattern#str, s#str) +/
+    return __builtin_regex_match(pattern, s)
+ECB
+
+bladeFN find(pattern#str, s#str) +/
+    return __builtin_regex_find(pattern, s)
+ECB
+
+bladeFN find_all(pattern#str, s#str) +/
+    return __builtin_regex_find_all(pattern, s)
+ECB
+
+bladeFN replace(pattern#str, s#str, repl#str) +/
+    return __builtin_regex_replace(pattern, s, repl)
+ECB

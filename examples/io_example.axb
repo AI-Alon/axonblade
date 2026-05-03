@@ -1,0 +1,34 @@
+# io_example.axb — file I/O with the io module
+uselib -io-
+
+>> path = "io_test_output.txt"
+
+# Write a file
+io.write(path, "Hello from AxonBlade!\nLine 2\nLine 3\n")
+write(-*green*- + "Wrote file: &{path}" + -*reset*-)
+
+# Read it back
+>> contents = io.read(path)
+write(-*cyan*- + "Contents:" + -*reset*-)
+write(contents)
+
+# Append to it
+io.append(path, "Line 4 (appended)\n")
+write(-*cyan*- + "After append:" + -*reset*-)
+write(io.read(path))
+
+# Check existence
+write("exists: &{io.exists(path)}")
+write("exists (fake): &{io.exists("no_such_file.txt")}")
+
+# List current directory
+>> entries = io.list(".")
+write(-*cyan*- + "Files in current directory:" + -*reset*-)
+for entry in entries +/
+    write("  &{entry}")
+ECB
+
+# Clean up
+io.delete(path)
+write(-*yellow*- + "Deleted &{path}" + -*reset*-)
+write("exists after delete: &{io.exists(path)}")

@@ -1,0 +1,40 @@
+# random_example.axb — randomness with the random module
+uselib -random-
+
+# Seed for reproducibility
+random.seed(42)
+
+# Random integers
+write(-*cyan*- + "── dice rolls ───────────────────────────" + -*reset*-)
+>> i = 0
+while i < 5 +/
+    write("d6: &{random.int(1, 6)}")
+    i = i + 1
+ECB
+
+# Random floats
+write("")
+write(-*cyan*- + "── random floats ────────────────────────" + -*reset*-)
+>> j = 0
+while j < 3 +/
+    write(random.float())
+    j = j + 1
+ECB
+
+# choice
+write("")
+write(-*cyan*- + "── random choice ────────────────────────" + -*reset*-)
+>> colors = ["red", "green", "blue", "cyan", "magenta"]
+>> k = 0
+while k < 4 +/
+    write(random.choice(colors))
+    k = k + 1
+ECB
+
+# shuffle
+write("")
+write(-*cyan*- + "── shuffle ──────────────────────────────" + -*reset*-)
+>> deck = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+>> shuffled = random.shuffle(deck)
+write("original: &{deck}")
+write("shuffled: &{shuffled}")

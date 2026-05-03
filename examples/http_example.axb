@@ -1,0 +1,26 @@
+# http_example.axb — HTTP requests with the http module
+# Uses https://httpbin.org — a free public HTTP testing service
+uselib -http-
+uselib -json-
+
+write(-*cyan*- + "── GET request ──────────────────────────" + -*reset*-)
+>> res = http.get("https://httpbin.org/get")
+write("status: &{res~"status"~}")
+>> body = json.parse(res~"body"~)
+write("origin: &{body~"origin"~}")
+write("url:    &{body~"url"~}")
+
+write("")
+write(-*cyan*- + "── POST request ─────────────────────────" + -*reset*-)
+>> payload = {name: "AxonBlade", version: 2}
+>> post_res = http.post("https://httpbin.org/post", payload)
+write("status: &{post_res~"status"~}")
+>> post_body = json.parse(post_res~"body"~)
+>> sent = post_body~"json"~
+write("echoed name:    &{sent~"name"~}")
+write("echoed version: &{sent~"version"~}")
+
+write("")
+write(-*cyan*- + "── Error handling ───────────────────────" + -*reset*-)
+>> err_res = http.get("https://httpbin.org/status/404")
+write("404 status: &{err_res~"status"~}")

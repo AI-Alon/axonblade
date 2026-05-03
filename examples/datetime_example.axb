@@ -1,0 +1,27 @@
+# datetime_example.axb — dates and times with the datetime module
+uselib -datetime-
+
+# Current datetime as ISO string
+>> now = datetime.now()
+write(-*cyan*- + "Now (ISO):  " + -*reset*- + now)
+
+# Unix timestamp
+>> ts = datetime.timestamp()
+write(-*cyan*- + "Timestamp: " + -*reset*- + str(ts))
+
+# Format a datetime
+>> formatted = datetime.format(now, "%Y-%m-%d %H:%M")
+write(-*cyan*- + "Formatted: " + -*reset*- + formatted)
+
+# Parse a string into ISO
+>> iso = datetime.parse("2026-05-03 12:00", "%Y-%m-%d %H:%M")
+write(-*cyan*- + "Parsed ISO:" + -*reset*- + " " + iso)
+
+# Diff between two datetimes
+>> start = datetime.parse("2026-01-01 00:00", "%Y-%m-%d %H:%M")
+>> end   = datetime.parse("2026-01-02 06:30", "%Y-%m-%d %H:%M")
+>> diff  = datetime.diff_seconds(start, end)
+write(-*cyan*- + "Diff (s):  " + -*reset*- + str(diff))
+
+>> hours = diff / 3600
+write(-*cyan*- + "Diff (h):  " + -*reset*- + str(hours))

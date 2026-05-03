@@ -1,0 +1,19 @@
+bladeFN int(lo#int, hi#int) +/
+    return __builtin_random_int(lo, hi)
+ECB
+
+bladeFN float() +/
+    return __builtin_random_float()
+ECB
+
+bladeFN choice(lst#list) +/
+    return __builtin_random_choice(lst)
+ECB
+
+bladeFN shuffle(lst#list) +/
+    return __builtin_random_shuffle(lst)
+ECB
+
+bladeFN seed(n#int) +/
+    __builtin_random_seed(n)
+ECB

@@ -1,0 +1,31 @@
+# json_example.axb — JSON parse and stringify with the json module
+uselib -json-
+
+# Stringify a dict
+>> person = {name: "Alon", age: 17, active: true}
+>> person_json = json.stringify(person)
+write(-*cyan*- + "Stringified:" + -*reset*-)
+write(person_json)
+
+# Stringify a list
+>> nums = [1, 2, 3, 4, 5]
+write("List JSON: &{json.stringify(nums)}")
+
+# Parse JSON back
+>> raw = "{\"city\": \"Tel Aviv\", \"pop\": 460000}"
+>> parsed = json.parse(raw)
+write(-*cyan*- + "Parsed:" + -*reset*-)
+write("city: &{parsed~"city"~}")
+write("pop:  &{parsed~"pop"~}")
+
+# Round-trip
+>> original = {x: 10, y: 20, label: "origin"}
+>> encoded = json.stringify(original)
+>> decoded = json.parse(encoded)
+write(-*green*- + "Round-trip check:" + -*reset*-)
+write("x = &{decoded~"x"~}  y = &{decoded~"y"~}  label = &{decoded~"label"~}")
+
+# Nested structure
+>> nested = json.parse("{\"items\": [1, 2, 3], \"meta\": {\"count\": 3}}")
+write("items~0~: &{nested~"items"~~0~}")
+write("meta count: &{nested~"meta"~~"count"~}")

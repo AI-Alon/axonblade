@@ -1,0 +1,23 @@
+bladeFN read(path#str) +/
+    return __builtin_io_read(path)
+ECB
+
+bladeFN write(path#str, content#str) +/
+    __builtin_io_write(path, content)
+ECB
+
+bladeFN append(path#str, content#str) +/
+    __builtin_io_append(path, content)
+ECB
+
+bladeFN exists(path#str) +/
+    return __builtin_io_exists(path)
+ECB
+
+bladeFN delete(path#str) +/
+    __builtin_io_delete(path)
+ECB
+
+bladeFN list(path#str) +/
+    return __builtin_io_list(path)
+ECB

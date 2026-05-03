@@ -1,0 +1,19 @@
+bladeFN now() +/
+    return __builtin_datetime_now()
+ECB
+
+bladeFN format(iso_str#str, fmt#str) +/
+    return __builtin_datetime_format(iso_str, fmt)
+ECB
+
+bladeFN parse(s#str, fmt#str) +/
+    return __builtin_datetime_parse(s, fmt)
+ECB
+
+bladeFN timestamp() +/
+    return __builtin_datetime_timestamp()
+ECB
+
+bladeFN diff_seconds(iso_a#str, iso_b#str) +/
+    return __builtin_datetime_diff_seconds(iso_a, iso_b)
+ECB

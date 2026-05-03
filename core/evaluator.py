@@ -487,6 +487,25 @@ class Evaluator:
                 f"dict has no method '{attr}'", line=node.line
             )
 
+        # String dot-methods (Phase 1.7)
+        if isinstance(obj, str):
+            _STR_METHODS = {
+                "upper":       lambda: obj.upper(),
+                "lower":       lambda: obj.lower(),
+                "strip":       lambda: obj.strip(),
+                "trim":        lambda: obj.strip(),
+                "split":       lambda sep: obj.split(sep),
+                "replace":     lambda old, new: obj.replace(old, new),
+                "contains":    lambda sub: sub in obj,
+                "starts_with": lambda prefix: obj.startswith(prefix),
+                "ends_with":   lambda suffix: obj.endswith(suffix),
+            }
+            if attr in _STR_METHODS:
+                return _STR_METHODS[attr]
+            raise AxonTypeError(
+                f"str has no method '{attr}'", line=node.line
+            )
+
         raise AxonTypeError(
             f"Cannot access attribute '{attr}' on {type(obj).__name__}",
             line=node.line,

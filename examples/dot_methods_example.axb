@@ -1,0 +1,29 @@
+# dot_methods_example.axb — string dot-methods (Phase 1.7)
+>> s = "  Hello, AxonBlade!  "
+
+write(-*cyan*- + "── transform ────────────────────────────" + -*reset*-)
+write(s.upper())
+write(s.lower())
+write(s.strip())
+write(s.trim())
+
+write("")
+write(-*cyan*- + "── test ─────────────────────────────────" + -*reset*-)
+>> clean = s.strip()
+write("starts_with 'Hello'?  &{clean.starts_with("Hello")}")
+write("ends_with '!'?        &{clean.ends_with("!")}")
+write("contains 'Axon'?      &{clean.contains("Axon")}")
+
+write("")
+write(-*cyan*- + "── split / replace ──────────────────────" + -*reset*-)
+>> parts = "one,two,three".split(",")
+write(parts)
+
+>> fixed = "hello world".replace("world", "AxonBlade")
+write(fixed)
+
+write("")
+write(-*cyan*- + "── chaining via variables ───────────────" + -*reset*-)
+>> title = "  axonblade v2  "
+>> result = title.strip().upper()
+write(result)

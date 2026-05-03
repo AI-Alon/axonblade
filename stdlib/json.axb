@@ -1,0 +1,7 @@
+bladeFN parse(s#str) +/
+    return __builtin_json_parse(s)
+ECB
+
+bladeFN stringify(value) +/
+    return __builtin_json_stringify(value)
+ECB
