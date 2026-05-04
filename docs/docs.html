@@ -234,6 +234,7 @@
   <option value="#grid">Grid System</option>
   <option value="#string-dot-methods">String Dot-Methods</option>
   <option value="#stdlib">Standard Library</option>
+  <option value="#vscode-extension">VSCode Extension</option>
 </select>
 
 <div class="docs-layout">
@@ -275,6 +276,15 @@
         <li><a href="#stdlib">Standard Library</a></li>
       </ul>
     </div>
+    <div class="sidebar-section">
+      <h4>Tooling</h4>
+      <ul>
+        <li><a href="#tooling-fmt">ablade fmt</a></li>
+        <li><a href="#tooling-lint">ablade lint</a></li>
+        <li><a href="#tooling-test">ablade test</a></li>
+        <li><a href="#vscode-extension">VSCode Extension</a></li>
+      </ul>
+    </div>
   </aside>
 
   <!-- Content -->
@@ -308,9 +318,14 @@ pip install -e .</code></pre>
 
     <!-- ── Running ── -->
     <h2 id="running">Running Files</h2>
-    <pre><code>ablade run &lt;file.axb&gt;   # run a program
-ablade repl             # start interactive REPL
-ablade version          # print version</code></pre>
+    <pre><code>ablade run &lt;file.axb&gt;          # run a program
+ablade repl                    # start interactive REPL
+ablade fmt &lt;file.axb&gt;          # print formatted source
+ablade fmt --in-place &lt;file&gt;   # overwrite file with formatted output
+ablade fmt --check &lt;file&gt;      # exit 1 if file would change (CI)
+ablade lint &lt;file.axb&gt;         # run static analysis
+ablade test [dir]              # discover and run *_test.axb files
+ablade version                 # print version</code></pre>
 
     <!-- ── REPL ── -->
     <h2 id="repl">REPL</h2>
@@ -811,6 +826,122 @@ axb&gt; EXIT</code></pre>
 <span class="fn">write</span>(<span class="var">random</span>.<span class="fn">choice</span>(<span class="var">items</span>))     <span class="cmt"># e.g. c</span>
 <span class="fn">write</span>(<span class="var">random</span>.<span class="fn">shuffle</span>(<span class="var">items</span>))    <span class="cmt"># e.g. [d, b, a, c]</span></code></pre>
 
+    <!-- ── Formatter ── -->
+    <h2 id="tooling-fmt">Formatter — <code>ablade fmt</code></h2>
+    <p>The formatter rewrites an AxonBlade source file to a canonical style — consistent indentation, spacing around operators, blank lines between declarations, and no trailing whitespace. It works by parsing the file into an AST and re-emitting it, so the output is always syntactically valid.</p>
+    <pre><code>ablade fmt hello.axb             # print formatted source to stdout
+ablade fmt --in-place hello.axb  # overwrite the file
+ablade fmt --check hello.axb     # exit 1 if the file would change (use in CI)</code></pre>
+
+    <h3>Formatting rules</h3>
+    <table>
+      <tr><th>Rule</th><th>Detail</th></tr>
+      <tr><td>Indentation</td><td>4 spaces per nesting level. Tabs are never used.</td></tr>
+      <tr><td>Binary operators</td><td>Exactly one space on each side: <code>x + 1</code>, <code>a == b</code></td></tr>
+      <tr><td>Top-level declarations</td><td>One blank line before each <code>bladeFN</code> or <code>bladeGRP</code></td></tr>
+      <tr><td>Trailing whitespace</td><td>Stripped from every line</td></tr>
+      <tr><td>Final newline</td><td>Always present</td></tr>
+    </table>
+
+    <!-- ── Linter ── -->
+    <h2 id="tooling-lint">Linter — <code>ablade lint</code></h2>
+    <p>The linter performs static analysis on a source file without running it. It reports errors and warnings in a machine-readable format and exits with a code that CI scripts can act on.</p>
+    <pre><code>ablade lint hello.axb</code></pre>
+
+    <h3>Output format</h3>
+    <pre><code>hello.axb:12:5: [error] undefined variable 'x'
+hello.axb:8:1: [warning] variable 'tmp' is declared but never read</code></pre>
+
+    <h3>Exit codes</h3>
+    <table>
+      <tr><th>Code</th><th>Meaning</th></tr>
+      <tr><td><code>0</code></td><td>No errors or warnings</td></tr>
+      <tr><td><code>1</code></td><td>At least one error</td></tr>
+      <tr><td><code>2</code></td><td>At least one warning, no errors</td></tr>
+    </table>
+
+    <h3>Diagnostics</h3>
+    <table>
+      <tr><th>Level</th><th>Diagnostic</th></tr>
+      <tr><td><code>[error]</code></td><td>Identifier used before any declaration in scope</td></tr>
+      <tr><td><code>[error]</code></td><td>Function called with the wrong number of arguments (at known call sites)</td></tr>
+      <tr><td><code>[warning]</code></td><td>Variable declared with <code>&gt;&gt;</code> but never read</td></tr>
+      <tr><td><code>[warning]</code></td><td>Unreachable statements after <code>return</code> in a function body</td></tr>
+      <tr><td><code>[warning]</code></td><td>Variable name shadows a variable from an outer scope</td></tr>
+    </table>
+
+    <!-- ── Test runner ── -->
+    <h2 id="tooling-test">Test Runner — <code>ablade test</code></h2>
+    <p>The test runner discovers all files named <code>*_test.axb</code> under the given directory (default: <code>.</code>), runs each one through the evaluator, and reports pass/fail results per <code>test()</code> call.</p>
+    <pre><code>ablade test           # search from current directory
+ablade test tests/    # search from a specific directory</code></pre>
+
+    <h3>Test builtins</h3>
+    <table>
+      <tr><th>Builtin</th><th>Description</th></tr>
+      <tr><td><code>test(name, fn)</code></td><td>Register and run a named test case. <code>fn</code> is a zero-argument <code>bladeFN</code>.</td></tr>
+      <tr><td><code>assert_eq(a, b)</code></td><td>Fail with a diff if <code>a != b</code></td></tr>
+      <tr><td><code>assert_true(val)</code></td><td>Fail if <code>val</code> is falsy</td></tr>
+      <tr><td><code>assert_raises(fn)</code></td><td>Fail if calling <code>fn()</code> does <em>not</em> raise an error</td></tr>
+    </table>
+
+    <h3>Example test file (<code>math_test.axb</code>)</h3>
+    <pre><code>test("addition", bladeFN() +/
+    assert_eq(1 + 1, 2)
+    assert_eq(10 + 32, 42)
+ECB)
+
+test("division by non-zero", bladeFN() +/
+    assert_eq(10 / 2, 5)
+ECB)
+
+test("division by zero raises", bladeFN() +/
+    assert_raises(bladeFN() +/
+        >> x = 1 / 0
+    ECB)
+ECB)</code></pre>
+
+    <h3>Output</h3>
+    <pre><code>  ✓  tests/math_test.axb :: addition
+  ✓  tests/math_test.axb :: division by non-zero
+  ✓  tests/math_test.axb :: division by zero raises
+
+  ✓ 3 passed   ✗ 0 failed</code></pre>
+
+    <!-- ── VSCode Extension ── -->
+    <h2 id="vscode-extension">VSCode Extension</h2>
+    <p>The official AxonBlade extension for Visual Studio Code adds syntax highlighting, bracket matching, auto-indentation, and comment toggling for <code>.axb</code> files.</p>
+
+    <h3>Install</h3>
+    <p>Download <code>axonblade-2.0.0.vsix</code> from <a href="https://github.com/AI-Alon/axonblade/releases" target="_blank" rel="noopener noreferrer">GitHub Releases</a>, then install via the Extensions panel:</p>
+    <pre><code># VS Code command palette → "Install from VSIX…"
+# or from the terminal:
+code --install-extension axonblade-2.0.0.vsix</code></pre>
+
+    <h3>Features</h3>
+    <table>
+      <tr><th>Feature</th><th>Detail</th></tr>
+      <tr><td>Keyword highlighting</td><td><code>bladeFN</code>, <code>bladeGRP</code>, <code>ECB</code>, <code>return</code>, <code>if</code>, <code>elif</code>, <code>else</code>, <code>while</code>, <code>for</code>, <code>in</code>, <code>try</code>, <code>catch</code>, <code>raise</code>, <code>uselib</code></td></tr>
+      <tr><td>Color literals</td><td><code>-*red*-</code>, <code>-*cyan*-</code>, etc. highlighted in gold/yellow</td></tr>
+      <tr><td>String interpolation</td><td><code>&amp;{expr}</code> inside strings highlighted as a distinct token</td></tr>
+      <tr><td>Variable declaration</td><td><code>&gt;&gt;</code> highlighted as a keyword operator</td></tr>
+      <tr><td>Block delimiters</td><td><code>+/</code> and <code>ECB</code> highlighted as punctuation</td></tr>
+      <tr><td>Logic operators</td><td><code>-a</code>, <code>-o</code>, <code>-n</code> highlighted as logical keywords</td></tr>
+      <tr><td>Type annotations</td><td><code>#str</code>, <code>#int</code>, <code>#float</code>, <code>#bool</code>, <code>#list</code>, <code>#fn</code></td></tr>
+      <tr><td>Built-in functions</td><td><code>write</code>, <code>len</code>, <code>type</code>, <code>range</code>, <code>input</code>, <code>grid</code>, <code>str</code>, <code>int</code>, <code>float</code>, <code>bool</code></td></tr>
+      <tr><td>Comments</td><td>Line: <code>#</code>  ·  Block: <code>#/ ... /#</code></td></tr>
+      <tr><td>Bracket matching</td><td><code>()</code>, <code>[]</code>, <code>{}</code></td></tr>
+      <tr><td>Auto-indent</td><td>Indents after <code>+/</code>, dedents at <code>ECB</code></td></tr>
+    </table>
+
+    <pre><code><span class="cmt"># Full example — all highlighted token types</span>
+<span class="kw">bladeFN</span> <span class="fn">greet</span>(<span class="var">name</span><span class="op">#</span><span class="var">str</span>) <span class="op">+/</span>
+    <span class="kw">&gt;&gt;</span> <span class="var">msg</span> <span class="op">=</span> <span class="str">"Hello, &amp;{name}!"</span>
+    <span class="fn">write</span>(<span class="col">-*cyan*-</span> <span class="op">+</span> <span class="var">msg</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="kw">ECB</span>
+
+<span class="fn">greet</span>(<span class="str">"world"</span>)</code></pre>
+
     <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" class="back-to-top">↑ Back to top</a>
   </main>
 </div>
@@ -818,7 +949,7 @@ axb&gt; EXIT</code></pre>
 <footer>
   <div class="footer-inner">
     <div class="footer-left">
-      <strong>AxonBlade</strong> v1.0 &nbsp;·&nbsp; MIT License &nbsp;·&nbsp;
+      <strong>AxonBlade</strong> v2.0 &nbsp;·&nbsp; MIT License &nbsp;·&nbsp;
       &copy; 2026 AI-Alon
     </div>
     <div class="footer-links">

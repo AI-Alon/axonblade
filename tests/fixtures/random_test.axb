@@ -1,0 +1,85 @@
+# random_test.axb — tests for the random stdlib module
+uselib -random-
+
+test("seed makes int reproducible", bladeFN() +/
+    random.seed(42)
+    >> a = random.int(0, 1000)
+    random.seed(42)
+    >> b = random.int(0, 1000)
+    assert_eq(a, b)
+ECB)
+
+test("int stays within bounds", bladeFN() +/
+    random.seed(1)
+    >> i = 0
+    while i < 20 +/
+        >> n = random.int(5, 10)
+        assert_true(n >= 5)
+        assert_true(n <= 10)
+        i = i + 1
+    ECB
+ECB)
+
+test("int with equal bounds returns that value", bladeFN() +/
+    >> n = random.int(7, 7)
+    assert_eq(n, 7)
+ECB)
+
+test("int raises when min > max", bladeFN() +/
+    assert_raises(bladeFN() +/
+        random.int(10, 5)
+    ECB)
+ECB)
+
+test("float returns value in [0, 1)", bladeFN() +/
+    random.seed(2)
+    >> i = 0
+    while i < 20 +/
+        >> f = random.float()
+        assert_true(f >= 0)
+        assert_true(f < 1)
+        i = i + 1
+    ECB
+ECB)
+
+test("seed makes float reproducible", bladeFN() +/
+    random.seed(99)
+    >> a = random.float()
+    random.seed(99)
+    >> b = random.float()
+    assert_eq(a, b)
+ECB)
+
+test("choice returns element from list", bladeFN() +/
+    >> lst = ["a", "b", "c"]
+    random.seed(3)
+    >> picked = random.choice(lst)
+    assert_true(picked == "a" -o picked == "b" -o picked == "c")
+ECB)
+
+test("choice raises on empty list", bladeFN() +/
+    assert_raises(bladeFN() +/
+        random.choice([])
+    ECB)
+ECB)
+
+test("shuffle returns same length list", bladeFN() +/
+    >> lst = [1, 2, 3, 4, 5]
+    >> shuffled = random.shuffle(lst)
+    assert_eq(len(shuffled), 5)
+ECB)
+
+test("shuffle does not mutate original", bladeFN() +/
+    >> lst = [1, 2, 3]
+    random.shuffle(lst)
+    assert_eq(len(lst), 3)
+    assert_eq(lst~0~, 1)
+ECB)
+
+test("shuffle contains same elements", bladeFN() +/
+    random.seed(7)
+    >> lst = [10, 20, 30]
+    >> s = random.shuffle(lst)
+    >> sum = s~0~ + s~1~ + s~2~
+    assert_eq(sum, 60)
+ECB)

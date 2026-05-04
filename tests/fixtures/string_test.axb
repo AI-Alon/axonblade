@@ -1,0 +1,47 @@
+# string_test.axb — tests for string operations and dot-methods
+
+test("string concatenation", bladeFN() +/
+    assert_eq("hello" + " " + "world", "hello world")
+ECB)
+
+test("string length", bladeFN() +/
+    assert_eq(len("axonblade"), 9)
+    assert_eq(len(""), 0)
+ECB)
+
+test("upper and lower dot-methods", bladeFN() +/
+    assert_eq("hello".upper(), "HELLO")
+    assert_eq("WORLD".lower(), "world")
+ECB)
+
+test("strip trims whitespace", bladeFN() +/
+    assert_eq("  hi  ".strip(), "hi")
+    assert_eq("  ".strip(), "")
+ECB)
+
+test("contains checks substring", bladeFN() +/
+    assert_true("hello".contains("ell"))
+    assert_true(-n "hello".contains("xyz"))
+ECB)
+
+test("starts_with and ends_with", bladeFN() +/
+    assert_true("axonblade".starts_with("axon"))
+    assert_true("axonblade".ends_with("blade"))
+ECB)
+
+test("replace substitutes text", bladeFN() +/
+    assert_eq("hello world".replace("world", "blade"), "hello blade")
+ECB)
+
+test("split returns list", bladeFN() +/
+    >> parts = "a,b,c".split(",")
+    assert_eq(len(parts), 3)
+    assert_eq(parts~0~, "a")
+    assert_eq(parts~2~, "c")
+ECB)
+
+test("str() converts values", bladeFN() +/
+    assert_eq(str(42), "42")
+    assert_eq(str(true), "true")
+    assert_eq(str(null), "null")
+ECB)

@@ -227,6 +227,7 @@
     <option value="classes">Classes</option>
     <option value="snake">Snake Game</option>
     <option value="life">Game of Life</option>
+    <option value="testing">Writing Tests</option>
   </select>
 </div>
 
@@ -239,6 +240,7 @@
     <button type="button" class="ex-nav-btn" onclick="showEx('classes', this)">Classes <span class="badge">OOP</span></button>
     <button type="button" class="ex-nav-btn" onclick="showEx('snake', this)">Snake <span class="badge game">game</span></button>
     <button type="button" class="ex-nav-btn" onclick="showEx('life', this)">Game of Life <span class="badge game">game</span></button>
+    <button type="button" class="ex-nav-btn" onclick="showEx('testing', this)">Writing Tests <span class="badge">tooling</span></button>
   </aside>
 
   <!-- Example panes -->
@@ -952,6 +954,70 @@
         </div>
       </div>
     </div>
+
+    <!-- Writing Tests -->
+    <div id="ex-testing" class="ex-pane">
+      <div class="ex-card">
+        <div class="ex-card-header">
+          <div>
+            <h2>Writing Tests</h2>
+            <p>Use <code>test()</code>, <code>assert_eq()</code>, <code>assert_true()</code>, and <code>assert_raises()</code> to write <code>*_test.axb</code> files, then run them with <code>ablade test</code>.</p>
+          </div>
+        </div>
+        <div class="code-block"><span class="cmt"># math_test.axb — tests for arithmetic</span>
+<span class="cmt"># Run with:  ablade test</span>
+
+<span class="fn">test</span>(<span class="str">"addition"</span>, <span class="kw">bladeFN</span>() <span class="op">+/</span>
+    <span class="fn">assert_eq</span>(<span class="num">1</span> <span class="op">+</span> <span class="num">1</span>, <span class="num">2</span>)
+    <span class="fn">assert_eq</span>(<span class="num">10</span> <span class="op">+</span> <span class="num">32</span>, <span class="num">42</span>)
+<span class="kw">ECB</span>)
+
+<span class="fn">test</span>(<span class="str">"subtraction"</span>, <span class="kw">bladeFN</span>() <span class="op">+/</span>
+    <span class="fn">assert_eq</span>(<span class="num">10</span> <span class="op">-</span> <span class="num">3</span>, <span class="num">7</span>)
+    <span class="fn">assert_eq</span>(<span class="num">0</span> <span class="op">-</span> <span class="num">5</span>, <span class="num">-5</span>)
+<span class="kw">ECB</span>)
+
+<span class="fn">test</span>(<span class="str">"power"</span>, <span class="kw">bladeFN</span>() <span class="op">+/</span>
+    <span class="fn">assert_eq</span>(<span class="num">2</span> <span class="op">**</span> <span class="num">10</span>, <span class="num">1024</span>)
+<span class="kw">ECB</span>)
+
+<span class="fn">test</span>(<span class="str">"division by zero raises"</span>, <span class="kw">bladeFN</span>() <span class="op">+/</span>
+    <span class="fn">assert_raises</span>(<span class="kw">bladeFN</span>() <span class="op">+/</span>
+        <span class="kw">&gt;&gt;</span> <span class="var">x</span> <span class="op">=</span> <span class="num">1</span> <span class="op">/</span> <span class="num">0</span>
+    <span class="kw">ECB</span>)
+<span class="kw">ECB</span>)
+
+<span class="cmt"># string_test.axb — tests for string dot-methods</span>
+
+<span class="fn">test</span>(<span class="str">"upper and lower"</span>, <span class="kw">bladeFN</span>() <span class="op">+/</span>
+    <span class="fn">assert_eq</span>(<span class="str">"hello"</span>.<span class="fn">upper</span>(), <span class="str">"HELLO"</span>)
+    <span class="fn">assert_eq</span>(<span class="str">"WORLD"</span>.<span class="fn">lower</span>(), <span class="str">"world"</span>)
+<span class="kw">ECB</span>)
+
+<span class="fn">test</span>(<span class="str">"contains checks substring"</span>, <span class="kw">bladeFN</span>() <span class="op">+/</span>
+    <span class="fn">assert_true</span>(<span class="str">"axonblade"</span>.<span class="fn">contains</span>(<span class="str">"axon"</span>))
+    <span class="fn">assert_true</span>(<span class="op">-n</span> <span class="str">"axonblade"</span>.<span class="fn">contains</span>(<span class="str">"xyz"</span>))
+<span class="kw">ECB</span>)</div>
+        <div style="margin-top:1.25rem; padding:1rem; background:var(--bg3); border-radius:var(--radius); border:1px solid var(--border);">
+          <p style="color:var(--muted);font-size:.88rem;margin-bottom:.5rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;">Running your tests</p>
+          <pre style="margin:0;padding:0;background:none;border:none;font-size:.9rem;"><code>ablade test               <span style="color:var(--muted)"># search from current directory</span>
+ablade test tests/        <span style="color:var(--muted)"># search a specific folder</span></code></pre>
+        </div>
+        <div style="margin-top:.75rem; padding:1rem; background:var(--bg3); border-radius:var(--radius); border:1px solid var(--border);">
+          <p style="color:var(--muted);font-size:.88rem;margin-bottom:.5rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;">Example output</p>
+          <pre style="margin:0;padding:0;background:none;border:none;font-size:.9rem;"><code><span style="color:var(--green)">✓</span>  tests/math_test.axb :: addition
+<span style="color:var(--green)">✓</span>  tests/math_test.axb :: subtraction
+<span style="color:var(--green)">✓</span>  tests/math_test.axb :: power
+<span style="color:var(--green)">✓</span>  tests/math_test.axb :: division by zero raises
+
+<span style="color:var(--green)">✓ 4 passed</span>   ✗ 0 failed</code></pre>
+        </div>
+        <div class="ex-meta">
+          <div class="ex-meta-item"><strong>Concepts:</strong> test(), assert_eq(), assert_true(), assert_raises(), ablade test</div>
+          <div class="ex-meta-item"><strong>Convention:</strong> name test files <code>*_test.axb</code> — the runner discovers them automatically</div>
+        </div>
+      </div>
+    </div>
   </main>
 </div>
 
@@ -994,7 +1060,7 @@
   }
 
   // Auto-select from ?ex= query param
-  const validExamples = ['hello','fibonacci','closures','classes','snake','life'];
+  const validExamples = ['hello','fibonacci','closures','classes','snake','life','testing'];
   const exParam = new URLSearchParams(window.location.search).get('ex');
   if (exParam && validExamples.includes(exParam) && document.getElementById('ex-' + exParam)) showEx(exParam);
 

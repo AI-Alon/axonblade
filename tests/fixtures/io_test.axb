@@ -1,0 +1,58 @@
+# io_test.axb — tests for the io stdlib module
+uselib -io-
+
+>> TMP = "/tmp/axb_io_test.txt"
+
+test("io.write and io.read roundtrip", bladeFN() +/
+    io.write(TMP, "hello axonblade")
+    >> content = io.read(TMP)
+    assert_eq(content, "hello axonblade")
+ECB)
+
+test("io.write overwrites previous content", bladeFN() +/
+    io.write(TMP, "first")
+    io.write(TMP, "second")
+    assert_eq(io.read(TMP), "second")
+ECB)
+
+test("io.append adds to file", bladeFN() +/
+    io.write(TMP, "line1\n")
+    io.append(TMP, "line2\n")
+    >> content = io.read(TMP)
+    assert_true(content.contains("line1"))
+    assert_true(content.contains("line2"))
+ECB)
+
+test("io.exists returns true for existing file", bladeFN() +/
+    io.write(TMP, "x")
+    assert_true(io.exists(TMP))
+ECB)
+
+test("io.exists returns false for missing file", bladeFN() +/
+    assert_true(-n io.exists("/tmp/axb_no_such_file_xyz.txt"))
+ECB)
+
+test("io.delete removes the file", bladeFN() +/
+    io.write(TMP, "bye")
+    io.delete(TMP)
+    assert_true(-n io.exists(TMP))
+ECB)
+
+test("io.read raises on missing file", bladeFN() +/
+    assert_raises(bladeFN() +/
+        io.read("/tmp/axb_no_such_file_xyz.txt")
+    ECB)
+ECB)
+
+test("io.list returns directory entries", bladeFN() +/
+    >> entries = io.list("/tmp")
+    assert_true(len(entries) > 0)
+ECB)
+
+test("io.list raises on non-directory", bladeFN() +/
+    io.write(TMP, "file")
+    assert_raises(bladeFN() +/
+        io.list(TMP)
+    ECB)
+    io.delete(TMP)
+ECB)

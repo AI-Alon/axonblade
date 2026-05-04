@@ -1,0 +1,185 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "AxonBlade",
+  "scopeName": "source.axonblade",
+  "fileTypes": ["axb"],
+  "patterns": [
+    { "include": "#block-comment" },
+    { "include": "#line-comment" },
+    { "include": "#color-literal" },
+    { "include": "#fstring" },
+    { "include": "#string" },
+    { "include": "#keywords" },
+    { "include": "#self-keyword" },
+    { "include": "#logic-operators" },
+    { "include": "#block-delimiters" },
+    { "include": "#var-decl" },
+    { "include": "#builtin-functions" },
+    { "include": "#function-call" },
+    { "include": "#numbers" },
+    { "include": "#operators" },
+    { "include": "#type-annotation" },
+    { "include": "#identifier" }
+  ],
+  "repository": {
+    "block-comment": {
+      "name": "comment.block.axonblade",
+      "begin": "#/",
+      "end": "/#",
+      "beginCaptures": { "0": { "name": "punctuation.definition.comment.begin.axonblade" } },
+      "endCaptures":   { "0": { "name": "punctuation.definition.comment.end.axonblade" } }
+    },
+    "line-comment": {
+      "name": "comment.line.number-sign.axonblade",
+      "match": "#.*$"
+    },
+    "color-literal": {
+      "name": "constant.other.color.axonblade",
+      "match": "-\\*(black|red|green|yellow|blue|magenta|cyan|white|reset)\\*-",
+      "captures": {
+        "0": { "name": "constant.other.color.axonblade" },
+        "1": { "name": "support.constant.color-name.axonblade" }
+      }
+    },
+    "fstring": {
+      "name": "string.quoted.double.fstring.axonblade",
+      "begin": "\"(?=[^\"]*&\\{)",
+      "end": "\"",
+      "beginCaptures": { "0": { "name": "punctuation.definition.string.begin.axonblade" } },
+      "endCaptures":   { "0": { "name": "punctuation.definition.string.end.axonblade" } },
+      "patterns": [
+        {
+          "name": "meta.interpolation.axonblade",
+          "begin": "&\\{",
+          "end": "\\}",
+          "beginCaptures": { "0": { "name": "punctuation.definition.interpolation.begin.axonblade" } },
+          "endCaptures":   { "0": { "name": "punctuation.definition.interpolation.end.axonblade" } },
+          "patterns": [{ "include": "$self" }]
+        },
+        { "name": "constant.character.escape.axonblade", "match": "\\\\." }
+      ]
+    },
+    "string": {
+      "name": "string.quoted.double.axonblade",
+      "begin": "\"",
+      "end": "\"",
+      "beginCaptures": { "0": { "name": "punctuation.definition.string.begin.axonblade" } },
+      "endCaptures":   { "0": { "name": "punctuation.definition.string.end.axonblade" } },
+      "patterns": [
+        { "name": "constant.character.escape.axonblade", "match": "\\\\." }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.declaration.function.axonblade",
+          "match": "\\bbladeFN\\b"
+        },
+        {
+          "name": "keyword.declaration.class.axonblade",
+          "match": "\\bbladeGRP\\b"
+        },
+        {
+          "name": "keyword.control.flow.axonblade",
+          "match": "\\b(return|if|elif|else|while|for|in|try|catch|raise)\\b"
+        },
+        {
+          "name": "keyword.other.axonblade",
+          "match": "\\buselib\\b"
+        },
+        {
+          "name": "keyword.control.end-block.axonblade",
+          "match": "\\bECB\\b"
+        },
+        {
+          "name": "constant.language.boolean.axonblade",
+          "match": "\\b(true|false)\\b"
+        },
+        {
+          "name": "constant.language.null.axonblade",
+          "match": "\\bnull\\b"
+        }
+      ]
+    },
+    "self-keyword": {
+      "name": "variable.language.self.axonblade",
+      "match": "\\bblade\\b"
+    },
+    "logic-operators": {
+      "name": "keyword.operator.logical.axonblade",
+      "match": "(?<![a-zA-Z0-9_])(-a|-o|-n)(?![a-zA-Z0-9_])"
+    },
+    "block-delimiters": {
+      "patterns": [
+        {
+          "name": "punctuation.section.block.begin.axonblade",
+          "match": "\\+/"
+        }
+      ]
+    },
+    "var-decl": {
+      "name": "keyword.operator.assignment.declare.axonblade",
+      "match": "(?<![>])>>(?![>])"
+    },
+    "builtin-functions": {
+      "name": "support.function.builtin.axonblade",
+      "match": "\\b(write|len|type|range|input|grid|str|int|float|bool|append)\\b(?=\\s*\\()"
+    },
+    "function-call": {
+      "name": "entity.name.function.axonblade",
+      "match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\b(?=\\s*\\()"
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.float.axonblade",
+          "match": "\\b\\d+\\.\\d+\\b"
+        },
+        {
+          "name": "constant.numeric.integer.axonblade",
+          "match": "\\b\\d+\\b"
+        }
+      ]
+    },
+    "operators": {
+      "patterns": [
+        {
+          "name": "keyword.operator.comparison.axonblade",
+          "match": "(==|!=|<=|>=|<|>)"
+        },
+        {
+          "name": "keyword.operator.pipeline.axonblade",
+          "match": "\\|>"
+        },
+        {
+          "name": "keyword.operator.power.axonblade",
+          "match": "\\*\\*"
+        },
+        {
+          "name": "keyword.operator.arithmetic.axonblade",
+          "match": "[+\\-*/%]"
+        },
+        {
+          "name": "keyword.operator.assignment.axonblade",
+          "match": "(?<!=)=(?!=)"
+        },
+        {
+          "name": "punctuation.accessor.axonblade",
+          "match": "~"
+        }
+      ]
+    },
+    "type-annotation": {
+      "name": "meta.type-annotation.axonblade",
+      "match": "(#)(str|int|float|bool|list|dict|fn)\\b",
+      "captures": {
+        "1": { "name": "punctuation.separator.type.axonblade" },
+        "2": { "name": "storage.type.axonblade" }
+      }
+    },
+    "identifier": {
+      "name": "variable.other.axonblade",
+      "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b"
+    }
+  }
+}

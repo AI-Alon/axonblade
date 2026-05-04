@@ -1,0 +1,60 @@
+# regex_test.axb — tests for the regex stdlib module
+uselib -regex-
+
+test("match returns true on hit", bladeFN() +/
+    assert_true(regex.match("\\d+", "abc123"))
+ECB)
+
+test("match returns false on miss", bladeFN() +/
+    assert_true(-n regex.match("\\d+", "abc"))
+ECB)
+
+test("match anchors with ^", bladeFN() +/
+    assert_true(regex.match("^hello", "hello world"))
+    assert_true(-n regex.match("^world", "hello world"))
+ECB)
+
+test("find returns first match", bladeFN() +/
+    >> m = regex.find("\\d+", "abc 42 xyz 99")
+    assert_eq(m, "42")
+ECB)
+
+test("find returns null on no match", bladeFN() +/
+    >> m = regex.find("\\d+", "no digits here")
+    assert_eq(m, null)
+ECB)
+
+test("find_all returns all matches", bladeFN() +/
+    >> matches = regex.find_all("\\d+", "a1 b22 c333")
+    assert_eq(len(matches), 3)
+    assert_eq(matches~0~, "1")
+    assert_eq(matches~1~, "22")
+    assert_eq(matches~2~, "333")
+ECB)
+
+test("find_all returns empty list when no match", bladeFN() +/
+    >> matches = regex.find_all("\\d+", "no digits")
+    assert_eq(len(matches), 0)
+ECB)
+
+test("replace substitutes first match", bladeFN() +/
+    >> result = regex.replace("\\d+", "abc 42 def 99", "NUM")
+    assert_eq(result, "abc NUM def NUM")
+ECB)
+
+test("replace with no match returns original", bladeFN() +/
+    >> result = regex.replace("\\d+", "no digits", "X")
+    assert_eq(result, "no digits")
+ECB)
+
+test("replace email pattern", bladeFN() +/
+    >> result = regex.replace("[a-z]+@[a-z]+\\.[a-z]+", "email: user@example.com", "REDACTED")
+    assert_true(result.contains("REDACTED"))
+    assert_true(-n result.contains("user@"))
+ECB)
+
+test("match invalid pattern raises error", bladeFN() +/
+    assert_raises(bladeFN() +/
+        regex.match("[invalid", "test")
+    ECB)
+ECB)

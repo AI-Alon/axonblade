@@ -1,0 +1,53 @@
+# collections_test.axb — tests for lists and dicts
+
+test("list indexing", bladeFN() +/
+    >> nums = [10, 20, 30]
+    assert_eq(nums~0~, 10)
+    assert_eq(nums~2~, 30)
+ECB)
+
+test("list length", bladeFN() +/
+    assert_eq(len([1, 2, 3, 4]), 4)
+    assert_eq(len([]), 0)
+ECB)
+
+test("list append", bladeFN() +/
+    >> items = [1, 2]
+    items.append(3)
+    assert_eq(len(items), 3)
+    assert_eq(items~2~, 3)
+ECB)
+
+test("list slicing", bladeFN() +/
+    >> nums = [0, 1, 2, 3, 4]
+    >> sliced = nums~1:3~
+    assert_eq(len(sliced), 2)
+    assert_eq(sliced~0~, 1)
+    assert_eq(sliced~1~, 2)
+ECB)
+
+test("dict get and set", bladeFN() +/
+    >> d = {"name": "axon", "version": 2}
+    assert_eq(d~"name"~, "axon")
+    assert_eq(d~"version"~, 2)
+ECB)
+
+test("dict keys", bladeFN() +/
+    >> d = {"a": 1, "b": 2}
+    >> ks = d.keys()
+    assert_eq(len(ks), 2)
+ECB)
+
+test("range generates list", bladeFN() +/
+    >> r = range(5)
+    assert_eq(len(r), 5)
+    assert_eq(r~0~, 0)
+    assert_eq(r~4~, 4)
+ECB)
+
+test("assert_raises catches errors", bladeFN() +/
+    assert_raises(bladeFN() +/
+        >> bad = []
+        >> x = bad~99~
+    ECB)
+ECB)

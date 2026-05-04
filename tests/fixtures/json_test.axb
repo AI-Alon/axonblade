@@ -1,0 +1,73 @@
+# json_test.axb — tests for the json stdlib module
+uselib -json-
+
+test("parse string", bladeFN() +/
+    >> v = json.parse("\"hello\"")
+    assert_eq(v, "hello")
+ECB)
+
+test("parse number", bladeFN() +/
+    assert_eq(json.parse("42"), 42)
+ECB)
+
+test("parse float", bladeFN() +/
+    >> v = json.parse("3.14")
+    assert_true(v > 3.0)
+    assert_true(v < 3.2)
+ECB)
+
+test("parse bool true", bladeFN() +/
+    assert_eq(json.parse("true"), true)
+ECB)
+
+test("parse bool false", bladeFN() +/
+    assert_eq(json.parse("false"), false)
+ECB)
+
+test("parse null", bladeFN() +/
+    assert_eq(json.parse("null"), null)
+ECB)
+
+test("parse list", bladeFN() +/
+    >> lst = json.parse("[1, 2, 3]")
+    assert_eq(len(lst), 3)
+    assert_eq(lst~0~, 1)
+    assert_eq(lst~2~, 3)
+ECB)
+
+test("parse nested object", bladeFN() +/
+    >> d = json.parse("{\"name\": \"axon\", \"ver\": 2}")
+    assert_eq(d~"name"~, "axon")
+    assert_eq(d~"ver"~, 2)
+ECB)
+
+test("stringify number", bladeFN() +/
+    assert_eq(json.stringify(99), "99")
+ECB)
+
+test("stringify string", bladeFN() +/
+    assert_eq(json.stringify("hi"), "\"hi\"")
+ECB)
+
+test("stringify list", bladeFN() +/
+    >> s = json.stringify([1, 2, 3])
+    assert_eq(s, "[1, 2, 3]")
+ECB)
+
+test("stringify null", bladeFN() +/
+    assert_eq(json.stringify(null), "null")
+ECB)
+
+test("roundtrip list", bladeFN() +/
+    >> original = [10, 20, 30]
+    >> s = json.stringify(original)
+    >> parsed = json.parse(s)
+    assert_eq(len(parsed), 3)
+    assert_eq(parsed~0~, 10)
+ECB)
+
+test("parse raises on invalid JSON", bladeFN() +/
+    assert_raises(bladeFN() +/
+        json.parse("{bad json}")
+    ECB)
+ECB)

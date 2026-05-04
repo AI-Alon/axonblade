@@ -1,0 +1,69 @@
+# datetime_test.axb — tests for the datetime stdlib module
+uselib -datetime-
+
+test("now returns a non-empty string", bladeFN() +/
+    >> n = datetime.now()
+    assert_true(type(n) == "str")
+    assert_true(len(n) > 0)
+ECB)
+
+test("now looks like an ISO string", bladeFN() +/
+    >> n = datetime.now()
+    assert_true(n.contains("T") -o n.contains("-"))
+ECB)
+
+test("timestamp returns a number", bladeFN() +/
+    >> t = datetime.timestamp()
+    assert_true(type(t) == "float" -o type(t) == "int")
+    assert_true(t > 0)
+ECB)
+
+test("format a known ISO string", bladeFN() +/
+    >> iso = "2026-05-04T12:00:00"
+    >> result = datetime.format(iso, "%Y-%m-%d")
+    assert_eq(result, "2026-05-04")
+ECB)
+
+test("format with time components", bladeFN() +/
+    >> iso = "2026-05-04T15:30:00"
+    >> result = datetime.format(iso, "%H:%M")
+    assert_eq(result, "15:30")
+ECB)
+
+test("parse roundtrip", bladeFN() +/
+    >> date_str = "04/05/2026"
+    >> iso = datetime.parse(date_str, "%d/%m/%Y")
+    >> back = datetime.format(iso, "%d/%m/%Y")
+    assert_eq(back, "04/05/2026")
+ECB)
+
+test("diff_seconds positive delta", bladeFN() +/
+    >> a = "2026-01-01T00:00:00"
+    >> b = "2026-01-01T00:01:00"
+    >> diff = datetime.diff_seconds(a, b)
+    assert_eq(diff, 60)
+ECB)
+
+test("diff_seconds negative delta", bladeFN() +/
+    >> a = "2026-01-01T00:01:00"
+    >> b = "2026-01-01T00:00:00"
+    >> diff = datetime.diff_seconds(a, b)
+    assert_eq(diff, -60)
+ECB)
+
+test("diff_seconds same time is zero", bladeFN() +/
+    >> t = "2026-05-04T10:00:00"
+    assert_eq(datetime.diff_seconds(t, t), 0)
+ECB)
+
+test("format raises on invalid ISO string", bladeFN() +/
+    assert_raises(bladeFN() +/
+        datetime.format("not-a-date", "%Y")
+    ECB)
+ECB)
+
+test("parse raises on format mismatch", bladeFN() +/
+    assert_raises(bladeFN() +/
+        datetime.parse("2026-05-04", "%H:%M")
+    ECB)
+ECB)

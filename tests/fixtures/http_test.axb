@@ -1,0 +1,50 @@
+# http_test.axb — tests for the http stdlib module
+# Network tests hit httpbin.org. Type-error tests run without network.
+uselib -http-
+
+test("http.get raises on non-string URL", bladeFN() +/
+    assert_raises(bladeFN() +/
+        http.get(42)
+    ECB)
+ECB)
+
+test("http.post raises on non-string URL", bladeFN() +/
+    assert_raises(bladeFN() +/
+        http.post(42, {})
+    ECB)
+ECB)
+
+test("http.put raises on non-string URL", bladeFN() +/
+    assert_raises(bladeFN() +/
+        http.put(42, {})
+    ECB)
+ECB)
+
+test("http.delete raises on non-string URL", bladeFN() +/
+    assert_raises(bladeFN() +/
+        http.delete(42)
+    ECB)
+ECB)
+
+test("http.get invalid host raises runtime error", bladeFN() +/
+    assert_raises(bladeFN() +/
+        http.get("http://this-host-does-not-exist.axb")
+    ECB)
+ECB)
+
+test("http.get returns dict with status, body, headers", bladeFN() +/
+    >> resp = http.get("https://httpbin.org/status/200")
+    assert_true(resp~"status"~ == 200)
+    assert_true(type(resp~"body"~) == "str")
+    assert_true(type(resp~"headers"~) == "dict")
+ECB)
+
+test("http.get 404 returns status 404", bladeFN() +/
+    >> resp = http.get("https://httpbin.org/status/404")
+    assert_eq(resp~"status"~, 404)
+ECB)
+
+test("http.post returns response dict", bladeFN() +/
+    >> resp = http.post("https://httpbin.org/post", {"key": "value"})
+    assert_true(resp~"status"~ == 200)
+ECB)

@@ -1,0 +1,34 @@
+{
+  "name": "axonblade",
+  "displayName": "AxonBlade",
+  "description": "Syntax highlighting, bracket matching, and comment toggling for AxonBlade (.axb) files.",
+  "version": "2.0.0",
+  "publisher": "AI-Alon",
+  "engines": { "vscode": "^1.75.0" },
+  "categories": ["Programming Languages"],
+  "keywords": ["axonblade", "axb", "scripting"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AI-Alon/axonblade"
+  },
+  "license": "MIT",
+  "activationEvents": [],
+  "main": "",
+  "contributes": {
+    "languages": [
+      {
+        "id": "axonblade",
+        "aliases": ["AxonBlade", "axonblade"],
+        "extensions": [".axb"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "axonblade",
+        "scopeName": "source.axonblade",
+        "path": "./syntaxes/axonblade.tmLanguage.json"
+      }
+    ]
+  }
+}
