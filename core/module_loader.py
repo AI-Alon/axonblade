@@ -14,12 +14,19 @@ Circular-import detection is handled via _loading_set.
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 
 from core.errors import AxonImportError
 
 _loading_set: set[str] = set()
-_STDLIB_DIR = Path(__file__).parent.parent / "stdlib"
+
+# When running as a PyInstaller frozen binary, stdlib .axb files are unpacked
+# into sys._MEIPASS/stdlib/. Otherwise use the normal source tree location.
+if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
+    _STDLIB_DIR = Path(sys._MEIPASS) / "stdlib"
+else:
+    _STDLIB_DIR = Path(__file__).parent.parent / "stdlib"
 
 
 def load_module(name: str, caller_file: str | None = None,

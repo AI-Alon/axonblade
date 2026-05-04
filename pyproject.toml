@@ -4,10 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "axonblade"
-version = "1.0.0"
-description = "AxonBlade — a custom interpreted scripting language with a native grid primitive"
+version = "2.0.0"
+description = "AxonBlade — a scripting language with bytecode compilation, color literals, and a native grid primitive"
 requires-python = ">=3.11"
 readme = "README.md"
+dependencies = ["requests>=2.28"]
+
+[project.optional-dependencies]
+dev = ["pyinstaller>=6.0"]
 
 [project.scripts]
 ablade = "axonblade.__main__:main"
