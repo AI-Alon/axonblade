@@ -78,7 +78,7 @@
     .hero {
       min-height: 88vh;
       display: flex; align-items: center;
-      padding: 4rem 2rem;
+      padding: 2.5rem 2rem;
       position: relative; overflow: hidden;
     }
     .hero::before {
@@ -90,26 +90,26 @@
     }
     .hero-inner {
       position: relative; max-width: 1200px; margin: 0 auto; width: 100%;
-      display: grid; grid-template-columns: 1fr 1fr; gap: 3.5rem; align-items: center;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: center;
     }
     .hero-badge {
       display: inline-block;
       background: rgba(0,212,255,.1); border: 1px solid rgba(0,212,255,.3);
       color: var(--cyan); border-radius: 100px;
-      padding: .25rem .9rem; font-size: .8rem; font-weight: 600;
-      letter-spacing: .05em; margin-bottom: 1.5rem;
+      padding: .3rem 1rem; font-size: .85rem; font-weight: 600;
+      letter-spacing: .05em; margin-bottom: .9rem;
     }
     .hero h1 {
-      font-size: clamp(2rem, 3.5vw, 3.2rem);
-      font-weight: 800; line-height: 1.1;
+      font-size: clamp(2.4rem, 4vw, 3.8rem);
+      font-weight: 800; line-height: 1.08;
       letter-spacing: -1.5px;
       background: linear-gradient(135deg, var(--cyan) 0%, var(--purple) 60%, var(--green) 100%);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
-      margin-bottom: 1rem;
+      margin-bottom: .75rem;
     }
     .hero-sub {
-      font-size: 1.1rem; color: var(--muted); margin: 0 0 2.5rem;
+      font-size: 1.15rem; color: var(--muted); margin: 0 0 1.75rem;
     }
     .hero-buttons { display: flex; gap: 1rem; justify-content: flex-start; flex-wrap: wrap; }
     .btn-primary {
@@ -128,7 +128,7 @@
     /* color strip animation below hero heading */
     .color-strip {
       display: flex; gap: 6px;
-      margin: 2rem 0 0; flex-wrap: wrap;
+      margin: 1.5rem 0 0; flex-wrap: wrap;
     }
     .cs-tile {
       width: 28px; height: 28px; border-radius: 4px;
@@ -441,7 +441,7 @@
     }
     .editor-tab {
       padding: .45rem 1.1rem;
-      font-size: .78rem; color: var(--muted);
+      font-size: .82rem; color: var(--muted);
       cursor: pointer; border-right: 1px solid var(--border);
       font-family: 'Cascadia Code','Fira Code','Consolas',monospace;
       transition: color .15s, background .15s;
@@ -452,9 +452,9 @@
     .editor-pane { display: none; }
     .editor-pane.active { display: block; }
     .editor-pane .code-body {
-      padding: 1rem 1.5rem;
-      font-size: .82rem; line-height: 1.75;
-      min-height: 140px;
+      padding: .85rem 1.25rem;
+      font-size: .88rem; line-height: 1.72;
+      min-height: 128px;
     }
     .editor-footer {
       display: flex; align-items: center; justify-content: space-between;
@@ -481,9 +481,9 @@
     .run-btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
     .editor-output {
       border-top: 1px solid var(--border);
-      padding: .75rem 1.5rem;
+      padding: .65rem 1.25rem;
       font-family: 'Cascadia Code','Fira Code','Consolas',monospace;
-      font-size: .82rem; line-height: 1.9;
+      font-size: .88rem; line-height: 1.85;
       display: none;
       background: rgba(0,0,0,.18);
     }
