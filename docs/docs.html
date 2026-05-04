@@ -235,6 +235,7 @@
   <option value="#string-dot-methods">String Dot-Methods</option>
   <option value="#stdlib">Standard Library</option>
   <option value="#vscode-extension">VSCode Extension</option>
+  <option value="#bytecode">Bytecode &amp; Performance</option>
 </select>
 
 <div class="docs-layout">
@@ -283,6 +284,12 @@
         <li><a href="#tooling-lint">ablade lint</a></li>
         <li><a href="#tooling-test">ablade test</a></li>
         <li><a href="#vscode-extension">VSCode Extension</a></li>
+      </ul>
+    </div>
+    <div class="sidebar-section">
+      <h4>Bytecode VM</h4>
+      <ul>
+        <li><a href="#bytecode">Bytecode &amp; Performance</a></li>
       </ul>
     </div>
   </aside>
@@ -941,6 +948,47 @@ code --install-extension axonblade-2.0.0.vsix</code></pre>
 <span class="kw">ECB</span>
 
 <span class="fn">greet</span>(<span class="str">"world"</span>)</code></pre>
+
+    <h2 id="bytecode">Bytecode &amp; Performance</h2>
+    <p>AxonBlade V2 compiles source files to compact bytecode before executing them. Instead of walking the AST on every run, the compiler emits a flat sequence of opcodes that a fast stack-based virtual machine (VM) dispatches in a tight loop.</p>
+
+    <h3>How it works</h3>
+    <ol>
+      <li>The <strong>compiler</strong> traverses the AST and emits <code>Instruction</code> objects, each carrying an <code>Opcode</code> and an optional argument (a constant index, a variable name, or a jump target).</li>
+      <li>The output is a <code>CodeObject</code> — a self-contained bundle holding the instruction list, a constants table, a names table, and metadata for parameters and captured upvalues.</li>
+      <li>The <strong>VM</strong> executes <code>CodeObject</code>s by maintaining a value stack and a call-frame stack. Each function call pushes a new frame; <code>RETURN</code> pops it.</li>
+    </ol>
+
+    <h3>Opcode groups</h3>
+    <table>
+      <tr><th>Group</th><th>Opcodes</th></tr>
+      <tr><td>Stack</td><td><code>PUSH_CONST</code>, <code>PUSH_NULL</code>, <code>PUSH_TRUE</code>, <code>PUSH_FALSE</code>, <code>POP</code></td></tr>
+      <tr><td>Variables</td><td><code>LOAD_VAR</code>, <code>DEFINE_VAR</code>, <code>STORE_VAR</code></td></tr>
+      <tr><td>Upvalues</td><td><code>LOAD_DEREF</code>, <code>STORE_DEREF</code> — for closed-over variables</td></tr>
+      <tr><td>Arithmetic</td><td><code>ADD</code>, <code>SUB</code>, <code>MUL</code>, <code>DIV</code>, <code>MOD</code>, <code>POW</code>, <code>NEG</code></td></tr>
+      <tr><td>Comparison</td><td><code>EQ</code>, <code>NEQ</code>, <code>LT</code>, <code>GT</code>, <code>LTE</code>, <code>GTE</code></td></tr>
+      <tr><td>Logic</td><td><code>AND</code>, <code>OR</code>, <code>NOT</code></td></tr>
+      <tr><td>Jumps</td><td><code>JUMP</code>, <code>JUMP_IF_FALSE</code>, <code>JUMP_IF_TRUE</code></td></tr>
+      <tr><td>Collections</td><td><code>MAKE_LIST</code>, <code>MAKE_DICT</code>, <code>GET_INDEX</code>, <code>SET_INDEX</code>, <code>GET_SLICE</code></td></tr>
+      <tr><td>Attributes</td><td><code>GET_ATTR</code>, <code>SET_ATTR</code></td></tr>
+      <tr><td>Functions</td><td><code>MAKE_FN</code>, <code>CALL</code>, <code>RETURN</code></td></tr>
+      <tr><td>Classes</td><td><code>MAKE_CLASS</code></td></tr>
+      <tr><td>Strings</td><td><code>BUILD_FSTRING</code></td></tr>
+      <tr><td>Exceptions</td><td><code>SETUP_TRY</code>, <code>POP_TRY</code>, <code>RAISE</code></td></tr>
+      <tr><td>Modules</td><td><code>IMPORT</code></td></tr>
+    </table>
+
+    <h3>CodeObject anatomy</h3>
+    <table>
+      <tr><th>Field</th><th>Type</th><th>Purpose</th></tr>
+      <tr><td><code>name</code></td><td>str</td><td>Descriptive name (function name, <code>"&lt;module&gt;"</code> for top-level)</td></tr>
+      <tr><td><code>constants</code></td><td>list</td><td>Interned literal values; referenced by index in <code>PUSH_CONST</code></td></tr>
+      <tr><td><code>names</code></td><td>list[str]</td><td>Interned variable/attribute names; referenced by index</td></tr>
+      <tr><td><code>instructions</code></td><td>list[Instruction]</td><td>Flat opcode sequence</td></tr>
+      <tr><td><code>param_names</code></td><td>list[str]</td><td>Parameter names in declaration order</td></tr>
+      <tr><td><code>param_types</code></td><td>list[str|None]</td><td>Type annotations per parameter (<code>None</code> = unannotated)</td></tr>
+      <tr><td><code>upvalue_names</code></td><td>list[str]</td><td>Names of outer-scope variables captured by this closure</td></tr>
+    </table>
 
     <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" class="back-to-top">↑ Back to top</a>
   </main>
