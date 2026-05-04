@@ -78,7 +78,7 @@
     .hero {
       min-height: 88vh;
       display: flex; align-items: center;
-      padding: 2.5rem 2rem;
+      padding: 1.5rem 2rem;
       position: relative; overflow: hidden;
     }
     .hero::before {
@@ -96,20 +96,20 @@
       display: inline-block;
       background: rgba(0,212,255,.1); border: 1px solid rgba(0,212,255,.3);
       color: var(--cyan); border-radius: 100px;
-      padding: .3rem 1rem; font-size: .87rem; font-weight: 600;
-      letter-spacing: .05em; margin-bottom: .6rem;
+      padding: .35rem 1.1rem; font-size: .97rem; font-weight: 600;
+      letter-spacing: .05em; margin-bottom: .4rem;
     }
     .hero h1 {
-      font-size: clamp(2.5rem, 4.5vw, 4.4rem);
-      font-weight: 800; line-height: 1.06;
-      letter-spacing: -2px;
+      font-size: clamp(2.8rem, 5.5vw, 5.5rem);
+      font-weight: 800; line-height: 1.05;
+      letter-spacing: -2.5px;
       background: linear-gradient(135deg, var(--cyan) 0%, var(--purple) 60%, var(--green) 100%);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
-      margin-bottom: .55rem;
+      margin-bottom: .35rem;
     }
     .hero-sub {
-      font-size: 1.18rem; color: var(--muted); margin: 0 0 1.4rem;
+      font-size: 1.25rem; color: var(--muted); margin: 0 0 1rem;
     }
     .hero-buttons { display: flex; gap: 1rem; justify-content: flex-start; flex-wrap: wrap; }
     .btn-primary {
@@ -128,7 +128,7 @@
     /* color strip animation below hero heading */
     .color-strip {
       display: flex; gap: 6px;
-      margin: 1.1rem 0 0; flex-wrap: wrap;
+      margin: .8rem 0 0; flex-wrap: wrap;
     }
     .cs-tile {
       width: 28px; height: 28px; border-radius: 4px;
@@ -440,8 +440,8 @@
       background: rgba(0,0,0,.25);
     }
     .editor-tab {
-      padding: .45rem 1.1rem;
-      font-size: .82rem; color: var(--muted);
+      padding: .5rem 1.2rem;
+      font-size: .9rem; color: var(--muted);
       cursor: pointer; border-right: 1px solid var(--border);
       font-family: 'Cascadia Code','Fira Code','Consolas',monospace;
       transition: color .15s, background .15s;
@@ -452,8 +452,8 @@
     .editor-pane { display: none; }
     .editor-pane.active { display: block; }
     .editor-pane .code-body {
-      padding: .85rem 1.25rem;
-      font-size: .88rem; line-height: 1.72;
+      padding: .9rem 1.4rem;
+      font-size: .97rem; line-height: 1.7;
       min-height: 128px;
     }
     .editor-footer {
@@ -481,9 +481,9 @@
     .run-btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
     .editor-output {
       border-top: 1px solid var(--border);
-      padding: .65rem 1.25rem;
+      padding: .65rem 1.4rem;
       font-family: 'Cascadia Code','Fira Code','Consolas',monospace;
-      font-size: .88rem; line-height: 1.85;
+      font-size: .95rem; line-height: 1.85;
       display: none;
       background: rgba(0,0,0,.18);
     }
