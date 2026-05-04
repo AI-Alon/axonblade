@@ -1,35 +1,32 @@
 """
-repl.py — AxonBlade interactive REPL (Week 7, Phase 7.5).
+repl.py — AxonBlade interactive REPL (V2 — compiler + VM).
 
-Provides a readline-style loop with a styled ">>" prompt.
-Return values are pretty-printed; errors are caught and displayed
-without crashing the session.
+Compiles each input line and executes it through the VM.
+State persists across inputs via the shared globals dict.
 """
 
 from __future__ import annotations
 
 import sys
 
-from core.evaluator import Evaluator, AxonFunction, AxonBladeGRP, AxonInstance
 from core.errors import AxonError
 from core.module_loader import load_module
 from core.parser import parse_source, ParseError
-from stdlib.builtins import build_global_env
+from core.runtime import AxonFunction, AxonBladeGRP, AxonInstance
+from stdlib.builtins import build_global_dict
 
-# ANSI color helpers for the REPL prompt and output
-_CYAN = "\033[36m"
+_CYAN   = "\033[36m"
 _YELLOW = "\033[33m"
-_RED = "\033[31m"
-_RESET = "\033[0m"
+_RED    = "\033[31m"
+_RESET  = "\033[0m"
 
-_VERSION = "1.0"
-_PROMPT = f"{_CYAN}>>{_RESET} "
+_VERSION = "2.0"
+_PROMPT  = f"{_CYAN}>>{_RESET} "
 
 
 def _format_value(value: object) -> str | None:
-    """Convert an AxonBlade value to a display string for the REPL."""
     if value is None:
-        return None  # don't print null from statements
+        return None
     if isinstance(value, bool):
         return "true" if value else "false"
     if isinstance(value, (AxonFunction, AxonBladeGRP, AxonInstance)):
@@ -40,14 +37,12 @@ def _format_value(value: object) -> str | None:
 
 
 def run_repl() -> None:
-    """Start the interactive REPL."""
-    ev = Evaluator()
-    global_env = build_global_env()
+    from core.compiler import Compiler
+    from core.vm import VM
 
-    # Wire module loader
-    ev._module_loader = lambda name, _line: load_module(
-        name, None, ev, build_global_env
-    )
+    global_env = build_global_dict()
+    vm = VM(global_env)
+    vm._module_loader = lambda name: load_module(name, None, vm)
 
     print(f"{_CYAN}AxonBlade v{_VERSION} — type 'exit' or Ctrl+D to quit{_RESET}")
 
@@ -66,7 +61,8 @@ def run_repl() -> None:
 
         try:
             prog = parse_source(line + "\n")
-            result = ev.eval(prog, global_env)
+            code = Compiler().compile(prog)
+            result = vm.run(code)
             display = _format_value(result)
             if display is not None:
                 print(display)

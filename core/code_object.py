@@ -19,6 +19,7 @@ class CodeObject:
     param_names: list[str] = field(default_factory=list)
     param_types: list[str | None] = field(default_factory=list)
     upvalue_names: list[str] = field(default_factory=list)
+    cell_vars: list[str] = field(default_factory=list)  # locals captured by inner fns
 
     def add_constant(self, value: Any) -> int:
         """Intern a constant and return its index."""

@@ -53,7 +53,7 @@ def _builtin_len(collection: object) -> int:
 
 def _builtin_type(value: object) -> str:
     """type(value) — returns type name as string."""
-    from core.evaluator import AxonFunction, AxonBladeGRP, AxonInstance
+    from core.runtime import AxonFunction, AxonBladeGRP, AxonInstance
     if value is None:
         return "null"
     if isinstance(value, bool):
@@ -554,82 +554,96 @@ def _builtin_random_seed(n: object) -> None:
 
 
 # ---------------------------------------------------------------------------
-# build_global_env — entry point used by evaluator and REPL
+# build_global_env — entry point used by VM and REPL
 # ---------------------------------------------------------------------------
+
+def build_global_dict() -> dict:
+    """
+    Create and return a fresh dict pre-loaded with all built-in functions
+    and __builtin_* hooks.  Used by the VM (which expects a plain dict).
+    """
+    env: dict = {}
+    _fill_env(env)
+    return env
+
 
 def build_global_env() -> Environment:
     """
     Create and return a fresh global Environment pre-loaded with all
-    built-in functions and __builtin_* hooks.
+    built-in functions.  Used by the module loader for namespace wrapping.
     """
     env = Environment()
+    _fill_env(env.store)
+    return env
+
+
+def _fill_env(env: dict) -> None:
+    """Populate *env* (a plain dict) with all built-in names."""
 
     # §8.1 — core built-ins
-    env.define("write",  _builtin_write)
-    env.define("len",    _builtin_len)
-    env.define("type",   _builtin_type)
-    env.define("range",  _builtin_range)
-    env.define("input",  _builtin_input)
-    env.define("str",    _builtin_str)
-    env.define("int",    _builtin_int)
-    env.define("float",  _builtin_float)
-    env.define("bool",   _builtin_bool)
-    env.define("grid",     _builtin_grid)
-    env.define("wait_key", _builtin_wait_key)
+    env["write"]    = _builtin_write
+    env["len"]      = _builtin_len
+    env["type"]     = _builtin_type
+    env["range"]    = _builtin_range
+    env["input"]    = _builtin_input
+    env["str"]      = _builtin_str
+    env["int"]      = _builtin_int
+    env["float"]    = _builtin_float
+    env["bool"]     = _builtin_bool
+    env["grid"]     = _builtin_grid
+    env["wait_key"] = _builtin_wait_key
 
     # §8.2 — math hooks
-    env.define("__builtin_sqrt",  _builtin_sqrt)
-    env.define("__builtin_floor", _builtin_floor)
-    env.define("__builtin_ceil",  _builtin_ceil)
+    env["__builtin_sqrt"]  = _builtin_sqrt
+    env["__builtin_floor"] = _builtin_floor
+    env["__builtin_ceil"]  = _builtin_ceil
 
     # §8.3 — string hooks
-    env.define("__builtin_upper",       _builtin_upper)
-    env.define("__builtin_lower",       _builtin_lower)
-    env.define("__builtin_split",       _builtin_split)
-    env.define("__builtin_join",        _builtin_join)
-    env.define("__builtin_strip",       _builtin_strip)
-    env.define("__builtin_contains",    _builtin_contains)
-    env.define("__builtin_replace",     _builtin_replace)
-    env.define("__builtin_starts_with", _builtin_starts_with)
-    env.define("__builtin_ends_with",   _builtin_ends_with)
-    env.define("__builtin_trim",        _builtin_trim)
+    env["__builtin_upper"]       = _builtin_upper
+    env["__builtin_lower"]       = _builtin_lower
+    env["__builtin_split"]       = _builtin_split
+    env["__builtin_join"]        = _builtin_join
+    env["__builtin_strip"]       = _builtin_strip
+    env["__builtin_contains"]    = _builtin_contains
+    env["__builtin_replace"]     = _builtin_replace
+    env["__builtin_starts_with"] = _builtin_starts_with
+    env["__builtin_ends_with"]   = _builtin_ends_with
+    env["__builtin_trim"]        = _builtin_trim
 
     # V2 Phase 1.1 — io hooks
-    env.define("__builtin_io_read",   _builtin_io_read)
-    env.define("__builtin_io_write",  _builtin_io_write)
-    env.define("__builtin_io_append", _builtin_io_append)
-    env.define("__builtin_io_exists", _builtin_io_exists)
-    env.define("__builtin_io_delete", _builtin_io_delete)
-    env.define("__builtin_io_list",   _builtin_io_list)
+    env["__builtin_io_read"]   = _builtin_io_read
+    env["__builtin_io_write"]  = _builtin_io_write
+    env["__builtin_io_append"] = _builtin_io_append
+    env["__builtin_io_exists"] = _builtin_io_exists
+    env["__builtin_io_delete"] = _builtin_io_delete
+    env["__builtin_io_list"]   = _builtin_io_list
 
     # V2 Phase 1.2 — json hooks
-    env.define("__builtin_json_parse",     _builtin_json_parse)
-    env.define("__builtin_json_stringify", _builtin_json_stringify)
+    env["__builtin_json_parse"]     = _builtin_json_parse
+    env["__builtin_json_stringify"] = _builtin_json_stringify
 
     # V2 Phase 1.3 — http hooks
-    env.define("__builtin_http_get",    _builtin_http_get)
-    env.define("__builtin_http_post",   _builtin_http_post)
-    env.define("__builtin_http_put",    _builtin_http_put)
-    env.define("__builtin_http_delete", _builtin_http_delete)
+    env["__builtin_http_get"]    = _builtin_http_get
+    env["__builtin_http_post"]   = _builtin_http_post
+    env["__builtin_http_put"]    = _builtin_http_put
+    env["__builtin_http_delete"] = _builtin_http_delete
 
     # V2 Phase 1.4 — regex hooks
-    env.define("__builtin_regex_match",    _builtin_regex_match)
-    env.define("__builtin_regex_find",     _builtin_regex_find)
-    env.define("__builtin_regex_find_all", _builtin_regex_find_all)
-    env.define("__builtin_regex_replace",  _builtin_regex_replace)
+    env["__builtin_regex_match"]    = _builtin_regex_match
+    env["__builtin_regex_find"]     = _builtin_regex_find
+    env["__builtin_regex_find_all"] = _builtin_regex_find_all
+    env["__builtin_regex_replace"]  = _builtin_regex_replace
 
     # V2 Phase 1.5 — datetime hooks
-    env.define("__builtin_datetime_now",          _builtin_datetime_now)
-    env.define("__builtin_datetime_format",       _builtin_datetime_format)
-    env.define("__builtin_datetime_parse",        _builtin_datetime_parse)
-    env.define("__builtin_datetime_timestamp",    _builtin_datetime_timestamp)
-    env.define("__builtin_datetime_diff_seconds", _builtin_datetime_diff_seconds)
+    env["__builtin_datetime_now"]          = _builtin_datetime_now
+    env["__builtin_datetime_format"]       = _builtin_datetime_format
+    env["__builtin_datetime_parse"]        = _builtin_datetime_parse
+    env["__builtin_datetime_timestamp"]    = _builtin_datetime_timestamp
+    env["__builtin_datetime_diff_seconds"] = _builtin_datetime_diff_seconds
 
     # V2 Phase 1.6 — random hooks
-    env.define("__builtin_random_int",     _builtin_random_int)
-    env.define("__builtin_random_float",   _builtin_random_float)
-    env.define("__builtin_random_choice",  _builtin_random_choice)
-    env.define("__builtin_random_shuffle", _builtin_random_shuffle)
-    env.define("__builtin_random_seed",    _builtin_random_seed)
-
-    return env
+    env["__builtin_random_int"]     = _builtin_random_int
+    env["__builtin_random_float"]   = _builtin_random_float
+    env["__builtin_random_choice"]  = _builtin_random_choice
+    env["__builtin_random_shuffle"] = _builtin_random_shuffle
+    env["__builtin_random_seed"]    = _builtin_random_seed

@@ -1,8 +1,8 @@
 """
-tools/test_runner.py — AxonBlade test runner (V2 Phase 2.3).
+tools/test_runner.py — AxonBlade test runner (V2 Phase 2.3, updated for VM).
 
-Discovers all *_test.axb files under a directory tree, runs them
-through the evaluator, and collects pass/fail results per test() call.
+Discovers all *_test.axb files under a directory tree, compiles and runs
+them through the VM, and collects pass/fail results per test() call.
 
 Built-ins injected into test files:
   test(name, fn)      — register and immediately run a named test case
@@ -15,16 +15,13 @@ Output:
   ✗ math_test.axb :: subtraction works
       AssertionError: expected 3, got 4
 
-Summary:
-  ✓ 5 passed   ✗ 1 failed
-
 Exit code: 0 if all pass, 1 if any fail.
 """
 
 from __future__ import annotations
 
 import sys
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 
@@ -50,14 +47,13 @@ class _TestAssertionError(Exception):
 
 
 def _make_test_builtins(results: list[TestResult], current_file: str,
-                        evaluator: object) -> dict:
-    """Return a dict of test built-in callables for injection into the env."""
-    from core.evaluator import AxonFunction
+                        vm: object) -> dict:
+    """Return a dict of test built-in callables for injection into globals."""
+    from core.runtime import AxonFunction
 
     def _call_axon(fn: object) -> None:
-        """Call fn whether it is a Python callable or an AxonFunction."""
         if isinstance(fn, AxonFunction):
-            evaluator._call_function(fn, [], call_line=0)  # type: ignore[attr-defined]
+            vm.call(fn, [])  # type: ignore[attr-defined]
         elif callable(fn):
             fn()
         else:
@@ -68,7 +64,7 @@ def _make_test_builtins(results: list[TestResult], current_file: str,
             raise _TestAssertionError(f"expected {_axon_repr(b)}, got {_axon_repr(a)}")
 
     def _assert_true(val: object) -> None:
-        if not _is_truthy(val):
+        if not (val is not None and val is not False):
             raise _TestAssertionError(f"expected truthy value, got {_axon_repr(val)}")
 
     def _assert_raises(fn: object) -> None:
@@ -78,7 +74,7 @@ def _make_test_builtins(results: list[TestResult], current_file: str,
         except _TestAssertionError:
             raise
         except (AxonError, Exception):
-            return  # raised as expected
+            return
         raise _TestAssertionError("expected an exception to be raised, but none was")
 
     def _test(name: object, fn: object) -> None:
@@ -88,17 +84,11 @@ def _make_test_builtins(results: list[TestResult], current_file: str,
             _call_axon(fn)
             results.append(TestResult(name=name_str, file=current_file, passed=True))
         except _TestAssertionError as e:
-            results.append(TestResult(
-                name=name_str, file=current_file, passed=False, error=str(e)
-            ))
+            results.append(TestResult(name=name_str, file=current_file, passed=False, error=str(e)))
         except AxonError as e:
-            results.append(TestResult(
-                name=name_str, file=current_file, passed=False, error=e.message
-            ))
+            results.append(TestResult(name=name_str, file=current_file, passed=False, error=e.message))
         except Exception as e:
-            results.append(TestResult(
-                name=name_str, file=current_file, passed=False, error=str(e)
-            ))
+            results.append(TestResult(name=name_str, file=current_file, passed=False, error=str(e)))
 
     return {
         "test":          _test,
@@ -106,14 +96,6 @@ def _make_test_builtins(results: list[TestResult], current_file: str,
         "assert_true":   _assert_true,
         "assert_raises": _assert_raises,
     }
-
-
-def _is_truthy(value: object) -> bool:
-    if value is None:
-        return False
-    if isinstance(value, bool):
-        return value
-    return True
 
 
 def _axon_repr(value: object) -> str:
@@ -136,30 +118,27 @@ class TestRunner:
         return sorted(Path(root).rglob("*_test.axb"))
 
     def run_file(self, path: Path) -> None:
-        from core.evaluator import Evaluator
+        from core.compiler import compile_source
         from core.errors import AxonError
         from core.module_loader import load_module
-        from core.parser import parse_source, ParseError
-        from stdlib.builtins import build_global_env
+        from core.parser import ParseError
+        from core.vm import VM
+        from stdlib.builtins import build_global_dict
 
         file_results: list[TestResult] = []
         source = path.read_text(encoding="utf-8")
-        ev = Evaluator()
-        builtins = _make_test_builtins(file_results, str(path), ev)
-        env = build_global_env()
 
-        # Inject test builtins
-        for name, fn in builtins.items():
-            env.define(name, fn)
+        global_env = build_global_dict()
+        vm = VM(global_env)
+        vm._module_loader = lambda name: load_module(name, str(path.resolve()), vm)
 
-        # Wire module loader
-        ev._module_loader = lambda name, _line: load_module(
-            name, str(path.resolve()), ev, build_global_env
-        )
+        # Inject test builtins into the VM's globals
+        for name, fn in _make_test_builtins(file_results, str(path), vm).items():
+            global_env[name] = fn
 
         try:
-            prog = parse_source(source)
-            ev.eval(prog, env)
+            code = compile_source(source)
+            vm.run(code)
         except (ParseError, SyntaxError) as e:
             self.results.append(TestResult(
                 name="<parse>", file=str(path), passed=False,
@@ -168,14 +147,12 @@ class TestRunner:
             return
         except AxonError as e:
             self.results.append(TestResult(
-                name="<runtime>", file=str(path), passed=False,
-                error=e.message,
+                name="<runtime>", file=str(path), passed=False, error=e.message,
             ))
             return
         except Exception as e:
             self.results.append(TestResult(
-                name="<internal>", file=str(path), passed=False,
-                error=str(e),
+                name="<internal>", file=str(path), passed=False, error=str(e),
             ))
             return
 
@@ -191,19 +168,13 @@ class TestRunner:
         RESET = "\033[0m"
         BOLD  = "\033[1m"
 
-        passed = 0
-        failed = 0
-        prev_file = None
-
+        passed = failed = 0
         for r in self.results:
-            if r.file != prev_file:
-                prev_file = r.file
             icon = f"{GREEN}✓{RESET}" if r.passed else f"{RED}✗{RESET}"
-            rel = r.file
             try:
                 rel = str(Path(r.file).relative_to(Path.cwd()))
             except ValueError:
-                pass
+                rel = r.file
             print(f"  {icon}  {rel} :: {r.name}")
             if not r.passed and r.error:
                 print(f"       {RED}{r.error}{RESET}")
@@ -219,16 +190,12 @@ class TestRunner:
             return
 
         p_str = f"{GREEN}✓ {passed} passed{RESET}"
-        f_str = f"{RED}✗ {failed} failed{RESET}" if failed else f"✗ 0 failed"
+        f_str = f"{RED}✗ {failed} failed{RESET}" if failed else "✗ 0 failed"
         print(f"  {BOLD}{p_str}   {f_str}{RESET}")
 
     def exit_code(self) -> int:
         return 0 if all(r.passed for r in self.results) else 1
 
-
-# ---------------------------------------------------------------------------
-# Module-level helper
-# ---------------------------------------------------------------------------
 
 def run_tests(root: str) -> int:
     runner = TestRunner()

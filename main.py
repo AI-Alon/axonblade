@@ -1,15 +1,17 @@
 """
-main.py — AxonBlade CLI entry point.
+main.py — AxonBlade CLI entry point (V2).
 
 Usage:
-    ablade run <file.axb>          — execute an AxonBlade source file
-    ablade repl                    — start the interactive REPL
-    ablade fmt <file.axb>          — print formatted source to stdout
-    ablade fmt --in-place <file>   — overwrite file with formatted source
-    ablade fmt --check <file>      — exit 1 if file would change (CI)
-    ablade lint <file.axb>         — run static analysis
-    ablade test [dir]              — discover and run *_test.axb files
-    ablade version                 — print version info
+    ablade run <file.axb>            — execute an AxonBlade source file
+    ablade run <file.axbc>           — execute a pre-compiled bytecode file
+    ablade compile <file.axb>        — compile source to file.axbc
+    ablade repl                      — start the interactive REPL
+    ablade fmt <file.axb>            — print formatted source to stdout
+    ablade fmt --in-place <file>     — overwrite file with formatted source
+    ablade fmt --check <file>        — exit 1 if file would change (CI)
+    ablade lint <file.axb>           — run static analysis
+    ablade test [dir]                — discover and run *_test.axb files
+    ablade version                   — print version info
 """
 
 from __future__ import annotations
@@ -21,35 +23,61 @@ from pathlib import Path
 _VERSION = "2.0"
 
 
+# ---------------------------------------------------------------------------
+# Shared helper: build and wire the VM
+# ---------------------------------------------------------------------------
+
+def _make_vm(file_path: Path | None = None):
+    """Return a wired-up VM with the global environment loaded."""
+    from core.vm import VM
+    from core.module_loader import load_module
+    from stdlib.builtins import build_global_dict
+
+    global_env = build_global_dict()
+    vm = VM(global_env)
+
+    caller = str(file_path.resolve()) if file_path else None
+    vm._module_loader = lambda name: load_module(name, caller, vm)
+    return vm
+
+
+# ---------------------------------------------------------------------------
+# ablade run
+# ---------------------------------------------------------------------------
+
 def cmd_run(args: argparse.Namespace) -> int:
-    """Execute an AxonBlade source file."""
     file_path = Path(args.file)
     if not file_path.exists():
-        print(f"axb: file not found: {args.file}", file=sys.stderr)
+        print(f"ablade: file not found: {args.file}", file=sys.stderr)
         return 1
-    if file_path.suffix != ".axb":
-        print(f"axb: warning: expected .axb extension, got '{file_path.suffix}'",
-              file=sys.stderr)
 
-    from core.evaluator import Evaluator
     from core.errors import AxonError
-    from core.module_loader import load_module
-    from core.parser import parse_source, ParseError
-    from stdlib.builtins import build_global_env
-
-    source = file_path.read_text(encoding="utf-8")
-    ev = Evaluator()
-    global_env = build_global_env()
-
-    # Wire module loader with the caller file for relative imports
-    ev._module_loader = lambda name, _line: load_module(
-        name, str(file_path.resolve()), ev, build_global_env
-    )
+    from core.parser import ParseError
 
     try:
-        prog = parse_source(source)
-        ev.eval(prog, global_env)
+        if file_path.suffix == ".axbc":
+            # Execute pre-compiled bytecode
+            from core.serializer import deserialize
+            data = file_path.read_bytes()
+            code = deserialize(data)
+        elif file_path.suffix == ".axb":
+            from core.compiler import compile_source
+            source = file_path.read_text(encoding="utf-8")
+            code = compile_source(source)
+        else:
+            print(
+                f"ablade: warning: expected .axb or .axbc extension, "
+                f"got '{file_path.suffix}'",
+                file=sys.stderr,
+            )
+            from core.compiler import compile_source
+            source = file_path.read_text(encoding="utf-8")
+            code = compile_source(source)
+
+        vm = _make_vm(file_path)
+        vm.run(code)
         return 0
+
     except (ParseError, SyntaxError) as e:
         print(f"ParseError: {e}", file=sys.stderr)
         return 1
@@ -61,21 +89,67 @@ def cmd_run(args: argparse.Namespace) -> int:
         return 1
 
 
+# ---------------------------------------------------------------------------
+# ablade compile
+# ---------------------------------------------------------------------------
+
+def cmd_compile(args: argparse.Namespace) -> int:
+    file_path = Path(args.file)
+    if not file_path.exists():
+        print(f"ablade compile: file not found: {args.file}", file=sys.stderr)
+        return 1
+    if file_path.suffix != ".axb":
+        print(
+            f"ablade compile: expected .axb file, got '{file_path.suffix}'",
+            file=sys.stderr,
+        )
+        return 1
+
+    from core.compiler import compile_source
+    from core.errors import AxonError
+    from core.parser import ParseError
+    from core.serializer import serialize
+
+    try:
+        source = file_path.read_text(encoding="utf-8")
+        code = compile_source(source)
+    except (ParseError, SyntaxError) as e:
+        print(f"ablade compile: parse error: {e}", file=sys.stderr)
+        return 1
+    except AxonError as e:
+        print(e.format(), file=sys.stderr)
+        return 1
+
+    out_path = file_path.with_suffix(".axbc")
+    out_path.write_bytes(serialize(code))
+    print(f"Compiled → {out_path}")
+    return 0
+
+
+# ---------------------------------------------------------------------------
+# ablade repl
+# ---------------------------------------------------------------------------
+
 def cmd_repl(_args: argparse.Namespace) -> int:
-    """Start the interactive REPL."""
     from repl import run_repl
     run_repl()
     return 0
 
 
+# ---------------------------------------------------------------------------
+# ablade version
+# ---------------------------------------------------------------------------
+
 def cmd_version(_args: argparse.Namespace) -> int:
-    """Print version info."""
     print(f"AxonBlade v{_VERSION}")
     return 0
 
 
+# ---------------------------------------------------------------------------
+# ablade fmt
+# ---------------------------------------------------------------------------
+
 def cmd_fmt(args: argparse.Namespace) -> int:
-    """Format an AxonBlade source file."""
     from core.formatter import Formatter
     from core.parser import parse_source, ParseError
 
@@ -107,8 +181,11 @@ def cmd_fmt(args: argparse.Namespace) -> int:
     return 0
 
 
+# ---------------------------------------------------------------------------
+# ablade lint
+# ---------------------------------------------------------------------------
+
 def cmd_lint(args: argparse.Namespace) -> int:
-    """Run static analysis on an AxonBlade source file."""
     from tools.linter import lint_file
 
     diags, code = lint_file(args.file)
@@ -117,8 +194,11 @@ def cmd_lint(args: argparse.Namespace) -> int:
     return code
 
 
+# ---------------------------------------------------------------------------
+# ablade test
+# ---------------------------------------------------------------------------
+
 def cmd_test(args: argparse.Namespace) -> int:
-    """Discover and run *_test.axb files."""
     from tools.test_runner import run_tests
 
     root = args.dir if args.dir else "."
@@ -128,6 +208,10 @@ def cmd_test(args: argparse.Namespace) -> int:
     return run_tests(root)
 
 
+# ---------------------------------------------------------------------------
+# Argument parser
+# ---------------------------------------------------------------------------
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="ablade",
@@ -135,9 +219,13 @@ def build_parser() -> argparse.ArgumentParser:
     )
     sub = parser.add_subparsers(dest="command", required=True)
 
-    run_p = sub.add_parser("run", help="Execute an .axb file")
-    run_p.add_argument("file", help="Path to the .axb source file")
+    run_p = sub.add_parser("run", help="Execute an .axb or .axbc file")
+    run_p.add_argument("file", help="Path to source or compiled file")
     run_p.set_defaults(func=cmd_run)
+
+    compile_p = sub.add_parser("compile", help="Compile .axb source to .axbc bytecode")
+    compile_p.add_argument("file", help="Path to the .axb source file")
+    compile_p.set_defaults(func=cmd_compile)
 
     repl_p = sub.add_parser("repl", help="Start the interactive REPL")
     repl_p.set_defaults(func=cmd_repl)
