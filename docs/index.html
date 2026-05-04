@@ -410,6 +410,91 @@
       .nav-links.open { display: flex; }
       .nav-cta { margin-left: 0; }
     }
+
+    /* ── Hero editor demo ────────────────────────────────────────── */
+    .hero-editor {
+      margin-top: 2.5rem;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      text-align: left;
+      box-shadow: 0 0 60px rgba(0,212,255,.08), 0 24px 64px rgba(0,0,0,.5);
+      opacity: 0;
+      animation: hero-up .6s .9s cubic-bezier(.22,1,.36,1) forwards;
+    }
+    .editor-titlebar {
+      display: flex; align-items: center; gap: .5rem;
+      padding: .55rem 1rem;
+      background: rgba(255,255,255,.03);
+      border-bottom: 1px solid var(--border);
+    }
+    .editor-window-title {
+      font-size: .75rem; color: var(--muted);
+      font-family: 'Cascadia Code','Fira Code','Consolas',monospace;
+      margin-left: .5rem;
+    }
+    .editor-tabs {
+      display: flex; border-bottom: 1px solid var(--border);
+      background: rgba(0,0,0,.25);
+    }
+    .editor-tab {
+      padding: .45rem 1.1rem;
+      font-size: .78rem; color: var(--muted);
+      cursor: pointer; border-right: 1px solid var(--border);
+      font-family: 'Cascadia Code','Fira Code','Consolas',monospace;
+      transition: color .15s, background .15s;
+      user-select: none;
+    }
+    .editor-tab.active { color: var(--cyan); background: var(--code-bg); }
+    .editor-tab:hover:not(.active) { color: var(--text); background: rgba(255,255,255,.04); }
+    .editor-pane { display: none; }
+    .editor-pane.active { display: block; }
+    .editor-pane .code-body {
+      padding: 1rem 1.5rem;
+      font-size: .82rem; line-height: 1.75;
+      min-height: 140px;
+    }
+    .editor-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: .5rem 1rem; border-top: 1px solid var(--border);
+      background: rgba(255,255,255,.02);
+    }
+    .editor-status {
+      font-size: .75rem;
+      font-family: 'Cascadia Code','Fira Code','Consolas',monospace;
+      color: var(--muted);
+    }
+    .editor-status.running { color: #ffcb6b; }
+    .editor-status.done    { color: var(--green); }
+    .run-btn {
+      background: var(--green); color: #000;
+      border: none; padding: .3rem .9rem;
+      border-radius: 6px; font-size: .8rem; font-weight: 700;
+      cursor: pointer; font-family: 'Comic Sans MS', cursive;
+      transition: opacity .15s, transform .1s;
+      display: flex; align-items: center; gap: .35rem;
+    }
+    .run-btn:hover { opacity: .85; }
+    .run-btn:active { transform: scale(.95); }
+    .run-btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+    .editor-output {
+      border-top: 1px solid var(--border);
+      padding: .75rem 1.5rem;
+      font-family: 'Cascadia Code','Fira Code','Consolas',monospace;
+      font-size: .82rem; line-height: 1.9;
+      display: none;
+      background: rgba(0,0,0,.18);
+    }
+    .editor-output.visible { display: block; }
+    .out-line { opacity: 0; animation: out-fade .2s forwards; }
+    .out-cursor {
+      display: inline-block; width: 8px; height: 1em;
+      background: var(--cyan); vertical-align: text-bottom;
+      animation: blink .85s step-end infinite; margin-left: 2px;
+    }
+    @keyframes out-fade { to { opacity: 1; } }
+    @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
   </style>
 </head>
 <body>
@@ -450,6 +535,56 @@
       <div class="cs-tile"></div><div class="cs-tile"></div>
       <div class="cs-tile"></div><div class="cs-tile"></div>
       <div class="cs-tile"></div>
+    </div>
+
+    <div class="hero-editor" role="region" aria-label="AxonBlade code demo">
+      <div class="editor-titlebar">
+        <div class="code-dot red"></div>
+        <div class="code-dot yel"></div>
+        <div class="code-dot grn"></div>
+        <span class="editor-window-title">axonblade — demo</span>
+      </div>
+      <div class="editor-tabs">
+        <div class="editor-tab active" data-tab="hello" onclick="heroTab('hello')">hello.axb</div>
+        <div class="editor-tab" data-tab="counter" onclick="heroTab('counter')">counter.axb</div>
+        <div class="editor-tab" data-tab="colors" onclick="heroTab('colors')">colors.axb</div>
+      </div>
+
+      <div id="he-hello" class="editor-pane active">
+        <div class="code-body"><span class="kw">&gt;&gt;</span> <span class="var">name</span> <span class="op">=</span> <span class="str">"AxonBlade"</span>
+<span class="kw">&gt;&gt;</span> <span class="var">color</span> <span class="op">=</span> <span class="col">-*cyan*-</span>
+<span class="fn">write</span>(<span class="var">color</span> <span class="op">+</span> <span class="str">"Hello, &amp;{name}!"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="fn">write</span>(<span class="str">"Running V2.0"</span>)</div>
+      </div>
+
+      <div id="he-counter" class="editor-pane">
+        <div class="code-body"><span class="kw">bladeFN</span> <span class="fn">make_counter</span>() <span class="op">+/</span>
+    <span class="kw">&gt;&gt;</span> <span class="var">n</span> <span class="op">=</span> <span class="num">0</span>
+    <span class="kw">return</span> <span class="kw">bladeFN</span>() <span class="op">+/</span>
+        <span class="var">n</span> <span class="op">=</span> <span class="var">n</span> <span class="op">+</span> <span class="num">1</span>
+        <span class="kw">return</span> <span class="var">n</span>
+    <span class="kw">ECB</span>
+<span class="kw">ECB</span>
+<span class="kw">&gt;&gt;</span> <span class="var">tick</span> <span class="op">=</span> <span class="fn">make_counter</span>()
+<span class="fn">write</span>(<span class="fn">tick</span>())  <span class="cmt"># 1</span>
+<span class="fn">write</span>(<span class="fn">tick</span>())  <span class="cmt"># 2</span>
+<span class="fn">write</span>(<span class="fn">tick</span>())  <span class="cmt"># 3</span></div>
+      </div>
+
+      <div id="he-colors" class="editor-pane">
+        <div class="code-body"><span class="kw">&gt;&gt;</span> <span class="var">i</span> <span class="op">=</span> <span class="num">0</span>
+<span class="kw">&gt;&gt;</span> <span class="var">labels</span> <span class="op">=</span> [<span class="str">"red"</span>, <span class="str">"green"</span>, <span class="str">"cyan"</span>, <span class="str">"purple"</span>]
+<span class="kw">while</span> <span class="var">i</span> <span class="op">&lt;</span> <span class="num">4</span> <span class="op">+/</span>
+    <span class="fn">write</span>(<span class="var">labels</span>[<span class="var">i</span>])
+    <span class="var">i</span> <span class="op">=</span> <span class="var">i</span> <span class="op">+</span> <span class="num">1</span>
+<span class="kw">ECB</span></div>
+      </div>
+
+      <div class="editor-footer">
+        <span class="editor-status" id="he-status">● ready</span>
+        <button class="run-btn" id="he-run" onclick="heroRunDemo()">▶ Run</button>
+      </div>
+      <div id="he-output" class="editor-output"></div>
     </div>
   </div>
 </section>
@@ -971,6 +1106,77 @@
       btn.textContent = 'Copied!';
       btn.classList.add('copied');
       setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 1500);
+    });
+  }
+
+  // ── Hero editor demo ──────────────────────────────────────────
+  var _heroTab = 'hello';
+
+  function heroTab(name) {
+    _heroTab = name;
+    document.querySelectorAll('.editor-tab').forEach(function(t) {
+      t.classList.toggle('active', t.dataset.tab === name);
+    });
+    document.querySelectorAll('.editor-pane').forEach(function(p) {
+      p.classList.remove('active');
+    });
+    document.getElementById('he-' + name).classList.add('active');
+    var out = document.getElementById('he-output');
+    out.classList.remove('visible');
+    out.innerHTML = '';
+    document.getElementById('he-status').textContent = '● ready';
+    document.getElementById('he-status').className = 'editor-status';
+    document.getElementById('he-run').disabled = false;
+  }
+
+  var _heroOutputs = {
+    hello: [
+      { html: '<span style="color:#00d4ff">Hello, AxonBlade!</span>' },
+      { html: 'Running V2.0' }
+    ],
+    counter: [
+      { html: '1' },
+      { html: '2' },
+      { html: '3' }
+    ],
+    colors: [
+      { html: '<span style="color:#ff5f57">■ red</span>' },
+      { html: '<span style="color:#28c840">■ green</span>' },
+      { html: '<span style="color:#00d4ff">■ cyan</span>' },
+      { html: '<span style="color:#bf5af2">■ purple</span>' }
+    ]
+  };
+
+  function heroRunDemo() {
+    var btn = document.getElementById('he-run');
+    var status = document.getElementById('he-status');
+    var out = document.getElementById('he-output');
+
+    btn.disabled = true;
+    status.textContent = '● running';
+    status.className = 'editor-status running';
+    out.innerHTML = '';
+    out.classList.add('visible');
+
+    var lines = _heroOutputs[_heroTab];
+    lines.forEach(function(line, i) {
+      setTimeout(function() {
+        var div = document.createElement('div');
+        div.className = 'out-line';
+        div.innerHTML = line.html;
+        out.appendChild(div);
+
+        if (i === lines.length - 1) {
+          setTimeout(function() {
+            status.textContent = '● done';
+            status.className = 'editor-status done';
+            btn.disabled = false;
+            var cursor = document.createElement('span');
+            cursor.className = 'out-cursor';
+            out.appendChild(cursor);
+          }, 250);
+        }
+      }, i * 180 + 120);
     });
   }
 </script>
