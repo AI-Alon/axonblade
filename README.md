@@ -15,8 +15,7 @@ No Python required — grab the binary for your platform, add it to PATH, and ru
 | Platform | Download |
 |----------|----------|
 | **Linux x64** | [ablade-linux-x64](https://github.com/AI-Alon/axonblade/releases/latest/download/ablade-linux-x64) |
-| **macOS arm64** (M1/M2/M3) | [ablade-macos-arm64](https://github.com/AI-Alon/axonblade/releases/latest/download/ablade-macos-arm64) |
-| **macOS x64** (Intel) | [ablade-macos-x64](https://github.com/AI-Alon/axonblade/releases/latest/download/ablade-macos-x64) |
+| **macOS** (M1/M2/M3 + Intel via Rosetta 2) | [ablade-macos-arm64](https://github.com/AI-Alon/axonblade/releases/latest/download/ablade-macos-arm64) |
 | **Windows x64** | [ablade-windows-x64.exe](https://github.com/AI-Alon/axonblade/releases/latest/download/ablade-windows-x64.exe) |
 
 ### Add to PATH
