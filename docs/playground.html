@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AxonBlade Playground — Try it in your browser</title>
+  <meta name="description" content="Write and run AxonBlade code instantly in your browser — no install required." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:      #0d0d1a;
+      --bg2:     #12122a;
+      --bg3:     #1a1a3a;
+      --border:  #2a2a4a;
+      --cyan:    #00d4ff;
+      --green:   #39ff14;
+      --purple:  #a855f7;
+      --red:     #ff5f57;
+      --text:    #e2e8f0;
+      --muted:   #94a3b8;
+      --code-bg: #0a0a1a;
+      --radius:  8px;
+    }
+    html, body { height: 100%; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Comic Sans MS', cursive;
+      display: flex; flex-direction: column;
+    }
+    a { color: var(--cyan); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── Navbar ─────────────────────────────────────────────── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(13,13,26,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem; height: 58px;
+      display: flex; align-items: center; gap: 2rem;
+      flex-shrink: 0;
+    }
+    .nav-logo { font-size: 1.25rem; font-weight: 700; color: var(--cyan); letter-spacing: -.5px; }
+    .nav-logo span { color: var(--green); }
+    .nav-links { display: flex; align-items: center; gap: 1.5rem; list-style: none; margin-left: auto; }
+    .nav-links a { color: var(--muted); font-size: .9rem; font-weight: 500; transition: color .2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--cyan); text-decoration: none; }
+    .nav-cta {
+      margin-left: 1rem; background: var(--cyan); color: #000;
+      padding: .35rem .9rem; border-radius: var(--radius);
+      font-size: .85rem; font-weight: 700; transition: opacity .2s;
+    }
+    .nav-cta:hover { opacity: .85; text-decoration: none; }
+
+    /* ── Page header ────────────────────────────────────────── */
+    .pg-header {
+      padding: 1.5rem 2rem .75rem;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .pg-header h1 { font-size: 1.4rem; font-weight: 800; letter-spacing: -.5px; }
+    .pg-header p  { color: var(--muted); font-size: .9rem; margin-top: .2rem; }
+
+    /* ── Main layout ─────────────────────────────────────────── */
+    .playground-wrap {
+      flex: 1; display: flex; flex-direction: column;
+      min-height: 0; padding: 1rem 1.5rem 1.5rem;
+      gap: 1rem;
+    }
+
+    /* ── Toolbar ─────────────────────────────────────────────── */
+    .toolbar {
+      display: flex; align-items: center; gap: .75rem; flex-wrap: wrap;
+      flex-shrink: 0;
+    }
+    .toolbar select {
+      background: var(--bg3); border: 1px solid var(--border);
+      color: var(--text); border-radius: var(--radius);
+      padding: .4rem .8rem; font-size: .88rem;
+      font-family: 'Comic Sans MS', cursive; cursor: pointer;
+    }
+    .toolbar select:focus { outline: 2px solid var(--cyan); }
+    .btn {
+      border: none; border-radius: var(--radius);
+      padding: .4rem 1rem; font-size: .88rem; font-weight: 700;
+      font-family: 'Comic Sans MS', cursive; cursor: pointer;
+      transition: opacity .15s, transform .1s;
+    }
+    .btn:active { transform: scale(.96); }
+    .btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+    .btn-run    { background: var(--green); color: #000; }
+    .btn-share  { background: var(--bg3); color: var(--cyan); border: 1px solid var(--border); }
+    .btn-clear  { background: var(--bg3); color: var(--muted); border: 1px solid var(--border); }
+    .btn:hover:not(:disabled) { opacity: .85; }
+    .status {
+      margin-left: auto; font-size: .8rem;
+      font-family: 'Cascadia Code','Fira Code',monospace;
+      color: var(--muted);
+    }
+    .status.running { color: #febc2e; }
+    .status.done    { color: var(--green); }
+    .status.error   { color: var(--red); }
+    .share-tip {
+      font-size: .78rem; color: var(--green);
+      font-family: 'Cascadia Code','Fira Code',monospace;
+      display: none;
+    }
+    .share-tip.visible { display: inline; }
+
+    /* ── Panels ──────────────────────────────────────────────── */
+    .panels {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1rem; flex: 1; min-height: 0;
+    }
+    @media (max-width: 768px) { .panels { grid-template-columns: 1fr; } }
+
+    .panel {
+      background: var(--code-bg); border: 1px solid var(--border);
+      border-radius: 10px; display: flex; flex-direction: column;
+      min-height: 0; overflow: hidden;
+    }
+    .panel-label {
+      display: flex; align-items: center; padding: .5rem 1rem;
+      border-bottom: 1px solid var(--border);
+      font-size: .72rem; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--muted);
+      background: rgba(255,255,255,.02);
+      flex-shrink: 0;
+      gap: .5rem;
+    }
+    .panel-label .dots { display: flex; gap: 5px; }
+    .dot { width: 11px; height: 11px; border-radius: 50%; }
+    .dot.r { background: #ff5f57; }
+    .dot.y { background: #febc2e; }
+    .dot.g { background: #28c840; }
+
+    /* ── CodeMirror editor ───────────────────────────────────── */
+    .editor-wrap { flex: 1; min-height: 0; overflow: auto; }
+    .cm-editor { height: 100%; }
+    .cm-editor.cm-focused { outline: none; }
+    .cm-scroller { font-family: 'Cascadia Code','Fira Code','Consolas',monospace !important; font-size: .92rem; }
+
+    /* ── Output panel ────────────────────────────────────────── */
+    .output-body {
+      flex: 1; padding: .8rem 1.1rem; overflow-y: auto;
+      font-family: 'Cascadia Code','Fira Code','Consolas',monospace;
+      font-size: .9rem; line-height: 1.8;
+    }
+    .out-placeholder { color: var(--muted); font-style: italic; font-size: .85rem; }
+    .out-line { white-space: pre-wrap; word-break: break-all; }
+    .spinner {
+      display: inline-block; width: 12px; height: 12px;
+      border: 2px solid rgba(254,188,46,.3);
+      border-top-color: #febc2e;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      vertical-align: middle; margin-right: .4rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Footer ──────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.2rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .footer-left { font-size: .82rem; color: var(--muted); }
+    .footer-links { display: flex; gap: 1.5rem; }
+    .footer-links a { color: var(--muted); font-size: .82rem; transition: color .2s; }
+    .footer-links a:hover { color: var(--cyan); text-decoration: none; }
+    @media (max-width: 600px) { footer { flex-direction: column; gap: .75rem; text-align: center; } }
+  </style>
+</head>
+<body>
+
+<!-- ── Navbar ──────────────────────────────────────────────────── -->
+<nav>
+  <a href="index.html" class="nav-logo">Axon<span>Blade</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="docs.html">Docs</a></li>
+    <li><a href="examples.html">Examples</a></li>
+    <li><a href="playground.html" class="active">Playground</a></li>
+    <li><a href="https://github.com/AI-Alon/axonblade" target="_blank" rel="noopener noreferrer">GitHub ↗</a></li>
+  </ul>
+</nav>
+
+<!-- ── Page header ─────────────────────────────────────────────── -->
+<div class="pg-header">
+  <h1>AxonBlade Playground</h1>
+  <p>Write and run AxonBlade code instantly — no install required. Press <kbd>Ctrl+Enter</kbd> to run.</p>
+</div>
+
+<!-- ── Playground ──────────────────────────────────────────────── -->
+<div class="playground-wrap">
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <select id="examples-select" onchange="loadExample(this.value)">
+      <option value="">— Load example —</option>
+      <option value="hello">Hello World</option>
+      <option value="fibonacci">Fibonacci</option>
+      <option value="closures">Closures</option>
+      <option value="classes">Classes</option>
+      <option value="pipeline">Pipeline</option>
+      <option value="math">Math module</option>
+      <option value="string">String methods</option>
+    </select>
+    <button class="btn btn-run" id="run-btn" onclick="runCode()">▶ Run</button>
+    <button class="btn btn-share" onclick="shareCode()">⬡ Share</button>
+    <button class="btn btn-clear" onclick="clearOutput()">✕ Clear</button>
+    <span class="share-tip" id="share-tip">Link copied!</span>
+    <span class="status" id="status">● ready</span>
+  </div>
+
+  <!-- Panels -->
+  <div class="panels">
+
+    <!-- Editor -->
+    <div class="panel">
+      <div class="panel-label">
+        <div class="dots"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div>
+        editor
+      </div>
+      <div class="editor-wrap" id="editor-wrap"></div>
+    </div>
+
+    <!-- Output -->
+    <div class="panel">
+      <div class="panel-label">
+        <div class="dots"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div>
+        output
+      </div>
+      <div class="output-body" id="output">
+        <span class="out-placeholder">Press ▶ Run or Ctrl+Enter to execute your code.</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── Footer ──────────────────────────────────────────────────── -->
+<footer>
+  <div class="footer-left"><strong>AxonBlade</strong> v2.0 &nbsp;·&nbsp; MIT License &nbsp;·&nbsp; © 2026 AI-Alon</div>
+  <div class="footer-links">
+    <a href="index.html">Home</a>
+    <a href="docs.html">Docs</a>
+    <a href="examples.html">Examples</a>
+    <a href="https://github.com/AI-Alon/axonblade" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+  </div>
+</footer>
+
+<!-- ── CodeMirror 6 via ESM CDN ─────────────────────────────────── -->
+<script type="module">
+  import { EditorView, keymap, lineNumbers, highlightActiveLine, drawSelection } from 'https://esm.sh/@codemirror/view@6';
+  import { EditorState, Compartment } from 'https://esm.sh/@codemirror/state@6';
+  import { defaultKeymap, historyKeymap, history, indentWithTab } from 'https://esm.sh/@codemirror/commands@6';
+  import { StreamLanguage } from 'https://esm.sh/@codemirror/language@6';
+  import { oneDark } from 'https://esm.sh/@codemirror/theme-one-dark@6';
+  import { closeBrackets, closeBracketsKeymap } from 'https://esm.sh/@codemirror/autocomplete@6';
+
+  // ── AxonBlade syntax mode ──────────────────────────────────────
+  const KEYWORDS = new Set([
+    'bladeFN','bladeGRP','blade','if','elif','else','while','for','in',
+    'return','uselib','try','catch','raise','null','true','false','ECB',
+  ]);
+
+  const axonBlade = StreamLanguage.define({
+    name: 'axonblade',
+    token(stream) {
+      if (stream.eatSpace()) return null;
+
+      // Comment
+      if (stream.match(/#.*/)) return 'comment';
+
+      // Color literal: -*name*-
+      if (stream.match(/-\*[a-zA-Z]+\*-/)) return 'atom';
+
+      // String with &{} interpolation
+      if (stream.peek() === '"') {
+        stream.next();
+        while (!stream.eol()) {
+          const ch = stream.peek();
+          if (ch === '\\') { stream.next(); stream.next(); continue; }
+          if (ch === '"')  { stream.next(); break; }
+          stream.next();
+        }
+        return 'string';
+      }
+
+      // Number
+      if (stream.match(/\d+(\.\d+)?/)) return 'number';
+
+      // Keyword / identifier
+      if (stream.match(/[a-zA-Z_][a-zA-Z0-9_]*/)) {
+        return KEYWORDS.has(stream.current()) ? 'keyword' : 'variableName';
+      }
+
+      // Operators
+      if (stream.match(/>>|\+\/|\|>|<-|ECB/)) return 'operator';
+
+      stream.next();
+      return null;
+    },
+  });
+
+  // ── Custom dark theme to match the site ───────────────────────
+  const siteTheme = EditorView.theme({
+    '&': { backgroundColor: '#0a0a1a', color: '#e2e8f0', height: '100%' },
+    '.cm-content': { padding: '12px 0', caretColor: '#00d4ff' },
+    '.cm-line': { padding: '0 16px' },
+    '.cm-cursor': { borderLeftColor: '#00d4ff' },
+    '.cm-selectionBackground, ::selection': { backgroundColor: 'rgba(0,212,255,.2)' },
+    '.cm-gutters': { backgroundColor: '#0a0a1a', borderRight: '1px solid #2a2a4a', color: '#4a5568' },
+    '.cm-activeLineGutter': { backgroundColor: 'rgba(0,212,255,.06)' },
+    '.cm-activeLine': { backgroundColor: 'rgba(0,212,255,.04)' },
+    // syntax
+    '.tok-keyword':      { color: '#c792ea', fontWeight: '600' },
+    '.tok-atom':         { color: '#ffcb6b' },  // color literals
+    '.tok-string':       { color: '#c3e88d' },
+    '.tok-number':       { color: '#f78c6c' },
+    '.tok-comment':      { color: '#697e8a', fontStyle: 'italic' },
+    '.tok-operator':     { color: '#89ddff' },
+    '.tok-variableName': { color: '#eeffff' },
+  }, { dark: true });
+
+  // ── Editor setup ───────────────────────────────────────────────
+  const runKeymap = keymap.of([{
+    key: 'Ctrl-Enter', mac: 'Mod-Enter',
+    run() { window._runCode(); return true; },
+  }]);
+
+  const state = EditorState.create({
+    doc: _getInitialCode(),
+    extensions: [
+      history(),
+      drawSelection(),
+      lineNumbers(),
+      highlightActiveLine(),
+      closeBrackets(),
+      keymap.of([...defaultKeymap, ...historyKeymap, ...closeBracketsKeymap, indentWithTab]),
+      runKeymap,
+      StreamLanguage.define(axonBlade.language.spec),
+      siteTheme,
+      EditorView.lineWrapping,
+    ],
+  });
+
+  const view = new EditorView({
+    state,
+    parent: document.getElementById('editor-wrap'),
+  });
+
+  window._editorView = view;
+</script>
+
+<script>
+  // ── Backend URL ────────────────────────────────────────────────
+  // Update this to your Render service URL after deploying the backend.
+  const BACKEND_URL = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+    ? 'http://localhost:8000'
+    : 'https://axonblade-playground.onrender.com';
+
+  // ── Example code snippets ──────────────────────────────────────
+  const EXAMPLES = {
+    hello: `>> name = "AxonBlade"
+write(-*cyan*- + "Hello from &{name}!" + -*reset*-)
+write(-*green*- + "Version 2.0 — bytecode compiled" + -*reset*-)`,
+
+    fibonacci: `bladeFN fib(n) +/
+    if n <= 1 +/
+        return n
+    ECB
+    return fib(n - 1) + fib(n - 2)
+ECB
+
+>> i = 0
+while i < 10 +/
+    write("fib(&{i}) = &{fib(i)}")
+    i = i + 1
+ECB`,
+
+    closures: `bladeFN make_counter() +/
+    >> count = 0
+    return bladeFN() +/
+        count = count + 1
+        return count
+    ECB
+ECB
+
+>> tick = make_counter()
+write(tick())
+write(tick())
+write(tick())`,
+
+    classes: `bladeGRP Animal +/
+    bladeFN init(blade, name#str, sound#str) +/
+        blade.name = name
+        blade.sound = sound
+    ECB
+    bladeFN speak(blade) +/
+        write(-*cyan*- + "&{blade.name} says: &{blade.sound}" + -*reset*-)
+    ECB
+ECB
+
+>> dog = Animal("Rex", "woof!")
+>> cat = Animal("Luna", "meow!")
+dog.speak()
+cat.speak()`,
+
+    pipeline: `bladeFN double(n) +/ return n * 2 ECB
+bladeFN inc(n)    +/ return n + 1 ECB
+bladeFN square(n) +/ return n * n ECB
+
+>> result = 3 |> double |> inc |> square
+write("3 → double → inc → square = &{result}")`,
+
+    math: `uselib -math-
+
+write(math.sqrt(144))
+write(math.floor(3.7))
+write(math.ceil(3.2))`,
+
+    string: `uselib -string-
+
+>> s = "  Hello, AxonBlade!  "
+write(string.upper(s))
+write(string.lower(s))
+write(string.strip(s))
+write(string.replace(s, "AxonBlade", "World"))
+
+>> parts = string.split("one,two,three", ",")
+write(parts[0])
+write(parts[1])
+write(parts[2])`,
+  };
+
+  function _getInitialCode() {
+    try {
+      const hash = location.hash.slice(1);
+      if (hash) return atob(hash);
+    } catch (_) {}
+    return EXAMPLES.hello;
+  }
+
+  function loadExample(key) {
+    if (!key || !EXAMPLES[key]) return;
+    const view = window._editorView;
+    if (!view) return;
+    view.dispatch({
+      changes: { from: 0, to: view.state.doc.length, insert: EXAMPLES[key] },
+    });
+    document.getElementById('examples-select').value = '';
+    clearOutput();
+  }
+
+  // ── ANSI → HTML ────────────────────────────────────────────────
+  const ANSI_COLORS = {
+    '30': '#888888', '31': '#ff5f57', '32': '#28c840',
+    '33': '#febc2e', '34': '#0a84ff', '35': '#bf5af2',
+    '36': '#00d4ff', '37': '#f0f0f0',
+  };
+
+  function ansiToHtml(text) {
+    const safe = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    let html = ''; let open = false;
+    for (const part of safe.split(/(\x1b\[\d+m)/)) {
+      const m = part.match(/^\x1b\[(\d+)m$/);
+      if (m) {
+        if (m[1] === '0') { if (open) { html += '</span>'; open = false; } }
+        else if (ANSI_COLORS[m[1]]) {
+          if (open) html += '</span>';
+          html += `<span style="color:${ANSI_COLORS[m[1]]}">`;
+          open = true;
+        }
+      } else {
+        html += part;
+      }
+    }
+    if (open) html += '</span>';
+    return html;
+  }
+
+  // ── Run code ───────────────────────────────────────────────────
+  window._runCode = async function runCode() {
+    const view = window._editorView;
+    if (!view) return;
+    const code = view.state.doc.toString();
+
+    const out    = document.getElementById('output');
+    const status = document.getElementById('status');
+    const btn    = document.getElementById('run-btn');
+
+    out.innerHTML = '<span class="spinner"></span>';
+    status.textContent = '● running';
+    status.className = 'status running';
+    btn.disabled = true;
+
+    let hasOutput = false;
+
+    try {
+      const res = await fetch(`${BACKEND_URL}/run`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code }),
+      });
+
+      if (!res.ok) {
+        throw new Error(`Server error: ${res.status}`);
+      }
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buf = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buf += decoder.decode(value, { stream: true });
+
+        const events = buf.split('\n\n');
+        buf = events.pop();
+
+        for (const event of events) {
+          const line = event.replace(/^data: /, '');
+          if (line === '[DONE]') { buf = ''; break; }
+
+          if (!hasOutput) {
+            out.innerHTML = '';
+            hasOutput = true;
+          }
+          const div = document.createElement('div');
+          div.className = 'out-line';
+          div.innerHTML = ansiToHtml(line);
+          out.appendChild(div);
+          out.scrollTop = out.scrollHeight;
+        }
+      }
+
+      if (!hasOutput) {
+        out.innerHTML = '<span class="out-placeholder" style="color:var(--muted)">(no output)</span>';
+      }
+
+      status.textContent = '● done';
+      status.className = 'status done';
+
+    } catch (err) {
+      out.innerHTML = `<div class="out-line" style="color:var(--red)">Connection error: ${err.message}<br><span style="color:var(--muted);font-size:.82rem">Is the backend running at ${BACKEND_URL}?</span></div>`;
+      status.textContent = '● error';
+      status.className = 'status error';
+    } finally {
+      btn.disabled = false;
+    }
+  };
+
+  // expose for onclick attribute
+  function runCode() { window._runCode(); }
+
+  function clearOutput() {
+    const out = document.getElementById('output');
+    out.innerHTML = '<span class="out-placeholder">Press ▶ Run or Ctrl+Enter to execute your code.</span>';
+    const status = document.getElementById('status');
+    status.textContent = '● ready';
+    status.className = 'status';
+  }
+
+  function shareCode() {
+    const view = window._editorView;
+    if (!view) return;
+    const code = view.state.doc.toString();
+    const hash = btoa(unescape(encodeURIComponent(code)));
+    const url = `${location.origin}${location.pathname}#${hash}`;
+    navigator.clipboard.writeText(url).then(() => {
+      const tip = document.getElementById('share-tip');
+      tip.classList.add('visible');
+      setTimeout(() => tip.classList.remove('visible'), 2000);
+    });
+  }
+</script>
+</body>
+</html>

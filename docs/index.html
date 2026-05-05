@@ -521,6 +521,7 @@
       <li><a href="index.html" class="active">Home</a></li>
       <li><a href="docs.html">Docs</a></li>
       <li><a href="examples.html">Examples</a></li>
+      <li><a href="playground.html">Playground</a></li>
       <li><a href="https://github.com/AI-Alon/axonblade" target="_blank" rel="noopener noreferrer">GitHub ↗</a></li>
     </ul>
   </div>
@@ -531,16 +532,17 @@
   <canvas id="hero-canvas"></canvas>
   <div class="hero-inner">
     <div class="hero-left">
-      <div class="hero-badge">v1.0 · Open Source</div>
+      <div class="hero-badge">v2.0 · Open Source</div>
       <h1>Code with Color.<br>Build with Grids.</h1>
       <p class="hero-sub">
-        AxonBlade is an expressive scripting language with built-in color literals,
+        AxonBlade is a bytecode-compiled scripting language with built-in color literals,
         a native grid primitive, and clean syntax — write terminal art, games, and
-        scripts with ease.
+        scripts with ease. No Python required.
       </p>
       <div class="hero-buttons">
-        <a class="btn-primary" href="#get-started">Get Started</a>
-        <a class="btn-secondary" href="docs.html">Read the Docs</a>
+        <a class="btn-primary" href="playground.html">Try in Browser</a>
+        <a class="btn-secondary" href="#get-started">Get Started</a>
+        <a class="btn-secondary" href="docs.html">Docs</a>
       </div>
       <div class="color-strip" aria-hidden="true">
         <div class="cs-tile"></div><div class="cs-tile"></div>
@@ -663,20 +665,43 @@
         </p>
       </div>
       <div class="feat-card">
+        <div class="feat-icon">⚙️</div>
+        <h3>Bytecode VM</h3>
+        <p>
+          Source compiles to <code>.axbc</code> bytecode and runs on a stack-based VM —
+          faster execution, pre-compilation with <code>ablade compile</code>.
+        </p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📦</div>
+        <h3>Standalone Binary</h3>
+        <p>
+          Download a single binary for Linux, macOS, or Windows — no Python,
+          no dependencies, no install. Just add to PATH and run.
+        </p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🌐</div>
+        <h3>Online Playground</h3>
+        <p>
+          Write and run AxonBlade in your browser with syntax highlighting,
+          ANSI color output, and shareable links — no install needed.
+        </p>
+      </div>
+      <div class="feat-card">
         <div class="feat-icon">🎨</div>
         <h3>VSCode Extension</h3>
         <p>
           Syntax highlighting for every AxonBlade token — keywords, color literals,
-          string interpolation, type annotations, and more. Bracket matching and
-          auto-indent included.
+          string interpolation, type annotations, and more.
         </p>
       </div>
       <div class="feat-card">
         <div class="feat-icon">📚</div>
         <h3>Expanded Stdlib</h3>
         <p>
-          Six new built-in modules: <code>io</code>, <code>json</code>, <code>http</code>,
-          <code>regex</code>, <code>datetime</code>, and <code>random</code>.
+          Six built-in modules: <code>io</code>, <code>json</code>, <code>http</code>,
+          <code>regex</code>, <code>datetime</code>, <code>random</code>.
           Plus string dot-methods like <code>"hello".upper()</code>.
         </p>
       </div>
@@ -690,7 +715,8 @@
     <p class="section-label">Get Started</p>
     <h2>Up and running in seconds</h2>
     <p class="section-desc">
-      Clone the repo, install with pip, write your first program, and run it.
+      Download the binary for your platform, add it to PATH, and start writing.
+      No Python, no dependencies.
     </p>
     <div class="gs-grid">
       <!-- Steps -->
@@ -698,8 +724,14 @@
         <ol class="gs-steps">
           <li>
             <div>
-              <h4>Install AxonBlade</h4>
-              <p>Requires Python 3.11+. Clone the repo and install with pip — the <code>ablade</code> CLI is ready.</p>
+              <h4>Download the binary</h4>
+              <p>Grab the latest release for your platform from GitHub Releases — a single self-contained file.</p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <h4>Add to PATH</h4>
+              <p>Move the binary to <code>/usr/local/bin/ablade</code> (Linux/macOS) or any folder in your Windows PATH.</p>
             </div>
           </li>
           <li>
@@ -711,40 +743,33 @@
           <li>
             <div>
               <h4>Run it</h4>
-              <p>Execute your file from the terminal with the <code>ablade run</code> command.</p>
-            </div>
-          </li>
-          <li>
-            <div>
-              <h4>Explore the docs</h4>
-              <p>Read the full language reference, check out examples, and build something cool.</p>
+              <p>Execute your file from the terminal with <code>ablade run hello.axb</code>.</p>
             </div>
           </li>
         </ol>
-        <a class="btn-primary" href="docs.html">Read the Docs →</a>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:.5rem">
+          <a class="btn-primary" href="https://github.com/AI-Alon/axonblade/releases/latest" target="_blank" rel="noopener noreferrer">Download v2.0 →</a>
+          <a class="btn-secondary" href="docs.html">Read the Docs</a>
+        </div>
       </div>
 
       <!-- Commands -->
       <div>
         <div class="install-wrap">
-          <div class="install-cmd" onclick="copyText(this, 'git clone https://github.com/AI-Alon/axonblade')">
+          <div style="font-size:.78rem;color:var(--muted);margin-bottom:.6rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase">Linux / macOS</div>
+          <div class="install-cmd" onclick="copyText(this, 'chmod +x ablade-linux-x64 && mv ablade-linux-x64 /usr/local/bin/ablade')">
             <span class="prompt">$</span>
-            <span class="cmd-text">git clone https://github.com/AI-Alon/axonblade</span>
+            <span class="cmd-text">chmod +x ablade-linux-x64 &amp;&amp; mv ablade-linux-x64 /usr/local/bin/ablade</span>
             <button class="copy-btn">Copy</button>
           </div>
-          <div class="install-cmd" onclick="copyText(this, 'cd axonblade')">
+          <div class="install-cmd" onclick="copyText(this, 'ablade version')">
             <span class="prompt">$</span>
-            <span class="cmd-text">cd axonblade</span>
+            <span class="cmd-text">ablade version</span>
             <button class="copy-btn">Copy</button>
           </div>
-          <div class="install-cmd" onclick="copyText(this, 'pip install -e .')">
+          <div class="install-cmd" onclick="copyText(this, 'ablade run hello.axb')">
             <span class="prompt">$</span>
-            <span class="cmd-text">pip install -e .</span>
-            <button class="copy-btn">Copy</button>
-          </div>
-          <div class="install-cmd" onclick="copyText(this, 'ablade run examples/hello.axb')">
-            <span class="prompt">$</span>
-            <span class="cmd-text">ablade run examples/hello.axb</span>
+            <span class="cmd-text">ablade run hello.axb</span>
             <button class="copy-btn">Copy</button>
           </div>
         </div>
@@ -1000,13 +1025,14 @@
 <footer>
   <div class="footer-inner">
     <div class="footer-left">
-      <strong>AxonBlade</strong> v1.0 &nbsp;·&nbsp; MIT License &nbsp;·&nbsp;
+      <strong>AxonBlade</strong> v2.0 &nbsp;·&nbsp; MIT License &nbsp;·&nbsp;
       &copy; 2026 AI-Alon
     </div>
     <div class="footer-links">
       <a href="index.html">Home</a>
       <a href="docs.html">Docs</a>
       <a href="examples.html">Examples</a>
+      <a href="playground.html">Playground</a>
       <a href="https://github.com/AI-Alon/axonblade" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
     </div>
   </div>
