@@ -455,6 +455,7 @@
       padding: .9rem 1.4rem;
       font-size: .97rem; line-height: 1.7;
       min-height: 128px;
+      white-space: pre-wrap; overflow-x: hidden;
     }
     .editor-footer {
       display: flex; align-items: center; justify-content: space-between;
@@ -589,7 +590,7 @@
 
       <div id="he-colors" class="editor-pane">
         <div class="code-body"><span class="kw">&gt;&gt;</span> <span class="var">i</span> <span class="op">=</span> <span class="num">0</span>
-<span class="kw">&gt;&gt;</span> <span class="var">labels</span> <span class="op">=</span> [<span class="str">"red"</span>, <span class="str">"green"</span>, <span class="str">"cyan"</span>, <span class="str">"purple"</span>]
+<span class="kw">&gt;&gt;</span> <span class="var">labels</span> <span class="op">=</span> [<span class="col">-*red*-</span> <span class="op">+</span> <span class="str">"red"</span> <span class="op">+</span> <span class="col">-*reset*-</span>, <span class="col">-*green*-</span> <span class="op">+</span> <span class="str">"green"</span> <span class="op">+</span> <span class="col">-*reset*-</span>, <span class="col">-*cyan*-</span> <span class="op">+</span> <span class="str">"cyan"</span> <span class="op">+</span> <span class="col">-*reset*-</span>, <span class="col">-*magenta*-</span> <span class="op">+</span> <span class="str">"magenta"</span> <span class="op">+</span> <span class="col">-*reset*-</span>]
 <span class="kw">while</span> <span class="var">i</span> <span class="op">&lt;</span> <span class="num">4</span> <span class="op">+/</span>
     <span class="fn">write</span>(<span class="var">labels</span><span class="op">~</span><span class="var">i</span><span class="op">~</span>)
     <span class="var">i</span> <span class="op">=</span> <span class="var">i</span> <span class="op">+</span> <span class="num">1</span>
@@ -1180,10 +1181,10 @@
       { html: '3' }
     ],
     colors: [
-      { html: '<span style="color:#ff5f57">■ red</span>' },
-      { html: '<span style="color:#28c840">■ green</span>' },
-      { html: '<span style="color:#00d4ff">■ cyan</span>' },
-      { html: '<span style="color:#bf5af2">■ purple</span>' }
+      { html: '<span style="color:#ff5f57">red</span>' },
+      { html: '<span style="color:#28c840">green</span>' },
+      { html: '<span style="color:#00d4ff">cyan</span>' },
+      { html: '<span style="color:#bf5af2">magenta</span>' }
     ]
   };
 
