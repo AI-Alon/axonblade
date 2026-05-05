@@ -171,13 +171,64 @@
     .footer-links a { color: var(--muted); font-size: .82rem; transition: color .2s; }
     .footer-links a:hover { color: var(--cyan); text-decoration: none; }
     @media (max-width: 600px) { footer { flex-direction: column; gap: .75rem; text-align: center; } }
+
+    /* ── Cursor glow ─────────────────────────────────────────── */
+    #cursor-glow {
+      position: fixed; width: 420px; height: 420px;
+      border-radius: 50%; pointer-events: none; z-index: 9999;
+      background: radial-gradient(circle, rgba(0,212,255,.07) 0%, transparent 70%);
+      transform: translate(-50%, -50%);
+      transition: left .04s linear, top .04s linear;
+    }
+
+    /* ── Hamburger nav ───────────────────────────────────────── */
+    .nav-hamburger {
+      display: none; background: none; border: none; cursor: pointer;
+      color: var(--muted); font-size: 1.4rem; margin-left: auto; padding: .2rem .4rem;
+    }
+    @media (max-width: 600px) {
+      .nav-hamburger { display: block; }
+      .nav-links {
+        display: none; flex-direction: column;
+        position: absolute; top: 58px; left: 0; right: 0;
+        background: rgba(13,13,26,.97); border-bottom: 1px solid var(--border);
+        padding: 1rem 2rem; gap: 1rem; z-index: 99;
+      }
+      .nav-links.open { display: flex; }
+    }
+
+    /* ── kbd ─────────────────────────────────────────────────── */
+    kbd {
+      font-family: 'Cascadia Code','Fira Code',monospace;
+      font-size: .78em; background: var(--bg3);
+      border: 1px solid var(--border); border-bottom-width: 2px;
+      border-radius: 4px; padding: .1rem .4rem; color: var(--cyan);
+    }
+
+    /* ── Panel fade-in ───────────────────────────────────────── */
+    @keyframes panel-up {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: none; }
+    }
+    .panel {
+      animation: panel-up .4s cubic-bezier(.22,1,.36,1) both;
+    }
+    .panel:nth-child(2) { animation-delay: .08s; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
   </style>
 </head>
 <body>
 
+<div id="cursor-glow"></div>
+
 <!-- ── Navbar ──────────────────────────────────────────────────── -->
 <nav>
   <a href="index.html" class="nav-logo">Axon<span>Blade</span></a>
+  <button class="nav-hamburger" aria-label="Menu" aria-expanded="false"
+    onclick="this.nextElementSibling.classList.toggle('open');this.setAttribute('aria-expanded',this.nextElementSibling.classList.contains('open'))">☰</button>
   <ul class="nav-links">
     <li><a href="index.html">Home</a></li>
     <li><a href="docs.html">Docs</a></li>
@@ -565,6 +616,13 @@ write(parts[2])`,
 
   // expose for onclick attribute
   function runCode() { window._runCode(); }
+
+  // ── Cursor glow ────────────────────────────────────────────────
+  const glow = document.getElementById('cursor-glow');
+  document.addEventListener('mousemove', e => {
+    glow.style.left = e.clientX + 'px';
+    glow.style.top  = e.clientY + 'px';
+  });
 
   function clearOutput() {
     const out = document.getElementById('output');
