@@ -260,6 +260,12 @@ ablade test tests/
 
 ---
 
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for a full version history.
+
+---
+
 ## License
 
 MIT — see [LICENSE](LICENSE).

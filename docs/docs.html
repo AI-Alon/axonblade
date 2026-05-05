@@ -207,6 +207,7 @@
       <li><a href="index.html">Home</a></li>
       <li><a href="docs.html" class="active">Docs</a></li>
       <li><a href="examples.html">Examples</a></li>
+      <li><a href="playground.html">Playground</a></li>
       <li><a href="https://github.com/AI-Alon/axonblade" target="_blank" rel="noopener noreferrer">GitHub ↗</a></li>
     </ul>
   </div>
@@ -235,6 +236,7 @@
   <option value="#string-dot-methods">String Dot-Methods</option>
   <option value="#stdlib">Standard Library</option>
   <option value="#vscode-extension">VSCode Extension</option>
+  <option value="#playground">Online Playground</option>
   <option value="#bytecode">Bytecode &amp; Performance</option>
 </select>
 
@@ -284,6 +286,7 @@
         <li><a href="#tooling-lint">ablade lint</a></li>
         <li><a href="#tooling-test">ablade test</a></li>
         <li><a href="#vscode-extension">VSCode Extension</a></li>
+        <li><a href="#playground">Online Playground</a></li>
       </ul>
     </div>
     <div class="sidebar-section">
@@ -301,19 +304,25 @@
 
     <!-- ── Install ── -->
     <h2 id="install">Installation</h2>
-    <p>Requires Python 3.11 or newer. Clone the repo and install from source:</p>
+    <p>Download the pre-built binary for your platform from <a href="https://github.com/AI-Alon/axonblade/releases/latest" target="_blank" rel="noopener noreferrer">GitHub Releases</a>. No Python required.</p>
+    <table>
+      <tr><th>Platform</th><th>File</th></tr>
+      <tr><td>Linux x64</td><td><code>ablade-linux-x64</code></td></tr>
+      <tr><td>macOS (Apple Silicon / Intel via Rosetta)</td><td><code>ablade-macos-arm64</code></td></tr>
+      <tr><td>Windows x64</td><td><code>ablade-windows-x64.exe</code></td></tr>
+    </table>
+    <p>Place the binary somewhere on your PATH and verify:</p>
+    <pre><code>ablade version</code></pre>
+    <div class="callout">
+      <strong>Linux / macOS:</strong> mark the binary executable first:<br/>
+      <code>chmod +x ablade-linux-x64 &amp;&amp; mv ablade-linux-x64 /usr/local/bin/ablade</code><br/><br/>
+      <strong>Windows:</strong> rename to <code>ablade.exe</code> and move to a folder already on your <code>%PATH%</code>.
+    </div>
+    <h3>Build from source</h3>
+    <p>Requires Python 3.11+:</p>
     <pre><code>git clone https://github.com/AI-Alon/axonblade.git
 cd axonblade
 pip install -e .</code></pre>
-    <p>This installs the <code>ablade</code> CLI command. Verify with:</p>
-    <pre><code>ablade version</code></pre>
-    <div class="callout">
-      If <code>ablade</code> is not found after install, add the pip scripts directory to your PATH:<br/><br/>
-      <strong>Linux / macOS:</strong><br/>
-      <code>export PATH="$(python3 -m site --user-base)/bin:$PATH"</code><br/><br/>
-      <strong>Windows (PowerShell):</strong><br/>
-      <code>$env:PATH += ";" + (python -m site --user-site).Replace("site-packages","Scripts")</code>
-    </div>
 
     <!-- ── First Program ── -->
     <h2 id="first-program">First Program</h2>
@@ -326,6 +335,7 @@ pip install -e .</code></pre>
     <!-- ── Running ── -->
     <h2 id="running">Running Files</h2>
     <pre><code>ablade run &lt;file.axb&gt;          # run a program
+ablade compile &lt;file.axb&gt;      # compile to bytecode (.axbc)
 ablade repl                    # start interactive REPL
 ablade fmt &lt;file.axb&gt;          # print formatted source
 ablade fmt --in-place &lt;file&gt;   # overwrite file with formatted output
@@ -879,7 +889,7 @@ hello.axb:8:1: [warning] variable 'tmp' is declared but never read</code></pre>
 
     <!-- ── Test runner ── -->
     <h2 id="tooling-test">Test Runner — <code>ablade test</code></h2>
-    <p>The test runner discovers all files named <code>*_test.axb</code> under the given directory (default: <code>.</code>), runs each one through the evaluator, and reports pass/fail results per <code>test()</code> call.</p>
+    <p>The test runner discovers all files named <code>*_test.axb</code> under the given directory (default: <code>.</code>), runs each one through the VM, and reports pass/fail results per <code>test()</code> call.</p>
     <pre><code>ablade test           # search from current directory
 ablade test tests/    # search from a specific directory</code></pre>
 
@@ -949,6 +959,31 @@ code --install-extension axonblade-2.0.0.vsix</code></pre>
 
 <span class="fn">greet</span>(<span class="str">"world"</span>)</code></pre>
 
+    <!-- ── Online Playground ── -->
+    <h2 id="playground">Online Playground</h2>
+    <p>Try AxonBlade in your browser without installing anything. The playground runs your code on a sandboxed backend and streams output line-by-line.</p>
+    <div class="callout">
+      <a href="playground.html" style="font-weight:700;">Open the Playground →</a>
+    </div>
+
+    <h3>Features</h3>
+    <table>
+      <tr><th>Feature</th><th>Detail</th></tr>
+      <tr><td>Syntax highlighting</td><td>Keywords, strings, color literals, comments, and numbers colored in real time</td></tr>
+      <tr><td>Live execution</td><td>Output streams line-by-line via SSE; ANSI colors rendered in the output pane</td></tr>
+      <tr><td>Share</td><td>Click <strong>Share</strong> to encode your code in the URL hash — paste the link to share a runnable snippet</td></tr>
+      <tr><td>Examples</td><td>7 built-in examples load with one click: Hello World, Fibonacci, Closures, Classes, Pipeline, Math, String ops</td></tr>
+      <tr><td>Keyboard shortcut</td><td><code>Ctrl+Enter</code> runs the current code</td></tr>
+    </table>
+
+    <h3>Restrictions</h3>
+    <p>For safety, the playground backend enforces:</p>
+    <ul>
+      <li>5-second execution timeout</li>
+      <li><code>io</code> and <code>http</code> modules are disabled (file system and network access blocked)</li>
+    </ul>
+    <p>For unrestricted execution, <a href="#install">download the binary</a> and run locally.</p>
+
     <h2 id="bytecode">Bytecode &amp; Performance</h2>
     <p>AxonBlade V2 compiles source files to compact bytecode before executing them. Instead of walking the AST on every run, the compiler emits a flat sequence of opcodes that a fast stack-based virtual machine (VM) dispatches in a tight loop.</p>
 
@@ -1004,6 +1039,7 @@ code --install-extension axonblade-2.0.0.vsix</code></pre>
       <a href="index.html">Home</a>
       <a href="docs.html">Docs</a>
       <a href="examples.html">Examples</a>
+      <a href="playground.html">Playground</a>
       <a href="https://github.com/AI-Alon/axonblade" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
     </div>
   </div>

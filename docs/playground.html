@@ -257,8 +257,8 @@
   import { EditorView, keymap, lineNumbers, highlightActiveLine, drawSelection } from 'https://esm.sh/@codemirror/view@6';
   import { EditorState, Compartment } from 'https://esm.sh/@codemirror/state@6';
   import { defaultKeymap, historyKeymap, history, indentWithTab } from 'https://esm.sh/@codemirror/commands@6';
-  import { StreamLanguage } from 'https://esm.sh/@codemirror/language@6';
-  import { oneDark } from 'https://esm.sh/@codemirror/theme-one-dark@6';
+  import { StreamLanguage, syntaxHighlighting, HighlightStyle } from 'https://esm.sh/@codemirror/language@6';
+  import { tags } from 'https://esm.sh/@lezer/highlight@1';
   import { closeBrackets, closeBracketsKeymap } from 'https://esm.sh/@codemirror/autocomplete@6';
 
   // ── AxonBlade syntax mode ──────────────────────────────────────
@@ -306,7 +306,18 @@
     },
   });
 
-  // ── Custom dark theme to match the site ───────────────────────
+  // ── Syntax highlight style ─────────────────────────────────────
+  const axonHighlight = HighlightStyle.define([
+    { tag: tags.keyword,      color: '#c792ea', fontWeight: '600' },
+    { tag: tags.atom,         color: '#ffcb6b' },
+    { tag: tags.string,       color: '#c3e88d' },
+    { tag: tags.number,       color: '#f78c6c' },
+    { tag: tags.comment,      color: '#697e8a', fontStyle: 'italic' },
+    { tag: tags.operator,     color: '#89ddff' },
+    { tag: tags.variableName, color: '#eeffff' },
+  ]);
+
+  // ── Editor chrome theme ────────────────────────────────────────
   const siteTheme = EditorView.theme({
     '&': { backgroundColor: '#0a0a1a', color: '#e2e8f0', height: '100%' },
     '.cm-content': { padding: '12px 0', caretColor: '#00d4ff' },
@@ -316,20 +327,12 @@
     '.cm-gutters': { backgroundColor: '#0a0a1a', borderRight: '1px solid #2a2a4a', color: '#4a5568' },
     '.cm-activeLineGutter': { backgroundColor: 'rgba(0,212,255,.06)' },
     '.cm-activeLine': { backgroundColor: 'rgba(0,212,255,.04)' },
-    // syntax
-    '.tok-keyword':      { color: '#c792ea', fontWeight: '600' },
-    '.tok-atom':         { color: '#ffcb6b' },  // color literals
-    '.tok-string':       { color: '#c3e88d' },
-    '.tok-number':       { color: '#f78c6c' },
-    '.tok-comment':      { color: '#697e8a', fontStyle: 'italic' },
-    '.tok-operator':     { color: '#89ddff' },
-    '.tok-variableName': { color: '#eeffff' },
   }, { dark: true });
 
   // ── Editor setup ───────────────────────────────────────────────
   const runKeymap = keymap.of([{
     key: 'Ctrl-Enter', mac: 'Mod-Enter',
-    run() { window._runCode(); return true; },
+    run() { window.runCode(); return true; },
   }]);
 
   const state = EditorState.create({
@@ -342,7 +345,8 @@
       closeBrackets(),
       keymap.of([...defaultKeymap, ...historyKeymap, ...closeBracketsKeymap, indentWithTab]),
       runKeymap,
-      StreamLanguage.define(axonBlade.language.spec),
+      axonBlade,
+      syntaxHighlighting(axonHighlight),
       siteTheme,
       EditorView.lineWrapping,
     ],
@@ -484,7 +488,7 @@ write(parts[2])`,
   }
 
   // ── Run code ───────────────────────────────────────────────────
-  window._runCode = async function runCode() {
+  window.runCode = async function() {
     const view = window._editorView;
     if (!view) return;
     const code = view.state.doc.toString();
@@ -547,7 +551,11 @@ write(parts[2])`,
       status.className = 'status done';
 
     } catch (err) {
-      out.innerHTML = `<div class="out-line" style="color:var(--red)">Connection error: ${err.message}<br><span style="color:var(--muted);font-size:.82rem">Is the backend running at ${BACKEND_URL}?</span></div>`;
+      const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+      const hint = isLocal
+        ? `Run: <code style="color:var(--cyan)">uvicorn playground.backend.main:app --reload</code>`
+        : `The server may be waking up (Render free tier cold start ~30s). <strong>Try again in a moment.</strong>`;
+      out.innerHTML = `<div class="out-line" style="color:var(--red)">Connection error: ${err.message}<br><span style="color:var(--muted);font-size:.82rem;line-height:2">${hint}</span></div>`;
       status.textContent = '● error';
       status.className = 'status error';
     } finally {

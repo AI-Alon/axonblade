@@ -208,6 +208,7 @@
       <li><a href="index.html">Home</a></li>
       <li><a href="docs.html">Docs</a></li>
       <li><a href="examples.html" class="active">Examples</a></li>
+      <li><a href="playground.html">Playground</a></li>
       <li><a href="https://github.com/AI-Alon/axonblade" target="_blank" rel="noopener noreferrer">GitHub ↗</a></li>
     </ul>
   </div>
@@ -225,6 +226,11 @@
     <option value="fibonacci">Fibonacci</option>
     <option value="closures">Closures</option>
     <option value="classes">Classes</option>
+    <option value="http">HTTP &amp; JSON</option>
+    <option value="fileio">File I/O</option>
+    <option value="regex">Regex</option>
+    <option value="datetime">Date &amp; Time</option>
+    <option value="random">Random</option>
     <option value="snake">Snake Game</option>
     <option value="life">Game of Life</option>
     <option value="testing">Writing Tests</option>
@@ -238,6 +244,11 @@
     <button type="button" class="ex-nav-btn" onclick="showEx('fibonacci', this)">Fibonacci <span class="badge">math</span></button>
     <button type="button" class="ex-nav-btn" onclick="showEx('closures', this)">Closures <span class="badge">advanced</span></button>
     <button type="button" class="ex-nav-btn" onclick="showEx('classes', this)">Classes <span class="badge">OOP</span></button>
+    <button type="button" class="ex-nav-btn" onclick="showEx('http', this)">HTTP &amp; JSON <span class="badge">stdlib</span></button>
+    <button type="button" class="ex-nav-btn" onclick="showEx('fileio', this)">File I/O <span class="badge">stdlib</span></button>
+    <button type="button" class="ex-nav-btn" onclick="showEx('regex', this)">Regex <span class="badge">stdlib</span></button>
+    <button type="button" class="ex-nav-btn" onclick="showEx('datetime', this)">Date &amp; Time <span class="badge">stdlib</span></button>
+    <button type="button" class="ex-nav-btn" onclick="showEx('random', this)">Random <span class="badge">stdlib</span></button>
     <button type="button" class="ex-nav-btn" onclick="showEx('snake', this)">Snake <span class="badge game">game</span></button>
     <button type="button" class="ex-nav-btn" onclick="showEx('life', this)">Game of Life <span class="badge game">game</span></button>
     <button type="button" class="ex-nav-btn" onclick="showEx('testing', this)">Writing Tests <span class="badge">tooling</span></button>
@@ -580,6 +591,216 @@
 <span class="kw">ECB</span></div>
         <div class="ex-meta">
           <div class="ex-meta-item"><strong>Concepts:</strong> bladeGRP classes, blade keyword, type annotations, if/else, try/catch</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HTTP & JSON -->
+    <div id="ex-http" class="ex-pane">
+      <div class="ex-card">
+        <div class="ex-card-header">
+          <div>
+            <h2>HTTP &amp; JSON</h2>
+            <p>Fetch a public API and parse the JSON response.</p>
+          </div>
+          <a href="playground.html#" class="run-btn" onclick="event.preventDefault();window.open('playground.html#'+btoa(unescape(encodeURIComponent(this.closest('.ex-card').querySelector('.code-block').innerText.trim()))),'_blank')">▶ Try it</a>
+        </div>
+        <div class="code-block"><span class="cmt"># http_demo.axb — HTTP GET + JSON parsing</span>
+<span class="kw">uselib</span> <span class="op">-</span><span class="var">http</span><span class="op">-</span>
+<span class="kw">uselib</span> <span class="op">-</span><span class="var">json</span><span class="op">-</span>
+
+<span class="cmt"># Fetch a public joke API</span>
+<span class="kw">&gt;&gt;</span> <span class="var">res</span> <span class="op">=</span> <span class="var">http</span>.<span class="fn">get</span>(<span class="str">"https://official-joke-api.appspot.com/random_joke"</span>)
+
+<span class="kw">if</span> <span class="var">res</span>.<span class="var">ok</span> <span class="op">+/</span>
+    <span class="kw">&gt;&gt;</span> <span class="var">joke</span> <span class="op">=</span> <span class="var">json</span>.<span class="fn">parse</span>(<span class="var">res</span>.<span class="var">body</span>)
+    <span class="fn">write</span>(<span class="col">-*cyan*-</span> <span class="op">+</span> <span class="var">joke</span><span class="op">~</span><span class="str">"setup"</span><span class="op">~</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+    <span class="fn">write</span>(<span class="col">-*yellow*-</span> <span class="op">+</span> <span class="var">joke</span><span class="op">~</span><span class="str">"punchline"</span><span class="op">~</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="kw">ECB</span>
+<span class="kw">else</span> <span class="op">+/</span>
+    <span class="fn">write</span>(<span class="col">-*red*-</span> <span class="op">+</span> <span class="str">"Request failed: &amp;{res.status}"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="kw">ECB</span>
+
+<span class="cmt"># POST with a JSON body</span>
+<span class="kw">&gt;&gt;</span> <span class="var">payload</span> <span class="op">=</span> <span class="var">json</span>.<span class="fn">stringify</span>({"title": <span class="str">"AxonBlade"</span>, "done": <span class="num">1</span>})
+<span class="kw">&gt;&gt;</span> <span class="var">post</span> <span class="op">=</span> <span class="var">http</span>.<span class="fn">post</span>(<span class="str">"https://jsonplaceholder.typicode.com/todos"</span>, <span class="var">payload</span>)
+<span class="fn">write</span>(<span class="str">"Created — status &amp;{post.status}"</span>)</div>
+        <div class="ex-meta">
+          <div class="ex-meta-item"><strong>Concepts:</strong> uselib, http.get, http.post, json.parse, json.stringify, dict access</div>
+          <div class="ex-meta-item"><strong>Modules:</strong> <code>http</code>, <code>json</code></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- File I/O -->
+    <div id="ex-fileio" class="ex-pane">
+      <div class="ex-card">
+        <div class="ex-card-header">
+          <div>
+            <h2>File I/O</h2>
+            <p>Read, write, and append files using the <code>io</code> module.</p>
+          </div>
+          <a href="playground.html#" class="run-btn" onclick="event.preventDefault();window.open('playground.html#'+btoa(unescape(encodeURIComponent(this.closest('.ex-card').querySelector('.code-block').innerText.trim()))),'_blank')">▶ Try it</a>
+        </div>
+        <div class="code-block"><span class="cmt"># fileio.axb — Reading and writing files</span>
+<span class="kw">uselib</span> <span class="op">-</span><span class="var">io</span><span class="op">-</span>
+
+<span class="cmt"># Write a file</span>
+<span class="var">io</span>.<span class="fn">write</span>(<span class="str">"notes.txt"</span>, <span class="str">"Line one\nLine two\nLine three\n"</span>)
+<span class="fn">write</span>(<span class="col">-*green*-</span> <span class="op">+</span> <span class="str">"File written."</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+
+<span class="cmt"># Read it back</span>
+<span class="kw">&gt;&gt;</span> <span class="var">content</span> <span class="op">=</span> <span class="var">io</span>.<span class="fn">read</span>(<span class="str">"notes.txt"</span>)
+<span class="fn">write</span>(<span class="str">"Contents:\n&amp;{content}"</span>)
+
+<span class="cmt"># Check if file exists</span>
+<span class="fn">write</span>(<span class="str">"Exists: &amp;{io.exists(\"notes.txt\")}"</span>)
+
+<span class="cmt"># Append a line</span>
+<span class="var">io</span>.<span class="fn">append</span>(<span class="str">"notes.txt"</span>, <span class="str">"Line four\n"</span>)
+<span class="fn">write</span>(<span class="str">"After append:\n&amp;{io.read(\"notes.txt\")}"</span>)
+
+<span class="cmt"># Delete the file</span>
+<span class="var">io</span>.<span class="fn">delete</span>(<span class="str">"notes.txt"</span>)
+<span class="fn">write</span>(<span class="str">"Deleted. Exists now: &amp;{io.exists(\"notes.txt\")}"</span>)</div>
+        <div class="ex-meta">
+          <div class="ex-meta-item"><strong>Concepts:</strong> uselib, io.read, io.write, io.append, io.exists, io.delete</div>
+          <div class="ex-meta-item"><strong>Modules:</strong> <code>io</code></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Regex -->
+    <div id="ex-regex" class="ex-pane">
+      <div class="ex-card">
+        <div class="ex-card-header">
+          <div>
+            <h2>Regex</h2>
+            <p>Pattern matching, extraction, and replacement with the <code>regex</code> module.</p>
+          </div>
+          <a href="playground.html#" class="run-btn" onclick="event.preventDefault();window.open('playground.html#'+btoa(unescape(encodeURIComponent(this.closest('.ex-card').querySelector('.code-block').innerText.trim()))),'_blank')">▶ Try it</a>
+        </div>
+        <div class="code-block"><span class="cmt"># regex_demo.axb — Pattern matching</span>
+<span class="kw">uselib</span> <span class="op">-</span><span class="var">regex</span><span class="op">-</span>
+
+<span class="kw">&gt;&gt;</span> <span class="var">email</span> <span class="op">=</span> <span class="str">"user@example.com"</span>
+<span class="kw">&gt;&gt;</span> <span class="var">pattern</span> <span class="op">=</span> <span class="str">"[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}"</span>
+
+<span class="cmt"># Test for a match</span>
+<span class="kw">if</span> <span class="var">regex</span>.<span class="fn">match</span>(<span class="var">pattern</span>, <span class="var">email</span>) <span class="op">+/</span>
+    <span class="fn">write</span>(<span class="col">-*green*-</span> <span class="op">+</span> <span class="str">"Valid email: &amp;{email}"</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="kw">ECB</span>
+
+<span class="cmt"># Extract all matches from a string</span>
+<span class="kw">&gt;&gt;</span> <span class="var">text</span> <span class="op">=</span> <span class="str">"Call us at 555-1234 or 555-5678 for support."</span>
+<span class="kw">&gt;&gt;</span> <span class="var">phones</span> <span class="op">=</span> <span class="var">regex</span>.<span class="fn">find_all</span>(<span class="str">"\\d{3}-\\d{4}"</span>, <span class="var">text</span>)
+<span class="fn">write</span>(<span class="str">"Phone numbers found: &amp;{phones}"</span>)
+
+<span class="cmt"># Replace matches</span>
+<span class="kw">&gt;&gt;</span> <span class="var">censored</span> <span class="op">=</span> <span class="var">regex</span>.<span class="fn">replace</span>(<span class="str">"\\d{3}-\\d{4}"</span>, <span class="var">text</span>, <span class="str">"[REDACTED]"</span>)
+<span class="fn">write</span>(<span class="var">censored</span>)
+
+<span class="cmt"># Split on a delimiter pattern</span>
+<span class="kw">&gt;&gt;</span> <span class="var">csv</span> <span class="op">=</span> <span class="str">"alpha, beta,  gamma,delta"</span>
+<span class="kw">&gt;&gt;</span> <span class="var">parts</span> <span class="op">=</span> <span class="var">regex</span>.<span class="fn">split</span>(<span class="str">",\\s*"</span>, <span class="var">csv</span>)
+<span class="fn">write</span>(<span class="str">"Parts: &amp;{parts}"</span>)</div>
+        <div class="ex-meta">
+          <div class="ex-meta-item"><strong>Concepts:</strong> uselib, regex.match, regex.find_all, regex.replace, regex.split</div>
+          <div class="ex-meta-item"><strong>Modules:</strong> <code>regex</code></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Date & Time -->
+    <div id="ex-datetime" class="ex-pane">
+      <div class="ex-card">
+        <div class="ex-card-header">
+          <div>
+            <h2>Date &amp; Time</h2>
+            <p>Get the current time, format dates, and measure elapsed time.</p>
+          </div>
+          <a href="playground.html#" class="run-btn" onclick="event.preventDefault();window.open('playground.html#'+btoa(unescape(encodeURIComponent(this.closest('.ex-card').querySelector('.code-block').innerText.trim()))),'_blank')">▶ Try it</a>
+        </div>
+        <div class="code-block"><span class="cmt"># datetime_demo.axb — Date and time operations</span>
+<span class="kw">uselib</span> <span class="op">-</span><span class="var">datetime</span><span class="op">-</span>
+
+<span class="cmt"># Current timestamp</span>
+<span class="kw">&gt;&gt;</span> <span class="var">now</span> <span class="op">=</span> <span class="var">datetime</span>.<span class="fn">now</span>()
+<span class="fn">write</span>(<span class="str">"Now:  &amp;{now}"</span>)
+<span class="fn">write</span>(<span class="str">"Year: &amp;{now.year}"</span>)
+<span class="fn">write</span>(<span class="str">"Month: &amp;{now.month}"</span>)
+<span class="fn">write</span>(<span class="str">"Day:  &amp;{now.day}"</span>)
+
+<span class="cmt"># Format a date</span>
+<span class="fn">write</span>(<span class="var">now</span>.<span class="fn">format</span>(<span class="str">"%Y-%m-%d"</span>))
+<span class="fn">write</span>(<span class="var">now</span>.<span class="fn">format</span>(<span class="str">"%B %d, %Y"</span>))
+
+<span class="cmt"># Unix timestamp</span>
+<span class="kw">&gt;&gt;</span> <span class="var">ts</span> <span class="op">=</span> <span class="var">datetime</span>.<span class="fn">timestamp</span>()
+<span class="fn">write</span>(<span class="str">"Unix: &amp;{ts}"</span>)
+
+<span class="cmt"># Measure elapsed time</span>
+<span class="kw">&gt;&gt;</span> <span class="var">t0</span> <span class="op">=</span> <span class="var">datetime</span>.<span class="fn">timestamp</span>()
+<span class="kw">&gt;&gt;</span> <span class="var">i</span> <span class="op">=</span> <span class="num">0</span>
+<span class="kw">while</span> <span class="var">i</span> <span class="op">&lt;</span> <span class="num">100000</span> <span class="op">+/</span>
+    <span class="var">i</span> <span class="op">=</span> <span class="var">i</span> <span class="op">+</span> <span class="num">1</span>
+<span class="kw">ECB</span>
+<span class="kw">&gt;&gt;</span> <span class="var">elapsed</span> <span class="op">=</span> <span class="var">datetime</span>.<span class="fn">timestamp</span>() <span class="op">-</span> <span class="var">t0</span>
+<span class="fn">write</span>(<span class="str">"100 000 iterations in &amp;{elapsed}s"</span>)</div>
+        <div class="ex-meta">
+          <div class="ex-meta-item"><strong>Concepts:</strong> uselib, datetime.now, date formatting, datetime.timestamp</div>
+          <div class="ex-meta-item"><strong>Modules:</strong> <code>datetime</code></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Random -->
+    <div id="ex-random" class="ex-pane">
+      <div class="ex-card">
+        <div class="ex-card-header">
+          <div>
+            <h2>Random</h2>
+            <p>Random numbers, choices, and shuffles — dice roller and card draw demo.</p>
+          </div>
+          <a href="playground.html#" class="run-btn" onclick="event.preventDefault();window.open('playground.html#'+btoa(unescape(encodeURIComponent(this.closest('.ex-card').querySelector('.code-block').innerText.trim()))),'_blank')">▶ Try it</a>
+        </div>
+        <div class="code-block"><span class="cmt"># random_demo.axb — Randomness</span>
+<span class="kw">uselib</span> <span class="op">-</span><span class="var">random</span><span class="op">-</span>
+
+<span class="cmt"># Dice roller</span>
+<span class="kw">bladeFN</span> <span class="fn">roll</span>(<span class="var">sides</span><span class="op">#</span><span class="kw">int</span>) <span class="op">+/</span>
+    <span class="kw">return</span> <span class="var">random</span>.<span class="fn">int</span>(<span class="num">1</span>, <span class="var">sides</span>)
+<span class="kw">ECB</span>
+
+<span class="fn">write</span>(<span class="col">-*cyan*-</span> <span class="op">+</span> <span class="str">"=== Dice Rolls ==="</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="fn">write</span>(<span class="str">"d6:  &amp;{roll(6)}"</span>)
+<span class="fn">write</span>(<span class="str">"d20: &amp;{roll(20)}"</span>)
+<span class="fn">write</span>(<span class="str">"d100: &amp;{roll(100)}"</span>)
+
+<span class="cmt"># Random float in [0,1)</span>
+<span class="fn">write</span>(<span class="str">""</span>)
+<span class="fn">write</span>(<span class="col">-*cyan*-</span> <span class="op">+</span> <span class="str">"=== Floats ==="</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="kw">&gt;&gt;</span> <span class="var">i</span> <span class="op">=</span> <span class="num">0</span>
+<span class="kw">while</span> <span class="var">i</span> <span class="op">&lt;</span> <span class="num">5</span> <span class="op">+/</span>
+    <span class="fn">write</span>(<span class="str">"  &amp;{random.float()}"</span>)
+    <span class="var">i</span> <span class="op">=</span> <span class="var">i</span> <span class="op">+</span> <span class="num">1</span>
+<span class="kw">ECB</span>
+
+<span class="cmt"># Shuffle and pick</span>
+<span class="fn">write</span>(<span class="str">""</span>)
+<span class="fn">write</span>(<span class="col">-*cyan*-</span> <span class="op">+</span> <span class="str">"=== Card Draw ==="</span> <span class="op">+</span> <span class="col">-*reset*-</span>)
+<span class="kw">&gt;&gt;</span> <span class="var">suits</span> <span class="op">=</span> [<span class="str">"♠"</span>, <span class="str">"♥"</span>, <span class="str">"♦"</span>, <span class="str">"♣"</span>]
+<span class="kw">&gt;&gt;</span> <span class="var">ranks</span> <span class="op">=</span> [<span class="str">"A"</span>, <span class="str">"2"</span>, <span class="str">"3"</span>, <span class="str">"4"</span>, <span class="str">"5"</span>, <span class="str">"6"</span>, <span class="str">"7"</span>,
+             <span class="str">"8"</span>, <span class="str">"9"</span>, <span class="str">"10"</span>, <span class="str">"J"</span>, <span class="str">"Q"</span>, <span class="str">"K"</span>]
+<span class="kw">&gt;&gt;</span> <span class="var">suit</span> <span class="op">=</span> <span class="var">random</span>.<span class="fn">choice</span>(<span class="var">suits</span>)
+<span class="kw">&gt;&gt;</span> <span class="var">rank</span> <span class="op">=</span> <span class="var">random</span>.<span class="fn">choice</span>(<span class="var">ranks</span>)
+<span class="fn">write</span>(<span class="str">"You drew: &amp;{rank}&amp;{suit}"</span>)
+
+<span class="kw">&gt;&gt;</span> <span class="var">hand</span> <span class="op">=</span> [<span class="str">"A♠"</span>, <span class="str">"K♥"</span>, <span class="str">"Q♦"</span>, <span class="str">"J♣"</span>, <span class="str">"10♠"</span>]
+<span class="fn">write</span>(<span class="str">"Shuffled hand: &amp;{random.shuffle(hand)}"</span>)</div>
+        <div class="ex-meta">
+          <div class="ex-meta-item"><strong>Concepts:</strong> uselib, random.int, random.float, random.choice, random.shuffle</div>
+          <div class="ex-meta-item"><strong>Modules:</strong> <code>random</code></div>
         </div>
       </div>
     </div>
@@ -1026,13 +1247,14 @@ ablade test tests/        <span style="color:var(--muted)"># search a specific f
 <footer>
   <div class="footer-inner">
     <div class="footer-left">
-      <strong>AxonBlade</strong> v1.0 &nbsp;·&nbsp; MIT License &nbsp;·&nbsp;
+      <strong>AxonBlade</strong> v2.0 &nbsp;·&nbsp; MIT License &nbsp;·&nbsp;
       &copy; 2026 AI-Alon
     </div>
     <div class="footer-links">
       <a href="index.html">Home</a>
       <a href="docs.html">Docs</a>
       <a href="examples.html">Examples</a>
+      <a href="playground.html">Playground</a>
       <a href="https://github.com/AI-Alon/axonblade" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
     </div>
   </div>
@@ -1060,7 +1282,7 @@ ablade test tests/        <span style="color:var(--muted)"># search a specific f
   }
 
   // Auto-select from ?ex= query param
-  const validExamples = ['hello','fibonacci','closures','classes','snake','life','testing'];
+  const validExamples = ['hello','fibonacci','closures','classes','http','fileio','regex','datetime','random','snake','life','testing'];
   const exParam = new URLSearchParams(window.location.search).get('ex');
   if (exParam && validExamples.includes(exParam) && document.getElementById('ex-' + exParam)) showEx(exParam);
 
