@@ -242,6 +242,11 @@
 <div class="pg-header">
   <h1>AxonBlade Playground</h1>
   <p>Write and run AxonBlade code instantly — no install required. Press <kbd>Ctrl+Enter</kbd> to run.</p>
+  <p style="margin-top:.5rem;font-size:.8rem;color:var(--muted);">
+    <span style="color:#febc2e">⚠</span>
+    <code>grid</code> and <code>write_key()</code> require a real terminal — use the
+    <a href="https://github.com/AI-Alon/axonblade/releases/latest" target="_blank" rel="noopener noreferrer">CLI binary</a> to run interactive or grid-based programs.
+  </p>
 </div>
 
 <!-- ── Playground ──────────────────────────────────────────────── -->
@@ -477,7 +482,7 @@ write(math.ceil(3.2))`,
 
     string: `uselib -string-
 
->> s = "  Hello, AxonBlade!  "
+>> s = "Hello, AxonBlade!"
 write(string.upper(s))
 write(string.lower(s))
 write(string.strip(s))
