@@ -55,44 +55,58 @@
 
     /* ── Page header ────────────────────────────────────────── */
     .pg-header {
-      padding: 1.5rem 2rem .75rem;
-      border-bottom: 1px solid var(--border);
+      padding: 1.75rem 2rem 1.25rem;
       flex-shrink: 0;
+      background: linear-gradient(180deg, rgba(0,212,255,.04) 0%, transparent 100%);
     }
-    .pg-header h1 { font-size: 1.4rem; font-weight: 800; letter-spacing: -.5px; }
-    .pg-header p  { color: var(--muted); font-size: .9rem; margin-top: .2rem; }
+    .pg-header h1 {
+      font-size: 1.7rem; font-weight: 800; letter-spacing: -.5px;
+      background: linear-gradient(90deg, var(--cyan), var(--purple));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      display: inline-block;
+    }
+    .pg-header p  { color: var(--muted); font-size: .9rem; margin-top: .3rem; }
 
     /* ── Main layout ─────────────────────────────────────────── */
     .playground-wrap {
       flex: 1; display: flex; flex-direction: column;
-      min-height: 0; padding: 1rem 1.5rem 1.5rem;
+      min-height: 0; padding: 1.25rem 1.5rem 1.5rem;
       gap: 1rem;
     }
 
     /* ── Toolbar ─────────────────────────────────────────────── */
     .toolbar {
-      display: flex; align-items: center; gap: .75rem; flex-wrap: wrap;
+      display: flex; align-items: center; gap: .6rem; flex-wrap: wrap;
       flex-shrink: 0;
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 10px; padding: .6rem .9rem;
     }
     .toolbar select {
       background: var(--bg3); border: 1px solid var(--border);
       color: var(--text); border-radius: var(--radius);
-      padding: .4rem .8rem; font-size: .88rem;
+      padding: .35rem .75rem; font-size: .85rem;
       font-family: 'Comic Sans MS', cursive; cursor: pointer;
     }
     .toolbar select:focus { outline: 2px solid var(--cyan); }
+    .toolbar-sep {
+      width: 1px; height: 20px; background: var(--border); flex-shrink: 0;
+    }
     .btn {
       border: none; border-radius: var(--radius);
-      padding: .4rem 1rem; font-size: .88rem; font-weight: 700;
+      padding: .38rem 1rem; font-size: .88rem; font-weight: 700;
       font-family: 'Comic Sans MS', cursive; cursor: pointer;
-      transition: opacity .15s, transform .1s;
+      transition: opacity .15s, transform .1s, box-shadow .15s;
     }
     .btn:active { transform: scale(.96); }
     .btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
-    .btn-run    { background: var(--green); color: #000; }
-    .btn-share  { background: var(--bg3); color: var(--cyan); border: 1px solid var(--border); }
-    .btn-clear  { background: var(--bg3); color: var(--muted); border: 1px solid var(--border); }
-    .btn:hover:not(:disabled) { opacity: .85; }
+    .btn-run {
+      background: var(--green); color: #000;
+      box-shadow: 0 0 12px rgba(57,255,20,.25);
+    }
+    .btn-run:hover:not(:disabled) { box-shadow: 0 0 20px rgba(57,255,20,.45); opacity: 1; }
+    .btn-share  { background: transparent; color: var(--cyan); border: 1px solid rgba(0,212,255,.3); }
+    .btn-clear  { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+    .btn-share:hover:not(:disabled), .btn-clear:hover:not(:disabled) { opacity: .75; }
     .status {
       margin-left: auto; font-size: .8rem;
       font-family: 'Cascadia Code','Fira Code',monospace;
@@ -116,18 +130,19 @@
     @media (max-width: 768px) { .panels { grid-template-columns: 1fr; } }
 
     .panel {
-      background: var(--code-bg); border: 1px solid var(--border);
-      border-radius: 10px; display: flex; flex-direction: column;
+      background: var(--code-bg);
+      border: 1px solid rgba(0,212,255,.12);
+      border-radius: 12px; display: flex; flex-direction: column;
       min-height: 0; overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.03);
     }
     .panel-label {
-      display: flex; align-items: center; padding: .5rem 1rem;
-      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; padding: .55rem 1rem;
+      border-bottom: 1px solid rgba(255,255,255,.04);
       font-size: .72rem; font-weight: 700; letter-spacing: .1em;
       text-transform: uppercase; color: var(--muted);
-      background: rgba(255,255,255,.02);
-      flex-shrink: 0;
-      gap: .5rem;
+      background: linear-gradient(135deg, rgba(0,212,255,.06), rgba(168,85,247,.04));
+      flex-shrink: 0; gap: .5rem;
     }
     .panel-label .dots { display: flex; gap: 5px; }
     .dot { width: 11px; height: 11px; border-radius: 50%; }
@@ -143,9 +158,9 @@
 
     /* ── Output panel ────────────────────────────────────────── */
     .output-body {
-      flex: 1; padding: .8rem 1.1rem; overflow-y: auto;
+      flex: 1; padding: .9rem 1.2rem; overflow-y: auto;
       font-family: 'Cascadia Code','Fira Code','Consolas',monospace;
-      font-size: .9rem; line-height: 1.8;
+      font-size: .9rem; line-height: 1.9;
     }
     .out-placeholder { color: var(--muted); font-style: italic; font-size: .85rem; }
     .out-line { white-space: pre-wrap; word-break: break-all; }
@@ -162,12 +177,12 @@
     /* ── Footer ──────────────────────────────────────────────── */
     footer {
       border-top: 1px solid var(--border);
-      padding: 1.2rem 2rem;
-      display: flex; align-items: center; justify-content: space-between;
+      padding: 2rem;
       flex-shrink: 0;
     }
     .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; width: 100%; }
     .footer-left { font-size: .82rem; color: var(--muted); }
+    .footer-left strong { color: var(--cyan); }
     .footer-links { display: flex; gap: 1.5rem; }
     .footer-links a { color: var(--muted); font-size: .82rem; transition: color .2s; }
     .footer-links a:hover { color: var(--cyan); text-decoration: none; }
@@ -243,10 +258,9 @@
 <div class="pg-header">
   <h1>AxonBlade Playground</h1>
   <p>Write and run AxonBlade code instantly — no install required. Press <kbd>Ctrl+Enter</kbd> to run.</p>
-  <p style="margin-top:.5rem;font-size:.8rem;color:var(--muted);">
-    <span style="color:#febc2e">⚠</span>
-    <code>grid</code> requires a real terminal — use the
-    <a href="https://github.com/AI-Alon/axonblade/releases/latest" target="_blank" rel="noopener noreferrer">CLI binary</a> to run interactive or grid-based programs.
+  <p style="margin-top:.75rem;font-size:.92rem;color:#febc2e;background:rgba(254,188,46,.08);border:1px solid rgba(254,188,46,.25);border-radius:6px;padding:.5rem .9rem;display:inline-block;">
+    ⚠ <code style="color:#febc2e">grid</code> requires a real terminal — use the
+    <a href="https://github.com/AI-Alon/axonblade/releases/latest" target="_blank" rel="noopener noreferrer" style="color:#febc2e;font-weight:700;">CLI binary</a> to run interactive or grid-based programs.
   </p>
 </div>
 
@@ -265,6 +279,7 @@
       <option value="math">Math module</option>
       <option value="string">String methods</option>
     </select>
+    <div class="toolbar-sep"></div>
     <button class="btn btn-run" id="run-btn" onclick="runCode()">▶ Run</button>
     <button class="btn btn-share" onclick="shareCode()">⬡ Share</button>
     <button class="btn btn-clear" onclick="clearOutput()">✕ Clear</button>
@@ -623,9 +638,6 @@ write(parts~2~)`,
     }
   };
 
-  // expose for onclick attribute
-  function runCode() { window._runCode(); }
-
   // ── Cursor glow ────────────────────────────────────────────────
   const glow = document.getElementById('cursor-glow');
   document.addEventListener('mousemove', e => {
@@ -633,15 +645,15 @@ write(parts~2~)`,
     glow.style.top  = e.clientY + 'px';
   });
 
-  function clearOutput() {
+  window.clearOutput = function() {
     const out = document.getElementById('output');
     out.innerHTML = '<span class="out-placeholder">Press ▶ Run or Ctrl+Enter to execute your code.</span>';
     const status = document.getElementById('status');
     status.textContent = '● ready';
     status.className = 'status';
-  }
+  };
 
-  function shareCode() {
+  window.shareCode = function() {
     const view = window._editorView;
     if (!view) return;
     const code = view.state.doc.toString();
@@ -652,7 +664,7 @@ write(parts~2~)`,
       tip.classList.add('visible');
       setTimeout(() => tip.classList.remove('visible'), 2000);
     });
-  }
+  };
 </script>
 </body>
 </html>
